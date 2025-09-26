@@ -1,73 +1,154 @@
-# Makefile for AI Slop project
+# Makefile for Sloposcope AI Text Analysis Project
 
-.PHONY: help install install-dev test test-unit test-aws test-localstack clean-localstack lint format type-check pre-commit
+.PHONY: help install install-dev test test-unit test-aws test-localstack clean-localstack lint format type-check pre-commit clean docker-build docker-run docker-clean dev-setup ci deploy-fly deploy-cf
 
 help: ## Show this help message
 	@echo "Available commands:"
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
+# Installation and Setup
 install: ## Install the package
-	uv pip install -e .
+	pip install -r requirements.txt
+	python -m spacy download en_core_web_sm
 
 install-dev: ## Install development dependencies
-	uv pip install -e ".[dev]"
+	pip install -r requirements.txt
+	pip install pytest pytest-cov ruff black mypy pre-commit
+	python -m spacy download en_core_web_sm
 
-sync: ## Sync dependencies with uv
-	uv sync
+sync: ## Sync dependencies with uv (if using uv)
+	@if command -v uv >/dev/null 2>&1; then \
+		uv sync; \
+	else \
+		echo "uv not found, using pip instead"; \
+		pip install -r requirements.txt; \
+	fi
 
-sync-dev: ## Sync development dependencies with uv
-	uv sync --dev
+sync-dev: ## Sync development dependencies with uv (if using uv)
+	@if command -v uv >/dev/null 2>&1; then \
+		uv sync --dev; \
+	else \
+		echo "uv not found, using pip instead"; \
+		make install-dev; \
+	fi
 
+# Testing
 test: ## Run all tests
-	uv run python scripts/run_tests_with_localstack.py
+	python -m pytest tests/ -v
 
 test-unit: ## Run unit tests only (fast)
-	uv run python -m pytest tests/test_cli.py -v --tb=short
+	python -m pytest tests/test_cli.py -v --tb=short
 
 test-aws: ## Run AWS Worker tests with LocalStack
-	uv run python scripts/run_tests_with_localstack.py tests/test_aws_worker.py -v --tb=short
+	@if command -v uv >/dev/null 2>&1; then \
+		uv run python scripts/run_tests_with_localstack.py tests/test_aws_worker.py -v --tb=short; \
+	else \
+		python scripts/run_tests_with_localstack.py tests/test_aws_worker.py -v --tb=short; \
+	fi
 
 test-localstack: ## Start LocalStack for testing
-	uv run python scripts/start_localstack_for_tests.py start
+	@if command -v uv >/dev/null 2>&1; then \
+		uv run python scripts/start_localstack_for_tests.py start; \
+	else \
+		python scripts/start_localstack_for_tests.py start; \
+	fi
 
 clean-localstack: ## Stop and remove LocalStack container
-	uv run python scripts/start_localstack_for_tests.py stop
+	@if command -v uv >/dev/null 2>&1; then \
+		uv run python scripts/start_localstack_for_tests.py stop; \
+	else \
+		python scripts/start_localstack_for_tests.py stop; \
+	fi
 
+# Code Quality
 lint: ## Run linting
-	uv run ruff check sloplint/ tests/ scripts/
-	uv run black --check sloplint/ tests/ scripts/
+	@if command -v ruff >/dev/null 2>&1; then \
+		ruff check sloplint/ tests/ scripts/; \
+	else \
+		echo "ruff not found, install with: pip install ruff"; \
+	fi
+	@if command -v black >/dev/null 2>&1; then \
+		black --check sloplint/ tests/ scripts/; \
+	else \
+		echo "black not found, install with: pip install black"; \
+	fi
 
 format: ## Format code
-	uv run black sloplint/ tests/ scripts/
-	uv run ruff check --fix sloplint/ tests/ scripts/
+	@if command -v black >/dev/null 2>&1; then \
+		black sloplint/ tests/ scripts/; \
+	else \
+		echo "black not found, install with: pip install black"; \
+	fi
+	@if command -v ruff >/dev/null 2>&1; then \
+		ruff check --fix sloplint/ tests/ scripts/; \
+	else \
+		echo "ruff not found, install with: pip install ruff"; \
+	fi
 
 type-check: ## Run type checking
-	uv run mypy sloplint/
+	@if command -v mypy >/dev/null 2>&1; then \
+		mypy sloplint/; \
+	else \
+		echo "mypy not found, install with: pip install mypy"; \
+	fi
 
 pre-commit: ## Install pre-commit hooks
-	uv run pre-commit install
+	@if command -v pre-commit >/dev/null 2>&1; then \
+		pre-commit install; \
+	else \
+		echo "pre-commit not found, install with: pip install pre-commit"; \
+	fi
 
 pre-commit-run: ## Run pre-commit hooks on all files
-	uv run pre-commit run --all-files
+	@if command -v pre-commit >/dev/null 2>&1; then \
+		pre-commit run --all-files; \
+	else \
+		echo "pre-commit not found, install with: pip install pre-commit"; \
+	fi
+
+# Cleanup
+clean: ## Clean up temporary files and caches
+	find . -type f -name "*.pyc" -delete
+	find . -type d -name "__pycache__" -delete
+	find . -type d -name "*.egg-info" -exec rm -rf {} +
+	find . -type f -name "*.log" -delete
+	rm -rf .pytest_cache/
+	rm -rf htmlcov/
+	rm -rf .coverage
+	rm -rf dist/
+	rm -rf build/
 
 # Docker commands
 docker-build: ## Build Docker image
-	cd docker && docker-compose build sloplint-worker
+	docker build -t sloposcope .
 
-docker-test: ## Test with Docker and LocalStack
-	cd docker && docker-compose up -d localstack
-	sleep 10
-	uv run python docker/setup_localstack.py
-	cd docker && docker-compose up sloplint-worker
+docker-run: ## Run Docker container
+	docker-compose up --build
 
-docker-clean: ## Clean up Docker containers
-	cd docker && docker-compose down
-	docker stop localstack-test 2>/dev/null || true
-	docker rm localstack-test 2>/dev/null || true
+docker-clean: ## Clean up Docker containers and images
+	docker-compose down
+	docker rmi sloposcope 2>/dev/null || true
+	docker system prune -f
 
 # Development workflow
-dev-setup: sync-dev pre-commit ## Set up development environment
+dev-setup: install-dev pre-commit ## Set up development environment
 	@echo "Development environment set up complete!"
-	@echo "Run 'make test' to run all tests with LocalStack"
+	@echo "Run 'make test' to run all tests"
+	@echo "Run 'make docker-run' to start with Docker"
 
+# CI Pipeline
 ci: lint type-check test ## Run CI pipeline locally
+	@echo "CI pipeline completed successfully!"
+
+# Deployment
+deploy-fly: ## Deploy to Fly.io
+	@if [ -f "./deploy-fly.sh" ]; then \
+		chmod +x ./deploy-fly.sh && ./deploy-fly.sh; \
+	else \
+		echo "deploy-fly.sh not found"; \
+	fi
+
+# Local development server
+run: ## Run the development server
+	uvicorn app:app --reload --host 0.0.0.0 --port 8000
+

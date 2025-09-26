@@ -1,90 +1,111 @@
-# Sloposcope Cloudflare Deployment Guide
+# Sloposcope Deployment Guide
 
-This guide explains how to deploy your sloposcope project on Cloudflare using Workers with Python support and Next.js with OpenNext.
+This guide explains how to deploy your sloposcope project on Fly.io and Docker.
 
 ## Architecture Overview
 
-- **Backend**: Python Cloudflare Worker (using Pyodide)
-- **Frontend**: Next.js with OpenNext for Cloudflare Workers
-- **Deployment**: Single Cloudflare Workers deployment
+Sloposcope supports two deployment architectures:
+
+### Option 1: Fly.io (Recommended)
+
+- **Backend**: FastAPI Python application
+- **Frontend**: Embedded HTML/CSS/JavaScript
+- **Deployment**: Single Fly.io app with Docker
+
+### Option 2: Docker
+
+- **Backend**: FastAPI Python application
+- **Frontend**: Embedded HTML/CSS/JavaScript
+- **Deployment**: Docker container with docker-compose
 
 ## Prerequisites
 
-1. **Cloudflare Account**: Sign up at [cloudflare.com](https://cloudflare.com)
-2. **Wrangler CLI**: Install Cloudflare's CLI tool
+### For Fly.io Deployment (Recommended)
+
+1. **Fly.io Account**: Sign up at [fly.io](https://fly.io)
+2. **flyctl CLI**: Install Fly.io's CLI tool
    ```bash
-   npm install -g wrangler
+   curl -L https://fly.io/install.sh | sh
    ```
-3. **Node.js**: Version 18 or higher
-4. **Python**: Version 3.11 or higher (for local development)
+3. **Python**: Version 3.11 or higher
 
-## Setup Instructions
+### For Docker Deployment
 
-### 1. Install Dependencies
+1. **Docker**: Install Docker and Docker Compose
+2. **Python**: Version 3.11 or higher
+
+## Deployment Instructions
+
+### Option 1: Fly.io Deployment (Recommended)
+
+#### 1. Install Dependencies
 
 ```bash
 # Install Python dependencies
 pip install -r requirements.txt
 
-# Install frontend dependencies
-cd web
-npm install
+# Download spaCy model
+python -m spacy download en_core_web_sm
 ```
 
-### 2. Configure Cloudflare
+#### 2. Configure Fly.io
 
 ```bash
-# Login to Cloudflare
-wrangler login
+# Login to Fly.io
+flyctl auth login
 
 # Verify your account
-wrangler whoami
+flyctl auth whoami
 ```
 
-### 3. Deploy the Python Worker
+#### 3. Deploy to Fly.io
 
 ```bash
-# Deploy the backend API
-wrangler deploy
+# Deploy using the provided script
+./deploy-fly.sh
 
-# Or deploy to staging
-wrangler deploy --env staging
+# Or deploy manually
+flyctl deploy
 ```
 
-### 4. Deploy the Frontend
+Your application will be available at `https://sloposcope.fly.dev`
+
+### Option 2: Docker Deployment
+
+#### 1. Build and Run with Docker Compose
 
 ```bash
-cd web
+# Build and start services
+docker-compose up --build
 
-# Build the Next.js app for Cloudflare
-npm run build:cf
-
-# Deploy to Cloudflare Pages
-npm run deploy
+# Or run in background
+docker-compose up -d --build
 ```
+
+#### 2. Access the Application
+
+The application will be available at `http://localhost:8000`
 
 ## Configuration
 
 ### Environment Variables
 
-Set these in your Cloudflare dashboard or `wrangler.toml`:
+Set these in your deployment platform:
 
-```toml
-[vars]
-ENVIRONMENT = "production"
-API_URL = "https://sloposcope.your-domain.workers.dev"
+```bash
+PORT=8000
+ENVIRONMENT=production
 ```
 
-### Custom Domain (Optional)
+### Custom Domain (Fly.io)
 
-1. Go to Cloudflare Dashboard → Workers & Pages
-2. Select your worker
-3. Go to Settings → Triggers
-4. Add a custom domain
+1. Go to Fly.io Dashboard → Your App
+2. Go to Settings → Domains
+3. Add a custom domain
 
 ## API Endpoints
 
-The deployed worker provides these endpoints:
+The deployed application provides these endpoints:
 
 - `GET /health` - Health check
 - `POST /analyze` - Analyze text for AI slop
@@ -94,10 +115,10 @@ The deployed worker provides these endpoints:
 
 ```bash
 # Health check
-curl https://sloposcope.your-domain.workers.dev/health
+curl https://sloposcope.fly.dev/health
 
 # Analyze text
-curl -X POST https://sloposcope.your-domain.workers.dev/analyze \
+curl -X POST https://sloposcope.fly.dev/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "text": "Your text here",
@@ -113,12 +134,11 @@ curl -X POST https://sloposcope.your-domain.workers.dev/analyze \
 ### Local Development
 
 ```bash
-# Start the Python worker locally
-wrangler dev
+# Start the development server
+make run
 
-# Start the Next.js frontend
-cd web
-npm run dev
+# Or with Docker
+make docker-run
 ```
 
 ### Testing
@@ -127,37 +147,34 @@ npm run dev
 # Run Python tests
 make test
 
-# Run frontend tests
-cd web
-npm test
+# Run unit tests only
+make test-unit
 ```
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Python Package Compatibility**: Some packages may not work with Pyodide. Check the [Pyodide compatibility list](https://pyodide.org/en/stable/usage/packages-in-pyodide.html).
-
-2. **Memory Limits**: Cloudflare Workers have memory limits. Monitor your usage and optimize if needed.
-
-3. **Cold Starts**: First requests may be slower due to Python initialization.
+1. **Memory Limits**: Monitor memory usage and optimize if needed
+2. **Cold Starts**: First requests may be slower due to model loading
+3. **Dependencies**: Ensure all Python packages are compatible
 
 ### Debugging
 
 ```bash
-# View worker logs
-wrangler tail
+# View application logs (Fly.io)
+flyctl logs
 
-# Test locally with debugging
-wrangler dev --local
+# View Docker logs
+docker-compose logs -f
 ```
 
 ## Performance Optimization
 
-1. **Caching**: Use Cloudflare KV for caching analysis results
-2. **CDN**: Leverage Cloudflare's global network
+1. **Caching**: Implement caching for analysis results
+2. **CDN**: Leverage Fly.io's global network
 3. **Compression**: Enable gzip compression
-4. **Minification**: Optimize JavaScript bundles
+4. **Minification**: Optimize static assets
 
 ## Security Considerations
 
@@ -168,29 +185,29 @@ wrangler dev --local
 
 ## Monitoring
 
-1. **Analytics**: Use Cloudflare Analytics
-2. **Logs**: Monitor worker logs
-3. **Metrics**: Track performance metrics
-4. **Alerts**: Set up alerts for errors
+1. **Logs**: Monitor application logs
+2. **Metrics**: Track performance metrics
+3. **Alerts**: Set up alerts for errors
+4. **Health Checks**: Use built-in health check endpoint
 
 ## Scaling
 
-Cloudflare Workers automatically scale, but consider:
+Both Fly.io and Docker support automatic scaling:
 
 1. **Resource Limits**: Monitor CPU and memory usage
 2. **Concurrent Requests**: Handle high traffic
-3. **Database**: Use Cloudflare D1 or external database
-4. **File Storage**: Use Cloudflare R2 for large files
+3. **Database**: Use external database if needed
+4. **File Storage**: Use external storage for large files
 
 ## Cost Optimization
 
-1. **Free Tier**: Cloudflare Workers have generous free tier
+1. **Free Tier**: Fly.io has generous free tier
 2. **Usage Monitoring**: Track usage to avoid overages
 3. **Optimization**: Optimize code for efficiency
 4. **Caching**: Reduce redundant computations
 
 ## Support
 
-- **Documentation**: [Cloudflare Workers Docs](https://developers.cloudflare.com/workers/)
-- **Community**: [Cloudflare Community](https://community.cloudflare.com/)
+- **Documentation**: [Fly.io Docs](https://fly.io/docs/)
+- **Community**: [Fly.io Community](https://community.fly.io/)
 - **Issues**: Report issues in the GitHub repository

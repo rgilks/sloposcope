@@ -27,26 +27,14 @@ uvicorn app:app --reload
 
 Visit http://localhost:8000 to use the web interface.
 
-### Fly.io Deployment
+### Deployment Options
 
-1. **Install flyctl**:
+This project supports two deployment targets:
 
-   ```bash
-   curl -L https://fly.io/install.sh | sh
-   ```
+- **Fly.io**: Use `./deploy-fly.sh` for Fly.io deployment
+- **Docker**: Use the provided Dockerfile for containerized deployment
 
-2. **Login to Fly.io**:
-
-   ```bash
-   flyctl auth login
-   ```
-
-3. **Deploy**:
-   ```bash
-   ./deploy-fly.sh
-   ```
-
-Your application will be available at `https://sloposcope.fly.dev`
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
 
 ## API Usage
 

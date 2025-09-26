@@ -129,8 +129,8 @@ class EntityGridCoherence:
             return 0.0
 
         try:
-            from sentence_transformers import SentenceTransformer
             import torch
+            from sentence_transformers import SentenceTransformer
 
             model = SentenceTransformer("all-MiniLM-L6-v2")
 

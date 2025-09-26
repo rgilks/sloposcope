@@ -69,11 +69,5 @@ demo_*.json
 coverage.xml
 htmlcov/
 
-# Cloudflare specific (from previous deployment)
-cloudflare/
-web/
-wrangler.toml
-cf-requirements.txt
-deploy.sh
-test_deployment.py
+# Deployment files
 DEPLOYMENT.md

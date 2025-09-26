@@ -49,9 +49,8 @@ dependencies = [
     # Progress bars and utilities
     "tqdm>=4.65.0",
     "pathlib2>=2.3.0",
-    "pip>=25.2",
-    "fastapi>=0.117.1",
-    "uvicorn>=0.37.0",
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
 ]
 
 [project.optional-dependencies]
