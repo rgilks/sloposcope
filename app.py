@@ -3,9 +3,13 @@ Sloposcope Web Application - FastAPI implementation for Fly.io deployment
 """
 
 import json
+import os
 import time
 from typing import Dict, Any, Optional
 from pathlib import Path
+
+# Set tokenizers parallelism to avoid warnings
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
