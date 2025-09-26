@@ -130,8 +130,22 @@ class EntityGridCoherence:
 
         try:
             from sentence_transformers import SentenceTransformer
+            import torch
 
             model = SentenceTransformer("all-MiniLM-L6-v2")
+
+            # Try to use GPU if available
+            try:
+                if torch.cuda.is_available():
+                    model = model.to("cuda")
+                    logger.info("Using CUDA GPU for coherence analysis")
+                elif torch.backends.mps.is_available():
+                    model = model.to("mps")
+                    logger.info("Using Apple Metal GPU for coherence analysis")
+                else:
+                    logger.info("Using CPU for coherence analysis")
+            except Exception as e:
+                logger.warning(f"Could not move model to GPU: {e}")
 
             # Get embeddings for all sentences
             embeddings = model.encode(sentences)

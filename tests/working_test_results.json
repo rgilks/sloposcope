@@ -1,27 +1,27 @@
 {
   "test_metadata": {
-    "timestamp": 1758896354.029807,
+    "timestamp": 1758907422.190753,
     "total_tests": 10,
     "successful_tests": 10,
-    "accuracy": 0.6
+    "accuracy": 0.5
   },
   "results": [
     {
       "name": "Clean Human Text",
       "text_length": 167,
-      "slop_score": 0.39469824565970885,
-      "confidence": 0.9074609803094584,
-      "processing_time": 4.117464065551758,
+      "slop_score": 0.41930702699744693,
+      "confidence": 0.9355564489377924,
+      "processing_time": 4.333595037460327,
       "expected": "low",
-      "correct": true,
+      "correct": false,
       "success": true
     },
     {
       "name": "Personal Narrative",
       "text_length": 176,
-      "slop_score": 0.3265167420407026,
-      "confidence": 0.9317908651411813,
-      "processing_time": 4.169201135635376,
+      "slop_score": 0.36189481296374315,
+      "confidence": 0.9547037393394959,
+      "processing_time": 4.097548961639404,
       "expected": "low",
       "correct": true,
       "success": true
@@ -29,19 +29,19 @@
     {
       "name": "Technical Writing",
       "text_length": 179,
-      "slop_score": 0.3667391768337583,
-      "confidence": 0.933964766634358,
-      "processing_time": 4.368541955947876,
+      "slop_score": 0.4017282797139183,
+      "confidence": 0.9411050263411941,
+      "processing_time": 4.1388819217681885,
       "expected": "low",
-      "correct": true,
+      "correct": false,
       "success": true
     },
     {
       "name": "AI Business Email",
       "text_length": 204,
-      "slop_score": 0.3302614488093151,
-      "confidence": 0.9348824239376706,
-      "processing_time": 4.181647777557373,
+      "slop_score": 0.347943348009912,
+      "confidence": 0.9433699812057447,
+      "processing_time": 4.057560920715332,
       "expected": "medium",
       "correct": true,
       "success": true
@@ -49,9 +49,9 @@
     {
       "name": "Product Description",
       "text_length": 217,
-      "slop_score": 0.4399876261961918,
-      "confidence": 0.8938765824939809,
-      "processing_time": 4.144034147262573,
+      "slop_score": 0.4698681443990217,
+      "confidence": 0.9228426550609723,
+      "processing_time": 4.692333936691284,
       "expected": "medium",
       "correct": true,
       "success": true
@@ -59,9 +59,9 @@
     {
       "name": "AI Response",
       "text_length": 203,
-      "slop_score": 0.33386716184219845,
-      "confidence": 0.9272229948095109,
-      "processing_time": 4.4468207359313965,
+      "slop_score": 0.36532857607127756,
+      "confidence": 0.9484937362545623,
+      "processing_time": 4.1429009437561035,
       "expected": "high",
       "correct": false,
       "success": true
@@ -69,9 +69,9 @@
     {
       "name": "Corporate Speak",
       "text_length": 211,
-      "slop_score": 0.4618980762558202,
-      "confidence": 0.8798879698451677,
-      "processing_time": 4.172513008117676,
+      "slop_score": 0.48155548567401707,
+      "confidence": 0.9189494547951494,
+      "processing_time": 4.3571319580078125,
       "expected": "high",
       "correct": false,
       "success": true
@@ -79,9 +79,9 @@
     {
       "name": "Repetitive AI",
       "text_length": 182,
-      "slop_score": 0.5494719987452501,
-      "confidence": 0.7858920886735963,
-      "processing_time": 4.169765949249268,
+      "slop_score": 0.5737589870808434,
+      "confidence": 0.7939437978447997,
+      "processing_time": 4.040112257003784,
       "expected": "very_high",
       "correct": false,
       "success": true
@@ -89,19 +89,19 @@
     {
       "name": "Template Content",
       "text_length": 200,
-      "slop_score": 0.4397035552774014,
-      "confidence": 0.9266819277465733,
-      "processing_time": 4.373396873474121,
+      "slop_score": 0.517408194378088,
+      "confidence": 0.9354416779902771,
+      "processing_time": 0.9348342418670654,
       "expected": "high",
-      "correct": false,
+      "correct": true,
       "success": true
     },
     {
       "name": "News Article",
       "text_length": 163,
-      "slop_score": 0.31885659538344246,
-      "confidence": 0.9337555204273507,
-      "processing_time": 4.254884958267212,
+      "slop_score": 0.3765440714394503,
+      "confidence": 0.9406909266230743,
+      "processing_time": 4.540405988693237,
       "expected": "low",
       "correct": true,
       "success": true

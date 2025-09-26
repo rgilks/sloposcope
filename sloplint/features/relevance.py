@@ -25,6 +25,22 @@ def get_relevance_model() -> Any:
         try:
             # Use a lightweight model for efficiency
             _relevance_model = SentenceTransformer("all-MiniLM-L6-v2")
+
+            # Try to use GPU if available
+            try:
+                import torch
+
+                if torch.cuda.is_available():
+                    _relevance_model = _relevance_model.to("cuda")
+                    logger.info("Using CUDA GPU for sentence transformers")
+                elif torch.backends.mps.is_available():
+                    _relevance_model = _relevance_model.to("mps")
+                    logger.info("Using Apple Metal GPU for sentence transformers")
+                else:
+                    logger.info("Using CPU for sentence transformers")
+            except Exception as e:
+                logger.warning(f"Could not move model to GPU: {e}")
+
         except Exception as e:
             logger.warning(f"Could not load sentence transformer model: {e}")
             _relevance_model = None

@@ -26,23 +26,40 @@ except ImportError:
 class DensityCalculator:
     """Calculates information density metrics."""
 
-    def __init__(self) -> None:
+    def __init__(self, device: str = "auto") -> None:
         """Initialize with pre-trained language model."""
         self.model_name = "distilgpt2"
         self.tokenizer = None
         self.model = None
 
+        # Determine device
+        if device == "auto":
+            if torch.cuda.is_available():
+                self.device = torch.device("cuda")
+                logger.info("Using CUDA GPU acceleration")
+            elif torch.backends.mps.is_available():
+                self.device = torch.device("mps")
+                logger.info("Using Apple Metal GPU acceleration")
+            else:
+                self.device = torch.device("cpu")
+                logger.info("Using CPU (no GPU available)")
+        else:
+            self.device = torch.device(device)
+            logger.info(f"Using specified device: {device}")
+
         if TRANSFORMERS_AVAILABLE:
             try:
                 logger.info("Loading DistilGPT-2 for perplexity calculation...")
                 self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-                self.model = AutoModelForCausalLM.from_pretrained(self.model_name)
+                self.model = AutoModelForCausalLM.from_pretrained(self.model_name).to(
+                    self.device
+                )
 
                 # Set padding token if not present
                 if self.tokenizer.pad_token is None:
                     self.tokenizer.pad_token = self.tokenizer.eos_token
 
-                logger.info("✅ DistilGPT-2 loaded successfully")
+                logger.info(f"✅ DistilGPT-2 loaded successfully on {self.device}")
             except Exception as e:
                 logger.error(f"Failed to load DistilGPT-2: {e}")
                 self.model = None
@@ -61,6 +78,9 @@ class DensityCalculator:
             inputs = self.tokenizer(
                 text, return_tensors="pt", truncation=True, max_length=512
             )
+
+            # Move inputs to the same device as the model
+            inputs = {k: v.to(self.device) for k, v in inputs.items()}
 
             # Get model predictions
             with torch.no_grad():
