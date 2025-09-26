@@ -108,39 +108,90 @@ class ScoreNormalizer:
             normalized = 1 / (1 + np.exp(-z_score))
 
         return float(max(0.0, min(1.0, normalized)))
-    
-    def normalize_score_with_inversion(self, metric_name: str, raw_score: float, domain: str) -> float:
+
+    def normalize_score_with_inversion(
+        self, metric_name: str, raw_score: float, domain: str
+    ) -> float:
         """Normalize a raw metric score with proper inversion for certain metrics."""
         # Define which metrics should be inverted (lower is better for slop detection)
         inverted_metrics = {
             # These metrics: lower values = more slop, higher values = less slop
-            "perplexity_score", "idea_density_score", "semantic_density_score", 
-            "conceptual_density_score", "combined_density",
-            "sentence_repetition", "compression_ratio", "overall_repetition",
-            "tone_score", "hedging_ratio", "sycophancy_ratio", "formality_ratio", "passive_ratio",
-            "overall_verbosity", "filler_ratio", "listiness", "sentence_variance",
-            "coherence_score", "entity_continuity", "embedding_drift",
-            "relevance_score", "mean_similarity", "min_similarity", "low_relevance_ratio", "relevance_variance",
-            "factuality_score", "unsupported_ratio", "contradictions_count",
-            "subjectivity_score", "subjective_ratio", "bias_ratio", "neutral_ratio",
-            "fluency_score", "grammar_error_ratio", "unnatural_phrase_ratio", "fragment_ratio",
-            "complexity_score", "complex_word_ratio", "complex_phrase_ratio", "flesch_kincaid_grade",
+            "perplexity_score",
+            "idea_density_score",
+            "semantic_density_score",
+            "conceptual_density_score",
+            "combined_density",
+            "sentence_repetition",
+            "compression_ratio",
+            "overall_repetition",
+            "tone_score",
+            "hedging_ratio",
+            "sycophancy_ratio",
+            "formality_ratio",
+            "passive_ratio",
+            "overall_verbosity",
+            "filler_ratio",
+            "listiness",
+            "sentence_variance",
+            "coherence_score",
+            "entity_continuity",
+            "embedding_drift",
+            "relevance_score",
+            "mean_similarity",
+            "min_similarity",
+            "low_relevance_ratio",
+            "relevance_variance",
+            "factuality_score",
+            "unsupported_ratio",
+            "contradictions_count",
+            "subjectivity_score",
+            "subjective_ratio",
+            "bias_ratio",
+            "neutral_ratio",
+            "fluency_score",
+            "grammar_error_ratio",
+            "unnatural_phrase_ratio",
+            "fragment_ratio",
+            "complexity_score",
+            "complex_word_ratio",
+            "complex_phrase_ratio",
+            "flesch_kincaid_grade",
             # These are metadata and should be neutral
-            "model_name", "has_transformer", "processing_times", "total_processing_time",
-            "has_semantic_features", "coherence_spans", "repetition_spans", "templated_spans",
-            "tone_spans", "verbosity_spans", "relevance_spans", "factual_claims", "hedging_spans",
-            "unsupported_spans", "contradiction_spans", "grammar_errors", "unnatural_phrases",
-            "fragments", "subjective_by_category", "bias_by_category", "subjective_spans",
-            "bias_spans", "neutral_spans", "complex_words", "complex_phrases", "value"
+            "model_name",
+            "has_transformer",
+            "processing_times",
+            "total_processing_time",
+            "has_semantic_features",
+            "coherence_spans",
+            "repetition_spans",
+            "templated_spans",
+            "tone_spans",
+            "verbosity_spans",
+            "relevance_spans",
+            "factual_claims",
+            "hedging_spans",
+            "unsupported_spans",
+            "contradiction_spans",
+            "grammar_errors",
+            "unnatural_phrases",
+            "fragments",
+            "subjective_by_category",
+            "bias_by_category",
+            "subjective_spans",
+            "bias_spans",
+            "neutral_spans",
+            "complex_words",
+            "complex_phrases",
+            "value",
         }
-        
+
         # Normalize the score first
         normalized = self.normalize_score(metric_name, raw_score, domain)
-        
+
         # Invert if this metric should be inverted
         if metric_name in inverted_metrics:
             return 1.0 - normalized
-        
+
         return normalized
 
 
@@ -201,7 +252,9 @@ def normalize_scores(
     for metric_name, metric_data in metrics.items():
         # Extract the main score value - different extractors use different key names
         raw_score = _extract_main_score(metric_name, metric_data)
-        normalized_score = normalizer.normalize_score_with_inversion(metric_name, raw_score, domain)
+        normalized_score = normalizer.normalize_score_with_inversion(
+            metric_name, raw_score, domain
+        )
 
         normalized[metric_name] = {
             **metric_data,
@@ -245,7 +298,7 @@ def combine_scores(
 ) -> tuple[float, float]:
     """Combine normalized metrics into a composite slop score."""
     weights = get_domain_weights(domain)
-    
+
     # Map individual metrics to core dimensions
     dimension_mapping = {
         # Density dimension
@@ -254,62 +307,52 @@ def combine_scores(
         "idea_density_score": "density",
         "semantic_density_score": "density",
         "conceptual_density_score": "density",
-        
         # Repetition dimension
         "overall_repetition": "repetition",
         "ngram_repetition": "repetition",
         "sentence_repetition": "repetition",
         "compression_ratio": "repetition",
         "pattern_repetition": "repetition",
-        
         # Templated dimension
         "templated_score": "templated",
         "boilerplate_hits": "templated",
         "pos_diversity": "templated",
-        
         # Tone dimension
         "tone_score": "tone",
         "hedging_ratio": "tone",
         "sycophancy_ratio": "tone",
         "formality_ratio": "tone",
         "passive_ratio": "tone",
-        
         # Verbosity dimension
         "overall_verbosity": "verbosity",
         "words_per_sentence": "verbosity",
         "filler_ratio": "verbosity",
         "listiness": "verbosity",
         "sentence_variance": "verbosity",
-        
         # Coherence dimension
         "coherence_score": "coherence",
         "entity_continuity": "coherence",
         "embedding_drift": "coherence",
-        
         # Relevance dimension
         "relevance_score": "relevance",
         "mean_similarity": "relevance",
         "min_similarity": "relevance",
         "low_relevance_ratio": "relevance",
         "relevance_variance": "relevance",
-        
         # Factuality dimension
         "factuality_score": "factuality",
         "unsupported_ratio": "factuality",
         "contradictions_count": "factuality",
-        
         # Subjectivity dimension
         "subjectivity_score": "subjectivity",
         "subjective_ratio": "subjectivity",
         "bias_ratio": "subjectivity",
         "neutral_ratio": "subjectivity",
-        
         # Fluency dimension
         "fluency_score": "fluency",
         "grammar_error_ratio": "fluency",
         "unnatural_phrase_ratio": "fluency",
         "fragment_ratio": "fluency",
-        
         # Complexity dimension
         "complexity_score": "complexity",
         "complex_word_ratio": "complexity",
@@ -320,16 +363,16 @@ def combine_scores(
     # Group metrics by dimension and calculate dimension scores
     dimension_scores = {}
     dimension_weights = {}
-    
+
     for metric_name, metric_data in metrics.items():
         if metric_name in dimension_mapping:
             dimension = dimension_mapping[metric_name]
             score = metric_data.get("value", 0.5)
-            
+
             if dimension not in dimension_scores:
                 dimension_scores[dimension] = []
                 dimension_weights[dimension] = []
-            
+
             dimension_scores[dimension].append(score)
             # Use equal weight for metrics within a dimension
             dimension_weights[dimension].append(1.0)
@@ -345,7 +388,7 @@ def combine_scores(
             if scores:
                 dimension_score = sum(scores) / len(scores)
                 weight = weights[dimension]
-                
+
                 weighted_sum += weight * dimension_score
                 total_weight += weight
                 available_dimensions += 1
