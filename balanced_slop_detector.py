@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """
-Final Slop Detector - Aggressive but Smart
+Balanced Slop Detector - Finding the Sweet Spot
 
-This version is more aggressive at detecting slop while still avoiding
-false positives on natural writing through better pattern recognition.
+This version balances aggressive slop detection with avoiding false positives
+by using smarter thresholds and better pattern recognition.
 """
 
 import re
@@ -14,8 +14,8 @@ from collections import Counter
 from typing import Dict, List, Any, Tuple
 
 
-class FinalSlopDetector:
-    """Final slop detector - aggressive but smart."""
+class BalancedSlopDetector:
+    """Balanced slop detector that finds the sweet spot."""
 
     def __init__(self):
         """Initialize with effective slop patterns."""
@@ -249,7 +249,7 @@ class FinalSlopDetector:
         return False
 
     def detect_slop(self, text: str) -> Dict[str, Any]:
-        """Detect slop using aggressive but smart thresholds."""
+        """Detect slop using balanced thresholds."""
         if not text or not text.strip():
             return {
                 "is_slop": False,
@@ -257,7 +257,7 @@ class FinalSlopDetector:
                 "slop_score": 0.0,
                 "level": "UNKNOWN",
                 "explanation": "Empty text",
-                "method": "final",
+                "method": "balanced",
             }
 
         # Analyze different aspects
@@ -275,16 +275,16 @@ class FinalSlopDetector:
         # Check for natural human writing
         is_natural = self._is_natural_human_writing(text, slop_indicators)
 
-        # Aggressive weights - focus on the most reliable indicators
+        # Balanced weights - include repetition and structure but with lower weights
         weights = {
-            "templates": 0.40,  # Highest effectiveness
-            "buzzwords": 0.30,
+            "templates": 0.35,  # Highest effectiveness
+            "buzzwords": 0.25,
             "corporate_speak": 0.15,
-            "ai_patterns": 0.10,
-            "hedging": 0.03,
-            "sycophancy": 0.02,
-            "repetition": 0.00,  # Disabled - too prone to false positives
-            "structure": 0.00,  # Disabled - too prone to false positives
+            "ai_patterns": 0.12,
+            "hedging": 0.05,
+            "sycophancy": 0.04,
+            "repetition": 0.02,  # Low weight to avoid false positives
+            "structure": 0.02,  # Low weight to avoid false positives
         }
 
         # Calculate weighted slop score
@@ -293,12 +293,12 @@ class FinalSlopDetector:
             / 100
         )
 
-        # AGGRESSIVE THRESHOLD - but protect natural writing
-        base_threshold = 0.03
-        threshold = base_threshold * 2 if is_natural else base_threshold
+        # BALANCED THRESHOLD - sweet spot between aggressive and conservative
+        base_threshold = 0.04
+        threshold = base_threshold * 1.5 if is_natural else base_threshold
 
         is_slop = slop_score > threshold
-        confidence = min(slop_score * 6, 1.0)
+        confidence = min(slop_score * 5, 1.0)
 
         # Determine level
         if slop_score > 0.3:
@@ -323,21 +323,21 @@ class FinalSlopDetector:
             "slop_indicators": slop_indicators,
             "pattern_matches": pattern_matches,
             "is_natural_writing": is_natural,
-            "method": "final",
+            "method": "balanced",
         }
 
 
 def main():
     """Main CLI interface."""
     parser = argparse.ArgumentParser(
-        description="Final AI Slop Detection Tool",
+        description="Balanced AI Slop Detection Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python final_slop_detector.py "This is high-quality technical content."
-  python final_slop_detector.py --file document.txt
-  python final_slop_detector.py --json "AI-generated slop text here"
-  python final_slop_detector.py --test  # Run test cases
+  python balanced_slop_detector.py "This is high-quality technical content."
+  python balanced_slop_detector.py --file document.txt
+  python balanced_slop_detector.py --json "AI-generated slop text here"
+  python balanced_slop_detector.py --test  # Run test cases
         """,
     )
 
@@ -360,11 +360,11 @@ Examples:
     args = parser.parse_args()
 
     # Initialize detector
-    detector = FinalSlopDetector()
+    detector = BalancedSlopDetector()
 
     if args.test:
         # Run test cases
-        print("🧪 Final Slop Detection Test Cases")
+        print("🧪 Balanced Slop Detection Test Cases")
         print("=" * 60)
 
         test_cases = [
@@ -470,7 +470,7 @@ Examples:
         accuracy = correct / total * 100
         print(f"\n📊 Test Results: {correct}/{total} correct ({accuracy:.1f}%)")
         print(
-            f"🎯 Final detector shows {'excellent' if accuracy >= 95 else 'good' if accuracy >= 90 else 'moderate'} performance"
+            f"🎯 Balanced detector shows {'excellent' if accuracy >= 95 else 'good' if accuracy >= 90 else 'moderate'} performance"
         )
 
         return
@@ -504,7 +504,7 @@ Examples:
         if args.json:
             print(json.dumps(result, indent=2))
         else:
-            print("\n🔍 Final Slop Detection Analysis")
+            print("\n🔍 Balanced Slop Detection Analysis")
             print("=" * 50)
             print(f"Prediction: {'🚨 SLOP' if result['is_slop'] else '✅ QUALITY'}")
             print(f"Confidence: {result['confidence']:.2f}")

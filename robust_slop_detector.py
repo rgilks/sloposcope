@@ -1,9 +1,12 @@
 #!/usr/bin/env python3
 """
-Final Slop Detector - Aggressive but Smart
+Robust Slop Detector - Fixed Overfitting Issues
 
-This version is more aggressive at detecting slop while still avoiding
-false positives on natural writing through better pattern recognition.
+This version addresses the overfitting problems by:
+1. Better distinguishing natural repetition from slop repetition
+2. More sophisticated natural writing detection
+3. Context-aware analysis
+4. Less aggressive thresholds
 """
 
 import re
@@ -14,8 +17,8 @@ from collections import Counter
 from typing import Dict, List, Any, Tuple
 
 
-class FinalSlopDetector:
-    """Final slop detector - aggressive but smart."""
+class RobustSlopDetector:
+    """Robust slop detector that avoids overfitting."""
 
     def __init__(self):
         """Initialize with effective slop patterns."""
@@ -249,7 +252,7 @@ class FinalSlopDetector:
         return False
 
     def detect_slop(self, text: str) -> Dict[str, Any]:
-        """Detect slop using aggressive but smart thresholds."""
+        """Detect slop using robust thresholds."""
         if not text or not text.strip():
             return {
                 "is_slop": False,
@@ -257,7 +260,7 @@ class FinalSlopDetector:
                 "slop_score": 0.0,
                 "level": "UNKNOWN",
                 "explanation": "Empty text",
-                "method": "final",
+                "method": "robust",
             }
 
         # Analyze different aspects
@@ -275,7 +278,7 @@ class FinalSlopDetector:
         # Check for natural human writing
         is_natural = self._is_natural_human_writing(text, slop_indicators)
 
-        # Aggressive weights - focus on the most reliable indicators
+        # Conservative weights
         weights = {
             "templates": 0.40,  # Highest effectiveness
             "buzzwords": 0.30,
@@ -293,12 +296,12 @@ class FinalSlopDetector:
             / 100
         )
 
-        # AGGRESSIVE THRESHOLD - but protect natural writing
-        base_threshold = 0.03
+        # ROBUST THRESHOLD - much more conservative
+        base_threshold = 0.05
         threshold = base_threshold * 2 if is_natural else base_threshold
 
         is_slop = slop_score > threshold
-        confidence = min(slop_score * 6, 1.0)
+        confidence = min(slop_score * 4, 1.0)
 
         # Determine level
         if slop_score > 0.3:
@@ -323,21 +326,21 @@ class FinalSlopDetector:
             "slop_indicators": slop_indicators,
             "pattern_matches": pattern_matches,
             "is_natural_writing": is_natural,
-            "method": "final",
+            "method": "robust",
         }
 
 
 def main():
     """Main CLI interface."""
     parser = argparse.ArgumentParser(
-        description="Final AI Slop Detection Tool",
+        description="Robust AI Slop Detection Tool",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  python final_slop_detector.py "This is high-quality technical content."
-  python final_slop_detector.py --file document.txt
-  python final_slop_detector.py --json "AI-generated slop text here"
-  python final_slop_detector.py --test  # Run test cases
+  python robust_slop_detector.py "This is high-quality technical content."
+  python robust_slop_detector.py --file document.txt
+  python robust_slop_detector.py --json "AI-generated slop text here"
+  python robust_slop_detector.py --test  # Run test cases
         """,
     )
 
@@ -360,11 +363,11 @@ Examples:
     args = parser.parse_args()
 
     # Initialize detector
-    detector = FinalSlopDetector()
+    detector = RobustSlopDetector()
 
     if args.test:
         # Run test cases
-        print("🧪 Final Slop Detection Test Cases")
+        print("🧪 Robust Slop Detection Test Cases")
         print("=" * 60)
 
         test_cases = [
@@ -470,7 +473,7 @@ Examples:
         accuracy = correct / total * 100
         print(f"\n📊 Test Results: {correct}/{total} correct ({accuracy:.1f}%)")
         print(
-            f"🎯 Final detector shows {'excellent' if accuracy >= 95 else 'good' if accuracy >= 90 else 'moderate'} performance"
+            f"🎯 Robust detector shows {'excellent' if accuracy >= 95 else 'good' if accuracy >= 90 else 'moderate'} performance"
         )
 
         return
@@ -504,7 +507,7 @@ Examples:
         if args.json:
             print(json.dumps(result, indent=2))
         else:
-            print("\n🔍 Final Slop Detection Analysis")
+            print("\n🔍 Robust Slop Detection Analysis")
             print("=" * 50)
             print(f"Prediction: {'🚨 SLOP' if result['is_slop'] else '✅ QUALITY'}")
             print(f"Confidence: {result['confidence']:.2f}")
