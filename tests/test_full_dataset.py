@@ -110,7 +110,9 @@ def test_full_dataset():
                 correct = 0.2 <= slop_score <= 0.7
                 expected_category = "Medium"
             else:
-                correct = slop_score > 0.5
+                correct = (
+                    slop_score > 0.70
+                )  # Fixed: match updated system classification logic
                 expected_category = "High"
 
             result = {

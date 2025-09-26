@@ -34,16 +34,16 @@ class ScoreNormalizer:
                 "subjectivity": {"mean": 0.3, "std": 0.16},  # Lower
                 "coherence": {"mean": 0.4, "std": 0.18},  # Lower
                 "repetition": {
-                    "mean": 0.05,
-                    "std": 0.10,
-                },  # Even lower - key slop indicator
-                "templated": {
-                    "mean": 0.01,
-                    "std": 0.05,
+                    "mean": 0.1,
+                    "std": 0.12,
                 },  # Much lower - key slop indicator
-                "verbosity": {"mean": 0.2, "std": 0.12},  # Lower - key slop indicator
+                "templated": {
+                    "mean": 0.2,
+                    "std": 0.16,
+                },  # Much lower - key slop indicator
+                "verbosity": {"mean": 0.3, "std": 0.14},  # Lower - key slop indicator
                 "complexity": {"mean": 0.3, "std": 0.18},  # Lower
-                "tone": {"mean": 0.01, "std": 0.05},  # Much lower - key slop indicator
+                "tone": {"mean": 0.2, "std": 0.15},  # Much lower - key slop indicator
                 "fluency": {"mean": 0.5, "std": 0.16},  # Lower
             },
             "news": {
@@ -244,7 +244,7 @@ def get_slop_level(score: float) -> str:
         return "Clean"
     elif score <= 0.55:
         return "Watch"
-    elif score <= 0.70:  # Lowered threshold for better high-slop detection
+    elif score <= 0.75:
         return "Sloppy"
     else:
         return "High-Slop"

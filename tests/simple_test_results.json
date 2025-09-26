@@ -1,64 +1,64 @@
 {
   "test_metadata": {
-    "timestamp": 1758889964.6767108,
+    "timestamp": 1758896274.2742321,
     "total_tests": 5,
     "successful_tests": 5,
-    "accuracy": 0.6
+    "accuracy": 0.4
   },
   "results": [
     {
       "name": "Clean Human Text",
       "text_length": 167,
-      "slop_score": 0.2982278275074689,
+      "slop_score": 0.4149157828055159,
       "confidence": 1.0,
-      "processing_time": 7.696522951126099,
+      "processing_time": 4.60471510887146,
       "expected_range": "low",
       "success": true,
-      "features_count": 10,
-      "correct": true
+      "features_count": 11,
+      "correct": false
     },
     {
       "name": "AI-Generated Business Email",
       "text_length": 204,
-      "slop_score": 0.29649255207845965,
+      "slop_score": 0.33880305801456917,
       "confidence": 1.0,
-      "processing_time": 6.338920831680298,
+      "processing_time": 4.364750862121582,
       "expected_range": "medium",
       "success": true,
-      "features_count": 10,
+      "features_count": 11,
       "correct": true
     },
     {
       "name": "High AI Content",
       "text_length": 203,
-      "slop_score": 0.25349289410284254,
+      "slop_score": 0.3263215647016314,
       "confidence": 1.0,
-      "processing_time": 4.191218852996826,
+      "processing_time": 4.424600839614868,
       "expected_range": "high",
       "success": true,
-      "features_count": 10,
+      "features_count": 11,
       "correct": false
     },
     {
       "name": "Repetitive AI Text",
       "text_length": 182,
-      "slop_score": 0.3861996068805481,
+      "slop_score": 0.4808913549968994,
       "confidence": 1.0,
-      "processing_time": 4.36477518081665,
+      "processing_time": 4.5870068073272705,
       "expected_range": "very_high",
       "success": true,
-      "features_count": 10,
+      "features_count": 11,
       "correct": false
     },
     {
       "name": "Technical Documentation",
       "text_length": 138,
-      "slop_score": 0.2741233109624793,
+      "slop_score": 0.36737148766978195,
       "confidence": 1.0,
-      "processing_time": 4.161095142364502,
+      "processing_time": 4.535340070724487,
       "expected_range": "low",
       "success": true,
-      "features_count": 10,
+      "features_count": 11,
       "correct": true
     }
   ]

@@ -135,7 +135,9 @@ class SlopDetectionTester:
             elif expected_range < 0.6:  # Medium slop expected
                 correct = 0.2 <= slop_score <= 0.7
             else:  # High slop expected
-                correct = slop_score > 0.5
+                correct = (
+                    slop_score > 0.70
+                )  # Fixed: match updated system classification logic
 
             # Update category accuracy
             if category not in self.performance_stats["category_accuracy"]:
