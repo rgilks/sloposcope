@@ -11,7 +11,7 @@ A production-ready tool for detecting AI-generated text patterns and measuring "
 - **⚡ High Performance**: Optimized for production with fast processing
 - **🌐 Modern Web Interface**: Real-time analysis with beautiful, responsive UI
 - **🔌 REST API**: Full API for seamless integration
-- **☁️ Cloud Ready**: Docker deployment with Fly.io and AWS support
+- **☁️ Cloud Ready**: Docker deployment with Fly.io support
 - **🔒 Privacy-First**: All processing happens locally, no external API calls
 
 ## 🚀 Quick Start
@@ -83,15 +83,6 @@ docker-compose up --build
 # Access at http://localhost:8000
 ```
 
-### AWS ECS Worker
-
-```bash
-# Deploy AWS worker infrastructure
-cd docker && terraform apply
-
-# Build and push Docker image
-docker build -f docker/Dockerfile -t sloplint-worker .
-```
 
 ## 📡 API Usage
 
@@ -207,7 +198,7 @@ make run
 - **Frontend**: Vanilla HTML/CSS/JavaScript with Tailwind CSS
 - **NLP Pipeline**: spaCy with transformer models + sentence-transformers
 - **Core Library**: `sloplint/` - Feature extraction and analysis modules
-- **Deployment**: Docker with Fly.io and AWS ECS support
+- **Deployment**: Docker with Fly.io support
 - **Testing**: pytest with comprehensive test coverage
 
 ## 📊 Performance
@@ -237,7 +228,7 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENS
 
 - Based on research by Shaib et al. (2025) "Measuring AI 'SLOP' in Text"
 - Built with [spaCy](https://spacy.io/) and [sentence-transformers](https://www.sbert.net/)
-- Deployed on [Fly.io](https://fly.io/) and [AWS](https://aws.amazon.com/)
+- Deployed on [Fly.io](https://fly.io/)
 - Inspired by ongoing research in AI text detection and quality assessment
 
 ## 📖 Additional Documentation

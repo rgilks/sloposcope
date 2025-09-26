@@ -42,8 +42,6 @@ dependencies = [
     "textstat>=0.7.0",
     "nltk>=3.8.0",
     "regex>=2023.10.0",
-    # AWS
-    "boto3>=1.29.0",
     # Optional for grammar checking
     "language-tool-python>=2.7.0",
     # Progress bars and utilities
@@ -65,8 +63,7 @@ dev = [
     "black>=23.10.0",
     "pre-commit>=3.5.0",
 ]
-aws = ["boto3>=1.29.0", "botocore>=1.32.0"]
-all = ["sloplint[dev,aws]"]
+all = ["sloplint[dev]"]
 
 [project.scripts]
 sloplint = "sloplint.cli:main"

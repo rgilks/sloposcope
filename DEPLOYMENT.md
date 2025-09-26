@@ -20,74 +20,6 @@ Sloposcope supports multiple deployment architectures:
 - **Deployment**: Docker container with docker-compose
 - **Benefits**: Consistent environment, easy local development
 
-### Option 3: AWS ECS Worker (Enterprise Scale)
-
-- **Backend**: Containerized worker processing SQS messages
-- **Storage**: S3 for text input/output
-- **Queue**: SQS for message processing
-- **Monitoring**: CloudWatch metrics and logging
-- **Benefits**: Auto-scaling, enterprise-grade infrastructure
-
-#### Architecture
-
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   Input Queue   │───▶│   ECS Worker    │───▶│  Output Queue   │
-│     (SQS)       │    │   (Fargate)     │    │     (SQS)       │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                              │
-                              ▼
-                       ┌─────────────────┐
-                       │  CloudWatch     │
-                       │   Metrics       │
-                       └─────────────────┘
-```
-
-#### Message Format
-
-**Input Message:**
-```json
-{
-  "doc_id": "unique-document-id",
-  "domain": "news",
-  "text": "Full text content to analyze",
-  "s3_uri": "s3://bucket/path/to/file.txt",
-  "prompt": "Optional analysis prompt",
-  "references": ["s3://bucket/ref1.txt", "s3://bucket/ref2.txt"],
-  "options": {
-    "custom_thresholds": {...}
-  }
-}
-```
-
-**Output Message:**
-```json
-{
-  "doc_id": "unique-document-id",
-  "status": "ok",
-  "result": {
-    "version": "1.0",
-    "domain": "news",
-    "slop_score": 0.347,
-    "confidence": 1.0,
-    "level": "Watch",
-    "metrics": {
-      "density": {"value": 0.5, "perplexity": 25.0},
-      "repetition": {"value": 0.3, "compression_ratio": 0.4}
-    },
-    "spans": [
-      {
-        "start": 120,
-        "end": 165,
-        "axis": "repetition",
-        "note": "Repeated sentence stem"
-      }
-    ],
-    "timings_ms": {"total": 500, "nlp": 200, "features": 300}
-  },
-  "error": null
-}
-```
 
 ## 📋 Prerequisites
 
@@ -107,12 +39,6 @@ Sloposcope supports multiple deployment architectures:
 2. **Python**: Version 3.11 or higher
 3. **Git**: For cloning the repository
 
-### For AWS ECS Deployment
-
-1. **AWS Account**: With appropriate permissions
-2. **AWS CLI**: Configured with credentials
-3. **Terraform**: For infrastructure as code
-4. **Docker**: For building container images
 
 ## 🚀 Deployment Instructions
 
@@ -204,56 +130,6 @@ docker run -d \
   sloposcope:latest
 ```
 
-### Option 3: AWS ECS Worker Deployment
-
-#### Prerequisites
-
-- AWS CLI configured with appropriate credentials
-- ECR repository created
-- SQS queues created (input and output)
-- VPC and subnets configured
-
-#### Deploy Infrastructure
-
-```bash
-# Navigate to docker directory
-cd docker
-
-# Initialize Terraform
-terraform init
-
-# Plan deployment
-terraform plan \
-  -var="input_queue_url=https://sqs.us-east-1.amazonaws.com/123456789/input-queue" \
-  -var="output_queue_url=https://sqs.us-east-1.amazonaws.com/123456789/output-queue"
-
-# Deploy infrastructure
-terraform apply
-```
-
-#### Build and Deploy Container
-
-```bash
-# Get ECR login token
-aws ecr get-login-password --region us-east-1 | \
-  docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-1.amazonaws.com
-
-# Build Docker image
-docker build -f docker/Dockerfile -t sloplint-worker .
-
-# Tag for ECR
-docker tag sloplint-worker:latest \
-  <account-id>.dkr.ecr.us-east-1.amazonaws.com/sloplint-worker:latest
-
-# Push to ECR
-docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/sloplint-worker:latest
-
-# Update ECS service
-aws ecs update-service \
-  --cluster sloplint-worker-cluster \
-  --service sloplint-worker-service \
-  --force-new-deployment
-```
 
 ## ⚙️ Configuration
 
@@ -275,11 +151,6 @@ SENTENCE_TRANSFORMER_MODEL=all-MiniLM-L6-v2
 MAX_WORKERS=4
 WORKER_TIMEOUT=30
 
-# AWS Configuration (for ECS worker)
-AWS_REGION=us-east-1
-INPUT_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/123456789/input-queue
-OUTPUT_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/123456789/output-queue
-S3_OUTPUT_BUCKET=sloposcope-results
 ```
 
 ### Fly.io Configuration
@@ -357,10 +228,6 @@ curl https://sloposcope.fly.dev/health
 # Test Docker deployment
 curl http://localhost:8000/health
 
-# Test AWS worker
-aws sqs send-message \
-  --queue-url $INPUT_QUEUE_URL \
-  --message-body '{"doc_id":"test","text":"Sample text","domain":"general"}'
 ```
 
 ## 🔍 Monitoring and Observability
@@ -402,17 +269,6 @@ docker-compose logs -f
 docker-compose logs -f sloposcope
 ```
 
-#### AWS CloudWatch Logs
-
-```bash
-# View worker logs
-aws logs tail /ecs/sloplint-worker --follow
-
-# View specific log stream
-aws logs get-log-events \
-  --log-group-name /ecs/sloplint-worker \
-  --log-stream-name <stream-name>
-```
 
 ### Metrics
 
@@ -426,15 +282,6 @@ flyctl metrics
 flyctl metrics --type cpu,memory
 ```
 
-#### AWS CloudWatch Metrics
-
-The ECS worker publishes metrics to CloudWatch:
-
-- **MessageProcessingTime**: Time to process each message
-- **MessagesProcessed**: Number of successfully processed messages
-- **MessagesFailed**: Number of failed messages
-- **SlopScore**: AI slop scores distribution
-- **WorkerErrors**: Error counts by type
 
 ## 🚨 Troubleshooting
 
@@ -491,29 +338,6 @@ docker run --cpus=2 --memory=2g sloposcope:latest
 flyctl metrics --type cpu,memory,latency
 ```
 
-#### 4. AWS ECS Issues
-
-**Symptoms**: Tasks failing, queue messages not processing
-
-**Solutions**:
-
-```bash
-# Check task status
-aws ecs describe-tasks \
-  --cluster sloplint-worker-cluster \
-  --tasks $(aws ecs list-tasks --cluster sloplint-worker-cluster --query taskArns[0])
-
-# Check queue depth
-aws sqs get-queue-attributes \
-  --queue-url $INPUT_QUEUE_URL \
-  --attribute-names ApproximateNumberOfMessages
-
-# Restart service
-aws ecs update-service \
-  --cluster sloplint-worker-cluster \
-  --service sloplint-worker-service \
-  --force-new-deployment
-```
 
 ### Debugging Commands
 
@@ -524,13 +348,6 @@ flyctl ssh console
 # Debug Docker container
 docker exec -it sloposcope-container /bin/bash
 
-# Debug AWS ECS task
-aws ecs execute-command \
-  --cluster sloplint-worker-cluster \
-  --task <task-arn> \
-  --container sloplint-worker \
-  --interactive \
-  --command "/bin/bash"
 ```
 
 ## 🔒 Security Considerations
@@ -557,12 +374,6 @@ export CORS_ORIGINS=https://yourdomain.com
 - Use HTTPS for all communications
 - Implement proper logging without exposing sensitive information
 
-### 4. AWS Security
-
-- Use least-privilege IAM roles
-- Enable S3 server-side encryption
-- Use VPC endpoints for AWS services
-- Implement proper security groups
 
 ## 📈 Performance Optimization
 
@@ -605,12 +416,6 @@ docker build --target production -t sloposcope:latest .
 - Enable auto-stop/start for non-production apps
 - Monitor usage with `flyctl metrics`
 
-### AWS
-
-- Use Spot instances for non-critical workloads
-- Implement auto-scaling based on queue depth
-- Use S3 Intelligent Tiering for storage
-- Monitor costs with AWS Cost Explorer
 
 ### Docker
 
@@ -666,7 +471,6 @@ jobs:
 
 - [Fly.io Documentation](https://fly.io/docs/)
 - [Docker Documentation](https://docs.docker.com/)
-- [AWS ECS Documentation](https://docs.aws.amazon.com/ecs/)
 - [FastAPI Deployment Guide](https://fastapi.tiangolo.com/deployment/)
 - [spaCy Model Installation](https://spacy.io/usage/models)
 
