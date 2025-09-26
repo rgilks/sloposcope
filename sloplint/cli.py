@@ -6,7 +6,6 @@ Provides command-line interface for analyzing text files and detecting AI slop.
 
 import sys
 from pathlib import Path
-from typing import List, Optional
 
 import typer
 from rich.console import Console
@@ -14,15 +13,14 @@ from rich.table import Table
 
 from . import __version__
 from .combine import combine_scores, normalize_scores
-from .io import load_text, save_json_output
-from .nlp.pipeline import NLPPipeline
 from .feature_extractor import FeatureExtractor
+from .io import load_text, save_json_output
 
 app = typer.Typer()
 console = Console()
 
 
-def version_callback(value: bool):
+def version_callback(value: bool) -> None:
     """Handle version option."""
     if value:
         console.print(f"sloplint v{__version__}")
@@ -30,23 +28,23 @@ def version_callback(value: bool):
 
 @app.callback()
 def main(
-    version: Optional[bool] = typer.Option(None, "--version", "-v", help="Show version information", callback=version_callback),
-):
+    version: bool | None = typer.Option(None, "--version", "-v", help="Show version information", callback=version_callback),
+) -> None:
     """AI Slop CLI - Detect low-quality AI-generated text with interpretable metrics."""
 
 
 @app.command("analyze")
 def analyze_command(
-    files: List[Path] = typer.Argument(..., help="Text files to analyze"),
+    files: list[Path] = typer.Argument(..., help="Text files to analyze"),
     domain: str = typer.Option("general", "--domain", help="Domain for analysis (news, qa, general)"),
-    prompt: Optional[str] = typer.Option(None, "--prompt", help="Intended instruction/prompt"),
-    reference: List[Path] = typer.Option([], "--reference", help="Reference files for factuality"),
-    json_output: Optional[Path] = typer.Option(None, "--json", help="JSON output file path"),
+    prompt: str | None = typer.Option(None, "--prompt", help="Intended instruction/prompt"),
+    reference: list[Path] = typer.Option([], "--reference", help="Reference files for factuality"),
+    json_output: Path | None = typer.Option(None, "--json", help="JSON output file path"),
     explain: bool = typer.Option(False, "--explain", help="Show detailed explanations"),
     spans: bool = typer.Option(False, "--spans", help="Show character spans"),
     language: str = typer.Option("en", "--language", help="Language code"),
-    config: Optional[Path] = typer.Option(None, "--config", help="Config file path"),
-):
+    config: Path | None = typer.Option(None, "--config", help="Config file path"),
+) -> None:
     """Analyze text files for AI slop."""
     try:
         # Load text from files
@@ -134,9 +132,9 @@ def get_slop_level(score: float) -> str:
         return "High-Slop"
 
 
-def display_results(result: dict, explain: bool = False, spans: bool = False):
+def display_results(result: dict, explain: bool = False, spans: bool = False) -> None:
     """Display analysis results in a formatted table."""
-    console.print(f"\n[bold]AI Slop Analysis Results[/bold]")
+    console.print("\n[bold]AI Slop Analysis Results[/bold]")
     console.print(f"Domain: {result['domain']}")
     console.print(f"Slop Score: {result['slop_score']:.3f} ({result['level']})")
     console.print(f"Confidence: {result['confidence']:.3f}")

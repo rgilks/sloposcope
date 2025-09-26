@@ -4,9 +4,9 @@ Tone analysis for AI slop detection.
 Detects hedging, sycophancy, formality, and other tone-related issues.
 """
 
-import re
-from typing import Dict, Any, List
 import logging
+import re
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 class ToneAnalyzer:
     """Analyzes tone issues in text."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize with tone pattern lists."""
         # Hedging patterns (words that indicate uncertainty)
         self.hedging_patterns = [
@@ -70,7 +70,7 @@ class ToneAnalyzer:
             count += len(pattern.findall(text))
         return count
 
-    def detect_tone_spans(self, text: str) -> List[Dict[str, Any]]:
+    def detect_tone_spans(self, text: str) -> list[dict[str, Any]]:
         """Detect spans containing tone issues."""
         spans = []
 
@@ -97,7 +97,7 @@ class ToneAnalyzer:
         return spans
 
 
-def calculate_passive_voice_ratio(sentences: List[str]) -> float:
+def calculate_passive_voice_ratio(sentences: list[str]) -> float:
     """Calculate ratio of passive voice constructions."""
     # This is a simplified implementation
     # In practice would use dependency parsing
@@ -124,7 +124,7 @@ def calculate_passive_voice_ratio(sentences: List[str]) -> float:
     return passive_sentences / total_sentences
 
 
-def extract_features(text: str, sentences: List[str], tokens: List[str]) -> Dict[str, Any]:
+def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict[str, Any]:
     """Extract all tone-related features."""
     try:
         analyzer = ToneAnalyzer()

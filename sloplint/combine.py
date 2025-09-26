@@ -5,9 +5,8 @@ Handles converting raw metric values to normalized scores and combining them
 into a composite slop score with domain-specific weighting.
 """
 
-import json
 from pathlib import Path
-from typing import Dict, Any, Tuple, Optional
+from typing import Any
 
 import numpy as np
 from scipy import stats
@@ -16,12 +15,12 @@ from scipy import stats
 class ScoreNormalizer:
     """Handles normalization of raw metric scores using calibration data."""
 
-    def __init__(self, calibration_dir: Optional[Path] = None):
+    def __init__(self, calibration_dir: Path | None = None):
         """Initialize with calibration data."""
         self.calibration_dir = calibration_dir or Path(__file__).parent / "calibration"
         self.calibration_data = self._load_calibration_data()
 
-    def _load_calibration_data(self) -> Dict[str, Any]:
+    def _load_calibration_data(self) -> dict[str, Any]:
         """Load calibration statistics from data files."""
         # Default calibration values based on research literature
         return {
@@ -80,15 +79,15 @@ class ScoreNormalizer:
             return 1.0 if raw_score >= mean_val else 0.0
 
         # Z-score normalization
-        z_score = (raw_score - mean_val) / std_val
+        z_score = float((raw_score - mean_val) / std_val)
 
         # Convert to [0,1] range using sigmoid-like function
         normalized = 1 / (1 + np.exp(-z_score))
 
-        return max(0.0, min(1.0, normalized))
+        return float(max(0.0, min(1.0, normalized)))
 
 
-def get_domain_weights(domain: str) -> Dict[str, float]:
+def get_domain_weights(domain: str) -> dict[str, float]:
     """Get domain-specific weights for combining metrics."""
     weights = {
         "general": {
@@ -130,7 +129,7 @@ def get_domain_weights(domain: str) -> Dict[str, float]:
     return weights.get(domain, weights["general"])
 
 
-def normalize_scores(metrics: Dict[str, Dict[str, Any]], domain: str) -> Dict[str, Dict[str, Any]]:
+def normalize_scores(metrics: dict[str, dict[str, Any]], domain: str) -> dict[str, dict[str, Any]]:
     """Normalize all metric scores for a domain."""
     normalizer = ScoreNormalizer()
 
@@ -148,7 +147,7 @@ def normalize_scores(metrics: Dict[str, Dict[str, Any]], domain: str) -> Dict[st
     return normalized
 
 
-def combine_scores(metrics: Dict[str, Dict[str, Any]], domain: str) -> Tuple[float, float]:
+def combine_scores(metrics: dict[str, dict[str, Any]], domain: str) -> tuple[float, float]:
     """Combine normalized metrics into a composite slop score."""
     weights = get_domain_weights(domain)
 
@@ -191,7 +190,7 @@ def get_slop_level(score: float) -> str:
         return "High-Slop"
 
 
-def calculate_confidence_intervals(metrics: Dict[str, Dict[str, Any]], domain: str) -> Dict[str, Any]:
+def calculate_confidence_intervals(metrics: dict[str, dict[str, Any]], domain: str) -> dict[str, Any]:
     """Calculate confidence intervals for the composite score."""
     # This is a simplified version - in practice would use bootstrap sampling
     weights = get_domain_weights(domain)

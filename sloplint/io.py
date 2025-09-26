@@ -7,15 +7,12 @@ Handles loading text from various sources and saving results in different format
 import json
 import sys
 from pathlib import Path
-from typing import Dict, Any, Union, List
-from urllib.parse import urlparse
-from urllib.request import urlopen
+from typing import Any
 
 import requests
-from pathlib import Path
 
 
-def load_text(source: Union[str, Path]) -> str:
+def load_text(source: str | Path) -> str:
     """Load text from a file path, URL, or stdin."""
     if source == "-" or str(source).lower() == "stdin":
         return sys.stdin.read()
@@ -24,17 +21,17 @@ def load_text(source: Union[str, Path]) -> str:
 
     if path.is_file():
         try:
-            with open(path, 'r', encoding='utf-8') as f:
+            with open(path, encoding='utf-8') as f:
                 content = f.read()
             return normalize_text(content)
         except UnicodeDecodeError:
             # Try with different encodings
             try:
-                with open(path, 'r', encoding='latin-1') as f:
+                with open(path, encoding='latin-1') as f:
                     content = f.read()
                 return normalize_text(content)
             except Exception as e:
-                raise ValueError(f"Could not read file {path}: {e}")
+                raise ValueError(f"Could not read file {path}: {e}") from e
     else:
         # Try as URL
         return load_from_url(str(source))
@@ -47,7 +44,7 @@ def load_from_url(url: str) -> str:
         response.raise_for_status()
         return normalize_text(response.text)
     except Exception as e:
-        raise ValueError(f"Could not load from URL {url}: {e}")
+        raise ValueError(f"Could not load from URL {url}: {e}") from e
 
 
 def normalize_text(text: str) -> str:
@@ -66,7 +63,7 @@ def normalize_text(text: str) -> str:
     return normalized.strip()
 
 
-def load_references(reference_paths: List[Union[str, Path]]) -> List[str]:
+def load_references(reference_paths: list[str | Path]) -> list[str]:
     """Load reference texts from multiple sources."""
     references = []
     for ref_path in reference_paths:
@@ -76,7 +73,7 @@ def load_references(reference_paths: List[Union[str, Path]]) -> List[str]:
     return references
 
 
-def save_json_output(data: Dict[str, Any], output_path: Union[str, Path]) -> None:
+def save_json_output(data: dict[str, Any], output_path: str | Path) -> None:
     """Save analysis results to JSON file."""
     path = Path(output_path)
 
@@ -87,7 +84,7 @@ def save_json_output(data: Dict[str, Any], output_path: Union[str, Path]) -> Non
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
-def load_config(config_path: Union[str, Path]) -> Dict[str, Any]:
+def load_config(config_path: str | Path) -> dict[str, Any]:
     """Load configuration from TOML file."""
     import tomli
 
@@ -99,10 +96,10 @@ def load_config(config_path: Union[str, Path]) -> Dict[str, Any]:
         with open(path, 'rb') as f:
             return tomli.load(f)
     except Exception as e:
-        raise ValueError(f"Could not load config file {path}: {e}")
+        raise ValueError(f"Could not load config file {path}: {e}") from e
 
 
-def save_config(config: Dict[str, Any], config_path: Union[str, Path]) -> None:
+def save_config(config: dict[str, Any], config_path: str | Path) -> None:
     """Save configuration to TOML file."""
     import tomli_w
 

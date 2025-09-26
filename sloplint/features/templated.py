@@ -4,11 +4,11 @@ Templated content detection for AI slop analysis.
 Detects boilerplate phrases, repetitive patterns, and templated writing.
 """
 
-import re
-import math
-from collections import Counter
-from typing import Dict, Any, List
 import logging
+import math
+import re
+from collections import Counter
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 class TemplateDetector:
     """Detects templated and boilerplate content."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize with known boilerplate patterns."""
         # Common AI-generated boilerplate phrases
         self.boilerplate_patterns = [
@@ -65,7 +65,7 @@ class TemplateDetector:
         # Compile patterns for efficiency
         self.compiled_patterns = [re.compile(pattern, re.IGNORECASE) for pattern in self.boilerplate_patterns]
 
-    def detect_boilerplate_spans(self, text: str) -> List[Dict[str, Any]]:
+    def detect_boilerplate_spans(self, text: str) -> list[dict[str, Any]]:
         """Detect spans containing boilerplate phrases."""
         spans = []
 
@@ -81,7 +81,7 @@ class TemplateDetector:
 
         return spans
 
-    def calculate_pos_diversity(self, pos_tags: List[str], window_size: int = 5) -> float:
+    def calculate_pos_diversity(self, pos_tags: list[str], window_size: int = 5) -> float:
         """Calculate diversity of POS tag 5-grams."""
         if len(pos_tags) < window_size:
             return 0.0
@@ -110,13 +110,13 @@ class TemplateDetector:
 
         return diversity_score
 
-    def calculate_pattern_repetition(self, sentences: List[str]) -> float:
+    def calculate_pattern_repetition(self, sentences: list[str]) -> float:
         """Calculate repetition of sentence patterns."""
         if not sentences:
             return 0.0
 
         # Simple pattern matching - look for common sentence starters
-        starters = Counter()
+        starters: Counter[str] = Counter()
         for sentence in sentences:
             words = sentence.strip().split()
             if words:
@@ -131,7 +131,7 @@ class TemplateDetector:
         return repetition_rate
 
 
-def extract_features(text: str, sentences: List[str], tokens: List[str], pos_tags: List[str] = None) -> Dict[str, Any]:
+def extract_features(text: str, sentences: list[str], tokens: list[str], pos_tags: list[str] | None = None) -> dict[str, Any]:
     """Extract all templated content features."""
     try:
         detector = TemplateDetector()

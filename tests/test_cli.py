@@ -2,15 +2,12 @@
 Tests for the AI Slop CLI tool.
 """
 
-import json
 import tempfile
 from pathlib import Path
 
-import pytest
-
-from sloplint.cli import analyze_command, get_slop_level
-from sloplint.feature_extractor import FeatureExtractor
+from sloplint.cli import get_slop_level
 from sloplint.combine import combine_scores, normalize_scores
+from sloplint.feature_extractor import FeatureExtractor
 
 
 def test_get_slop_level():

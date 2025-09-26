@@ -5,8 +5,8 @@ Manages character-level annotations for problematic regions in text.
 """
 
 from dataclasses import dataclass
-from typing import List, Dict, Any, Optional
 from enum import Enum
+from typing import Any
 
 
 class SpanType(Enum):
@@ -27,10 +27,10 @@ class Span:
     end: int
     span_type: SpanType
     confidence: float = 1.0
-    note: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
+    note: str | None = None
+    metadata: dict[str, Any] | None = None
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         """Validate span data."""
         if self.start < 0:
             raise ValueError("Start position must be non-negative")
@@ -39,7 +39,7 @@ class Span:
         if self.confidence < 0 or self.confidence > 1:
             raise ValueError("Confidence must be between 0 and 1")
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert span to dictionary representation."""
         return {
             "start": self.start,
@@ -51,7 +51,7 @@ class Span:
         }
 
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Span":
+    def from_dict(cls, data: dict[str, Any]) -> "Span":
         """Create span from dictionary representation."""
         return cls(
             start=data["start"],
@@ -66,7 +66,7 @@ class Span:
 class SpanCollection:
     """Manages a collection of spans with merging and filtering capabilities."""
 
-    def __init__(self, spans: Optional[List[Span]] = None):
+    def __init__(self, spans: list[Span] | None = None):
         """Initialize span collection."""
         self.spans = spans or []
         self._sort_spans()
@@ -76,7 +76,7 @@ class SpanCollection:
         self.spans.append(span)
         self._sort_spans()
 
-    def add_spans(self, spans: List[Span]) -> None:
+    def add_spans(self, spans: list[Span]) -> None:
         """Add multiple spans to the collection."""
         self.spans.extend(spans)
         self._sort_spans()
@@ -123,12 +123,12 @@ class SpanCollection:
         filtered = [span for span in self.spans if span.confidence >= min_confidence]
         return SpanCollection(filtered)
 
-    def to_dict_list(self) -> List[Dict[str, Any]]:
+    def to_dict_list(self) -> list[dict[str, Any]]:
         """Convert all spans to dictionary list."""
         return [span.to_dict() for span in self.spans]
 
     @classmethod
-    def from_dict_list(cls, data: List[Dict[str, Any]]) -> "SpanCollection":
+    def from_dict_list(cls, data: list[dict[str, Any]]) -> "SpanCollection":
         """Create span collection from dictionary list."""
         spans = [Span.from_dict(item) for item in data]
         return cls(spans)
@@ -158,7 +158,7 @@ class SpanCollection:
         """Return number of spans."""
         return len(self.spans)
 
-    def __iter__(self):
+    def __iter__(self) -> iter[Span]:  # type: ignore
         """Iterate over spans."""
         return iter(self.spans)
 

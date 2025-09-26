@@ -4,9 +4,10 @@ Coherence analysis for AI slop detection.
 Calculates entity grid continuity and topic drift to measure text coherence.
 """
 
-import numpy as np
-from typing import Dict, Any, List, Tuple
 import logging
+from typing import Any
+
+import numpy as np
 
 logger = logging.getLogger(__name__)
 
@@ -21,11 +22,11 @@ except ImportError:
 class EntityGridCoherence:
     """Calculates coherence using entity grid analysis."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize entity grid analyzer."""
         self.entity_roles = ['S', 'O', 'X', '-']  # Subject, Object, Other, None
 
-    def extract_entities(self, sentences: List[str]) -> Dict[str, List[str]]:
+    def extract_entities(self, sentences: list[str]) -> dict[int, list[str]]:
         """Extract entities and their roles from sentences."""
         if not SPACY_AVAILABLE:
             return self._fallback_entity_extraction(sentences)
@@ -59,7 +60,7 @@ class EntityGridCoherence:
             logger.error(f"Error in entity extraction: {e}")
             return self._fallback_entity_extraction(sentences)
 
-    def _fallback_entity_extraction(self, sentences: List[str]) -> Dict[str, List[str]]:
+    def _fallback_entity_extraction(self, sentences: list[str]) -> dict[int, list[str]]:
         """Fallback entity extraction when spaCy is not available."""
         # Simple rule-based extraction
         entities_by_sentence = {}
@@ -84,7 +85,7 @@ class EntityGridCoherence:
 
         return entities_by_sentence
 
-    def calculate_entity_continuity(self, entities_by_sentence: Dict[int, List[str]]) -> float:
+    def calculate_entity_continuity(self, entities_by_sentence: dict[int, list[str]]) -> float:
         """Calculate entity continuity score using transition probabilities."""
         if not entities_by_sentence:
             return 0.0
@@ -117,7 +118,7 @@ class EntityGridCoherence:
 
         return np.mean(continuity_scores) if continuity_scores else 0.0
 
-    def calculate_embedding_drift(self, sentences: List[str]) -> float:
+    def calculate_embedding_drift(self, sentences: list[str]) -> float:
         """Calculate drift between adjacent sentence embeddings."""
         if len(sentences) < 2:
             return 0.0
@@ -148,7 +149,7 @@ class EntityGridCoherence:
             logger.error(f"Error calculating embedding drift: {e}")
             return 0.0
 
-    def detect_coherence_breaks(self, sentences: List[str], threshold: float = 0.3) -> List[Dict[str, Any]]:
+    def detect_coherence_breaks(self, sentences: list[str], threshold: float = 0.3) -> list[dict[str, Any]]:
         """Detect coherence breaks between sentences."""
         if len(sentences) < 2:
             return []
@@ -171,7 +172,7 @@ class EntityGridCoherence:
         return breaks
 
 
-def extract_features(text: str, sentences: List[str], tokens: List[str]) -> Dict[str, Any]:
+def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict[str, Any]:
     """Extract all coherence-related features."""
     try:
         analyzer = EntityGridCoherence()
@@ -180,7 +181,7 @@ def extract_features(text: str, sentences: List[str], tokens: List[str]) -> Dict
         entities_by_sentence = analyzer.extract_entities(sentences)
 
         # Calculate entity continuity
-        entity_continuity = analyzer.calculate_entity_continuity(entities_by_sentence)
+        entity_continuity = float(analyzer.calculate_entity_continuity(entities_by_sentence))
 
         # Calculate embedding drift
         embedding_drift = analyzer.calculate_embedding_drift(sentences)

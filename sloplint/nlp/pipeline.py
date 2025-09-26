@@ -5,12 +5,11 @@ Provides unified interface for spaCy processing, sentence segmentation,
 tokenization, and linguistic feature extraction.
 """
 
-from typing import List, Dict, Any, Optional
 import logging
+from typing import Any
 
 try:
     import spacy
-    from spacy.language import Language
     SPACY_AVAILABLE = True
 except ImportError:
     SPACY_AVAILABLE = False
@@ -22,7 +21,7 @@ logger = logging.getLogger(__name__)
 class NLPPipeline:
     """Unified NLP processing pipeline."""
 
-    def __init__(self, language: str = "en", model_name: Optional[str] = None):
+    def __init__(self, language: str = "en", model_name: str | None = None):
         """Initialize NLP pipeline."""
         self.language = language
         self.model_name = model_name or "en_core_web_sm"
@@ -49,7 +48,7 @@ class NLPPipeline:
             # Add custom components if needed
             self._add_custom_components()
 
-    def _add_custom_components(self):
+    def _add_custom_components(self) -> None:
         """Add custom spaCy components for slop analysis."""
         if not self.nlp:
             return
@@ -58,7 +57,7 @@ class NLPPipeline:
         if not self.nlp.has_pipe("parser"):
             self.nlp.add_pipe("sentencizer")
 
-    def process(self, text: str) -> Optional[Dict[str, Any]]:
+    def process(self, text: str) -> dict[str, Any] | None:
         """Process text through the NLP pipeline."""
         if not self.nlp:
             return self._fallback_processing(text)
@@ -80,7 +79,7 @@ class NLPPipeline:
             logger.error(f"Error processing text: {e}")
             return self._fallback_processing(text)
 
-    def _fallback_processing(self, text: str) -> Dict[str, Any]:
+    def _fallback_processing(self, text: str) -> dict[str, Any]:
         """Fallback processing when spaCy is not available."""
         logger.warning("Using fallback text processing")
 
@@ -100,22 +99,22 @@ class NLPPipeline:
             "doc": None,
         }
 
-    def get_sentences(self, text: str) -> List[str]:
+    def get_sentences(self, text: str) -> list[str]:
         """Extract sentences from text."""
         result = self.process(text)
         return result["sentences"] if result else []
 
-    def get_tokens(self, text: str) -> List[str]:
+    def get_tokens(self, text: str) -> list[str]:
         """Extract tokens from text."""
         result = self.process(text)
         return result["tokens"] if result else []
 
-    def get_pos_tags(self, text: str) -> List[str]:
+    def get_pos_tags(self, text: str) -> list[str]:
         """Extract POS tags from text."""
         result = self.process(text)
         return result["pos_tags"] if result else []
 
-    def get_entities(self, text: str) -> List[tuple]:
+    def get_entities(self, text: str) -> list[tuple]:
         """Extract named entities from text."""
         result = self.process(text)
         return result["entities"] if result else []

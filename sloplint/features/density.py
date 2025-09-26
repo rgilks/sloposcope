@@ -5,15 +5,15 @@ Calculates information density using perplexity from language models
 and idea density based on linguistic features.
 """
 
-import math
-from typing import Dict, Any, List
 import logging
+import math
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 try:
-    from transformers import AutoTokenizer, AutoModelForCausalLM
     import torch
+    from transformers import AutoModelForCausalLM, AutoTokenizer
     TRANSFORMERS_AVAILABLE = True
 except ImportError:
     TRANSFORMERS_AVAILABLE = False
@@ -23,7 +23,7 @@ except ImportError:
 class DensityCalculator:
     """Calculates information density metrics."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize with pre-trained language model."""
         self.model_name = "distilgpt2"
         self.tokenizer = None
@@ -84,7 +84,7 @@ class DensityCalculator:
 
         return base_perplexity * complexity_factor
 
-    def calculate_idea_density(self, sentences: List[str], pos_tags: List[str]) -> float:
+    def calculate_idea_density(self, sentences: list[str], pos_tags: list[str]) -> float:
         """Calculate idea density (propositions per 100 words)."""
         if not sentences:
             return 0.0
@@ -96,7 +96,7 @@ class DensityCalculator:
             return 0.0
 
         # Count predicates (verbs) and complex noun phrases as idea indicators
-        idea_indicators = 0
+        idea_indicators: float = 0.0
 
         # This is a simplified version - in practice would use dependency parsing
         for sentence in sentences:
@@ -117,7 +117,7 @@ class DensityCalculator:
         return min(idea_density, 20.0)  # Cap at reasonable maximum
 
 
-def extract_features(text: str, sentences: List[str], tokens: List[str], pos_tags: List[str] = None) -> Dict[str, Any]:
+def extract_features(text: str, sentences: list[str], tokens: list[str], pos_tags: list[str] | None = None) -> dict[str, Any]:
     """Extract all density-related features."""
     try:
         calculator = DensityCalculator()

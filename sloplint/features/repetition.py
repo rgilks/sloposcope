@@ -6,14 +6,14 @@ sentence repetition, and compression ratio.
 """
 
 import gzip
-from collections import Counter
-from typing import Dict, Any, List, Tuple
 import logging
+from collections import Counter
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def calculate_ngram_repetition(tokens: List[str], n: int) -> float:
+def calculate_ngram_repetition(tokens: list[str], n: int) -> float:
     """Calculate n-gram repetition rate."""
     if len(tokens) < n:
         return 0.0
@@ -37,7 +37,7 @@ def calculate_ngram_repetition(tokens: List[str], n: int) -> float:
     return repetition_rate
 
 
-def calculate_sentence_repetition(sentences: List[str]) -> float:
+def calculate_sentence_repetition(sentences: list[str]) -> float:
     """Calculate sentence-level repetition using embeddings similarity."""
     if len(sentences) < 2:
         return 0.0
@@ -73,7 +73,7 @@ def calculate_compression_ratio(text: str) -> float:
     return max(0.0, min(1.0, repetition_score))
 
 
-def detect_repetition_spans(tokens: List[str], threshold: float = 0.1) -> List[Dict[str, Any]]:
+def detect_repetition_spans(tokens: list[str], threshold: float = 0.1) -> list[dict[str, Any]]:
     """Detect spans of repetitive content."""
     spans = []
 
@@ -82,7 +82,7 @@ def detect_repetition_spans(tokens: List[str], threshold: float = 0.1) -> List[D
         if len(tokens) < n:
             continue
 
-        seen_ngrams = {}
+        seen_ngrams: dict[tuple[str, ...], int] = {}
         for i in range(len(tokens) - n + 1):
             ngram = tuple(tokens[i:i+n])
 
@@ -107,7 +107,7 @@ def detect_repetition_spans(tokens: List[str], threshold: float = 0.1) -> List[D
     return spans
 
 
-def extract_features(text: str, sentences: List[str], tokens: List[str]) -> Dict[str, Any]:
+def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict[str, Any]:
     """Extract all repetition-related features."""
     try:
         # Calculate n-gram repetition rates

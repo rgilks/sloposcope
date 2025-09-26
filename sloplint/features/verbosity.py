@@ -4,15 +4,15 @@ Verbosity analysis for AI slop detection.
 Calculates wordiness, sentence length, filler words, and structural complexity.
 """
 
-import re
-from typing import Dict, Any, List
-import statistics
 import logging
+import re
+import statistics
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
 
-def calculate_words_per_sentence(sentences: List[str]) -> float:
+def calculate_words_per_sentence(sentences: list[str]) -> float:
     """Calculate average words per sentence."""
     if not sentences:
         return 0.0
@@ -25,7 +25,7 @@ def calculate_words_per_sentence(sentences: List[str]) -> float:
     return statistics.mean(word_counts) if word_counts else 0.0
 
 
-def calculate_filler_words_ratio(text: str, tokens: List[str]) -> float:
+def calculate_filler_words_ratio(text: str, tokens: list[str]) -> float:
     """Calculate ratio of filler/discourse words."""
     # Common filler and discourse words
     filler_words = {
@@ -66,7 +66,7 @@ def calculate_listiness(text: str) -> float:
     return list_lines / total_lines
 
 
-def calculate_sentence_length_variance(sentences: List[str]) -> float:
+def calculate_sentence_length_variance(sentences: list[str]) -> float:
     """Calculate variance in sentence lengths."""
     if not sentences:
         return 0.0
@@ -82,7 +82,7 @@ def calculate_sentence_length_variance(sentences: List[str]) -> float:
     return statistics.variance(word_counts)
 
 
-def detect_verbosity_spans(text: str, tokens: List[str]) -> List[Dict[str, Any]]:
+def detect_verbosity_spans(text: str, tokens: list[str]) -> list[dict[str, Any]]:
     """Detect spans of verbose or wordy content."""
     spans = []
 
@@ -107,7 +107,7 @@ def detect_verbosity_spans(text: str, tokens: List[str]) -> List[Dict[str, Any]]
     return spans
 
 
-def extract_features(text: str, sentences: List[str], tokens: List[str]) -> Dict[str, Any]:
+def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict[str, Any]:
     """Extract all verbosity-related features."""
     try:
         # Calculate words per sentence

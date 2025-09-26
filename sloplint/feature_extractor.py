@@ -5,19 +5,18 @@ Combines all individual feature extractors and provides a unified interface.
 """
 
 import logging
-from typing import Dict, Any, Optional
-from pathlib import Path
+from typing import Any
 
-from .nlp.pipeline import NLPPipeline
 from .features import (
-    extract_repetition_features,
-    extract_verbosity_features,
-    extract_density_features,
     extract_coherence_features,
+    extract_density_features,
+    extract_repetition_features,
     extract_templated_features,
     extract_tone_features,
+    extract_verbosity_features,
 )
-from .spans import SpanCollection, SpanType, Span
+from .nlp.pipeline import NLPPipeline
+from .spans import Span, SpanCollection, SpanType
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +29,7 @@ class FeatureExtractor:
         self.language = language
         self.nlp_pipeline = NLPPipeline(language=language)
 
-    def extract_all_features(self, text: str) -> Dict[str, Any]:
+    def extract_all_features(self, text: str) -> dict[str, Any]:
         """Extract all AI slop features from text."""
         logger.info(f"Extracting features from {len(text)} characters of text...")
 
@@ -85,7 +84,7 @@ class FeatureExtractor:
 
         return features
 
-    def _create_empty_features(self) -> Dict[str, Any]:
+    def _create_empty_features(self) -> dict[str, Any]:
         """Create empty feature set for error cases."""
         return {
             "density": {"combined_density": 0.0, "perplexity": 25.0, "idea_density": 0.0},
