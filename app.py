@@ -456,7 +456,11 @@ async def analyze_text(request: AnalysisRequest):
             if isinstance(feature_data, dict):
                 metrics[feature_name] = feature_data
             else:
-                metrics[feature_name] = {"value": float(feature_data) if isinstance(feature_data, (int, float)) else 0.5}
+                metrics[feature_name] = {
+                    "value": float(feature_data)
+                    if isinstance(feature_data, (int, float))
+                    else 0.5
+                }
 
         # Normalize and combine scores
         normalized_metrics = normalize_scores(metrics, request.domain)

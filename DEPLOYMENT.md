@@ -66,16 +66,19 @@ flyctl auth login
 ## Production Considerations
 
 ### Performance
+
 - Memory usage: ~400MB peak
 - Processing time: <1s for 1000 words
 - Concurrent requests: Handles multiple users
 
 ### Scaling
+
 - Fly.io: Automatic scaling based on traffic
 - Docker: Manual scaling with load balancer
 - Database: No database required (stateless)
 
 ### Monitoring
+
 - Health check endpoint: `/health`
 - Metrics endpoint: `/metrics`
 - Logs: Available through deployment platform
@@ -109,11 +112,13 @@ curl http://localhost:8000/metrics
 ## Maintenance
 
 ### Updates
+
 - Pull latest changes: `git pull`
 - Rebuild container: `docker-compose up --build`
 - Redeploy to Fly.io: `./deploy-fly.sh`
 
 ### Monitoring
+
 - Check logs regularly
 - Monitor memory usage
 - Verify health endpoints
