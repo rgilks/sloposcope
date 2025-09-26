@@ -210,19 +210,110 @@ def combine_scores(
 ) -> tuple[float, float]:
     """Combine normalized metrics into a composite slop score."""
     weights = get_domain_weights(domain)
+    
+    # Map individual metrics to core dimensions
+    dimension_mapping = {
+        # Density dimension
+        "combined_density": "density",
+        "perplexity_score": "density",
+        "idea_density_score": "density",
+        "semantic_density_score": "density",
+        "conceptual_density_score": "density",
+        
+        # Repetition dimension
+        "overall_repetition": "repetition",
+        "ngram_repetition": "repetition",
+        "sentence_repetition": "repetition",
+        "compression_ratio": "repetition",
+        "pattern_repetition": "repetition",
+        
+        # Templated dimension
+        "templated_score": "templated",
+        "boilerplate_hits": "templated",
+        "pos_diversity": "templated",
+        
+        # Tone dimension
+        "tone_score": "tone",
+        "hedging_ratio": "tone",
+        "sycophancy_ratio": "tone",
+        "formality_ratio": "tone",
+        "passive_ratio": "tone",
+        
+        # Verbosity dimension
+        "overall_verbosity": "verbosity",
+        "words_per_sentence": "verbosity",
+        "filler_ratio": "verbosity",
+        "listiness": "verbosity",
+        "sentence_variance": "verbosity",
+        
+        # Coherence dimension
+        "coherence_score": "coherence",
+        "entity_continuity": "coherence",
+        "embedding_drift": "coherence",
+        
+        # Relevance dimension
+        "relevance_score": "relevance",
+        "mean_similarity": "relevance",
+        "min_similarity": "relevance",
+        "low_relevance_ratio": "relevance",
+        "relevance_variance": "relevance",
+        
+        # Factuality dimension
+        "factuality_score": "factuality",
+        "unsupported_ratio": "factuality",
+        "contradictions_count": "factuality",
+        
+        # Subjectivity dimension
+        "subjectivity_score": "subjectivity",
+        "subjective_ratio": "subjectivity",
+        "bias_ratio": "subjectivity",
+        "neutral_ratio": "subjectivity",
+        
+        # Fluency dimension
+        "fluency_score": "fluency",
+        "grammar_error_ratio": "fluency",
+        "unnatural_phrase_ratio": "fluency",
+        "fragment_ratio": "fluency",
+        
+        # Complexity dimension
+        "complexity_score": "complexity",
+        "complex_word_ratio": "complexity",
+        "complex_phrase_ratio": "complexity",
+        "flesch_kincaid_grade": "complexity",
+    }
 
+    # Group metrics by dimension and calculate dimension scores
+    dimension_scores = {}
+    dimension_weights = {}
+    
+    for metric_name, metric_data in metrics.items():
+        if metric_name in dimension_mapping:
+            dimension = dimension_mapping[metric_name]
+            score = metric_data.get("value", 0.5)
+            
+            if dimension not in dimension_scores:
+                dimension_scores[dimension] = []
+                dimension_weights[dimension] = []
+            
+            dimension_scores[dimension].append(score)
+            # Use equal weight for metrics within a dimension
+            dimension_weights[dimension].append(1.0)
+
+    # Calculate weighted average for each dimension
     total_weight = 0.0
     weighted_sum = 0.0
-    available_metrics = 0
+    available_dimensions = 0
 
-    for metric_name, metric_data in metrics.items():
-        if metric_name in weights:
-            weight = weights[metric_name]
-            score = metric_data["value"]
-
-            weighted_sum += weight * score
-            total_weight += weight
-            available_metrics += 1
+    for dimension, scores in dimension_scores.items():
+        if dimension in weights:
+            # Calculate average score for this dimension
+            if scores:
+                dimension_score = sum(scores) / len(scores)
+                weight = weights[dimension]
+                
+                weighted_sum += weight * dimension_score
+                total_weight += weight
+                available_dimensions += 1
 
     if total_weight == 0:
         return 0.5, 0.0  # Default fallback
@@ -231,8 +322,8 @@ def combine_scores(
     composite_score = weighted_sum / total_weight
 
     # Calculate confidence based on coverage
-    expected_metrics = len(weights)
-    coverage = available_metrics / expected_metrics
+    expected_dimensions = len(weights)
+    coverage = available_dimensions / expected_dimensions
     confidence = min(coverage, 1.0)  # Cap at 1.0
 
     return composite_score, confidence
