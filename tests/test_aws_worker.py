@@ -35,9 +35,11 @@ def aws_credentials():
     }
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def localstack_resources(localstack_endpoint, aws_credentials):
     """Set up LocalStack resources for testing."""
+    import uuid
+
     # Set environment variables
     for key, value in aws_credentials.items():
         os.environ[key] = value
@@ -48,12 +50,15 @@ def localstack_resources(localstack_endpoint, aws_credentials):
     # Create S3 client
     s3 = boto3.client("s3", endpoint_url=localstack_endpoint, region_name="us-east-1")
 
-    # Create queues
-    input_queue = sqs.create_queue(QueueName="test-input-queue")
-    output_queue = sqs.create_queue(QueueName="test-output-queue")
+    # Generate unique identifiers for this test
+    test_id = str(uuid.uuid4())[:8]
 
-    # Create S3 bucket
-    bucket_name = "test-bucket"
+    # Create queues with unique names
+    input_queue = sqs.create_queue(QueueName=f"test-input-queue-{test_id}")
+    output_queue = sqs.create_queue(QueueName=f"test-output-queue-{test_id}")
+
+    # Create S3 bucket with unique name
+    bucket_name = f"test-bucket-{test_id}"
     s3.create_bucket(Bucket=bucket_name)
 
     # Create test file in S3
@@ -72,6 +77,13 @@ def localstack_resources(localstack_endpoint, aws_credentials):
 
     # Cleanup
     try:
+        # Purge queues before deletion to ensure no messages remain
+        try:
+            sqs.purge_queue(QueueUrl=input_queue["QueueUrl"])
+            sqs.purge_queue(QueueUrl=output_queue["QueueUrl"])
+        except ClientError:
+            pass  # Ignore purge errors
+
         sqs.delete_queue(QueueUrl=input_queue["QueueUrl"])
         sqs.delete_queue(QueueUrl=output_queue["QueueUrl"])
         s3.delete_object(Bucket=bucket_name, Key="test-document.txt")
