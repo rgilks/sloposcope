@@ -130,11 +130,11 @@ def analyze_command(
 
 def get_slop_level(score: float) -> str:
     """Convert slop score to level category."""
-    if score <= 0.30:
+    if score <= 0.50:
         return "Clean"
-    elif score <= 0.55:
+    elif score <= 0.70:
         return "Watch"
-    elif score <= 0.75:
+    elif score <= 0.85:
         return "Sloppy"
     else:
         return "High-Slop"
@@ -155,11 +155,11 @@ def display_results(result: dict, explain: bool = False, spans: bool = False) ->
 
     for metric_name, metric_data in result["metrics"].items():
         score = metric_data["value"]
-        if score <= 0.30:
+        if score <= 0.50:
             status = "✅ Good"
-        elif score <= 0.55:
+        elif score <= 0.70:
             status = "⚠️ Watch"
-        elif score <= 0.75:
+        elif score <= 0.85:
             status = "🔶 Sloppy"
         else:
             status = "❌ High-Slop"
