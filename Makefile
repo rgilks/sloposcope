@@ -8,20 +8,19 @@ help: ## Show this help message
 
 # Installation and Setup
 install: ## Install the package
-	pip install -r requirements.txt
-	python -m spacy download en_core_web_sm
+	python3 -m pip install -e .
+	python3 -m spacy download en_core_web_sm
 
 install-dev: ## Install development dependencies
-	pip install -r requirements.txt
-	pip install pytest pytest-cov ruff black mypy pre-commit
-	python -m spacy download en_core_web_sm
+	python3 -m pip install -e ".[dev]"
+	python3 -m spacy download en_core_web_sm
 
 sync: ## Sync dependencies with uv (if using uv)
 	@if command -v uv >/dev/null 2>&1; then \
 		uv sync; \
 	else \
 		echo "uv not found, using pip instead"; \
-		pip install -r requirements.txt; \
+		python3 -m pip install -e .; \
 	fi
 
 sync-dev: ## Sync development dependencies with uv (if using uv)
@@ -34,10 +33,10 @@ sync-dev: ## Sync development dependencies with uv (if using uv)
 
 # Testing
 test: ## Run all tests
-	python -m pytest tests/ -v
+	python3 -m pytest tests/ -v
 
 test-unit: ## Run unit tests only (fast)
-	python -m pytest tests/test_cli.py -v --tb=short
+	python3 -m pytest tests/test_cli.py -v --tb=short
 
 test-aws: ## Run AWS Worker tests with LocalStack
 	@if command -v uv >/dev/null 2>&1; then \
@@ -48,16 +47,16 @@ test-aws: ## Run AWS Worker tests with LocalStack
 
 test-localstack: ## Start LocalStack for testing
 	@if command -v uv >/dev/null 2>&1; then \
-		uv run python scripts/start_localstack_for_tests.py start; \
+		uv run python3 scripts/start_localstack_for_tests.py start; \
 	else \
-		python scripts/start_localstack_for_tests.py start; \
+		python3 scripts/start_localstack_for_tests.py start; \
 	fi
 
 clean-localstack: ## Stop and remove LocalStack container
 	@if command -v uv >/dev/null 2>&1; then \
-		uv run python scripts/start_localstack_for_tests.py stop; \
+		uv run python3 scripts/start_localstack_for_tests.py stop; \
 	else \
-		python scripts/start_localstack_for_tests.py stop; \
+		python3 scripts/start_localstack_for_tests.py stop; \
 	fi
 
 # Code Quality
@@ -123,10 +122,10 @@ docker-build: ## Build Docker image
 	docker build -t sloposcope .
 
 docker-run: ## Run Docker container
-	docker-compose up --build
+	cd docker && docker-compose up --build
 
 docker-clean: ## Clean up Docker containers and images
-	docker-compose down
+	cd docker && docker-compose down
 	docker rmi sloposcope 2>/dev/null || true
 	docker system prune -f
 

@@ -50,7 +50,6 @@ ehthumbs.db
 Thumbs.db
 
 # Documentation
-*.md
 docs/
 htmlcov/
 

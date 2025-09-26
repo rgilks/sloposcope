@@ -16,7 +16,7 @@ A comprehensive tool for detecting AI-generated text patterns and measuring "slo
 
 ```bash
 # Install dependencies
-pip install -r requirements.txt
+pip install -e .
 
 # Download spaCy model
 python -m spacy download en_core_web_sm

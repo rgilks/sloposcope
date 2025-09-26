@@ -42,7 +42,7 @@ Sloposcope supports two deployment architectures:
 
 ```bash
 # Install Python dependencies
-pip install -r requirements.txt
+pip install -e .
 
 # Download spaCy model
 python -m spacy download en_core_web_sm
