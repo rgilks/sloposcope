@@ -1,0 +1,1866 @@
+{
+  "test_metadata": {
+    "timestamp": 1758889572.402571,
+    "total_texts": 102,
+    "feature_extractor_version": "1.0.0"
+  },
+  "summary": {
+    "test_summary": {
+      "total_texts": 102,
+      "successful_analyses": 0,
+      "failed_analyses": 102,
+      "success_rate": 0.0
+    },
+    "performance_metrics": {
+      "avg_processing_time": 0,
+      "median_processing_time": 0,
+      "total_processing_time": 0,
+      "avg_slop_score": 0,
+      "median_slop_score": 0,
+      "avg_confidence": 0
+    },
+    "accuracy_by_category": {},
+    "accuracy_by_domain": {},
+    "slop_score_distribution": {},
+    "failed_analyses": [
+      {
+        "doc_id": "test_074_marketing_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_011_product_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_024_advice_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_013_formal_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_093_corporate_006",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_070_educational_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_086_business_005",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_078_personal_006",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_012_docs_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_045_personal_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_016_creative_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_005_ai_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_054_creative_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_057_forum_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_006_template_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_060_social_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_022_review_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_050_motivational_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_053_news_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_014_personal_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_058_product_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_031_business_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_062_tech_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_073_hybrid_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_099_social_006",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_023_educational_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_079_tech_004",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_100_review_004",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_021_product_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_083_creative_005",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_044_docs_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_101_review_005",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_061_extreme_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_041_conversational_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_077_personal_005",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_065_academic_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_028_corporate_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_055_business_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_056_forum_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_026_forum_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_037_advice_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_036_marketing_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_085_business_004",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_034_academic_ai_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_035_mixed_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_020_template_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_038_mixed_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_048_advice_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_042_review_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_102_review_006",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_068_social_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_094_news_004",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_071_docs_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_003_corporate_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_030_news_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_087_business_006",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_010_business_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_092_corporate_005",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_051_extreme_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_049_corporate_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_098_social_005",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_002_academic_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_009_formal_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_072_academic_ai_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_019_conversational_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_029_academic_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_090_ai_006",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_067_motivational_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_040_edited_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_096_news_006",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_089_ai_005",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_001_conversational_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_007_hybrid_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_084_creative_006",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_066_academic_ai_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_088_ai_004",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_052_hybrid_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_076_personal_004",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_047_news_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_032_creative_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_097_social_004",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_046_tech_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_082_creative_004",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_081_tech_006",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_080_tech_005",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_075_social_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_027_template_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_095_news_005",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_008_educational_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_063_edited_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_064_extreme_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_018_personal_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_033_formal_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_015_mixed_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_043_marketing_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_025_motivational_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_017_ai_001",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_039_edited_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_059_review_003",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_069_tech_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_004_ai_002",
+        "error": "'value'"
+      },
+      {
+        "doc_id": "test_091_corporate_004",
+        "error": "'value'"
+      }
+    ]
+  },
+  "detailed_results": [
+    {
+      "doc_id": "test_074_marketing_003",
+      "domain": "marketing",
+      "text_length": 182,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 7.060615062713623,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "marketing"
+    },
+    {
+      "doc_id": "test_011_product_001",
+      "domain": "product",
+      "text_length": 217,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.94818902015686,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "product"
+    },
+    {
+      "doc_id": "test_024_advice_001",
+      "domain": "advice",
+      "text_length": 219,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.378425121307373,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "advice"
+    },
+    {
+      "doc_id": "test_013_formal_002",
+      "domain": "formal",
+      "text_length": 187,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.632311105728149,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "formal"
+    },
+    {
+      "doc_id": "test_093_corporate_006",
+      "domain": "corporate",
+      "text_length": 142,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 1.4419641494750977,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "corporate"
+    },
+    {
+      "doc_id": "test_070_educational_001",
+      "domain": "educational",
+      "text_length": 195,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.159676790237427,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "educational"
+    },
+    {
+      "doc_id": "test_086_business_005",
+      "domain": "business",
+      "text_length": 143,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.165319919586182,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "business"
+    },
+    {
+      "doc_id": "test_078_personal_006",
+      "domain": "personal",
+      "text_length": 166,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.268855094909668,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "personal"
+    },
+    {
+      "doc_id": "test_012_docs_002",
+      "domain": "documentation",
+      "text_length": 141,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.8468708992004395,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.2,
+      "category": "docs"
+    },
+    {
+      "doc_id": "test_045_personal_001",
+      "domain": "personal",
+      "text_length": 167,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.847673177719116,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "personal"
+    },
+    {
+      "doc_id": "test_016_creative_002",
+      "domain": "creative",
+      "text_length": 169,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.219352960586548,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "creative"
+    },
+    {
+      "doc_id": "test_005_ai_003",
+      "domain": "ai_response",
+      "text_length": 180,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.205723762512207,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "ai"
+    },
+    {
+      "doc_id": "test_054_creative_001",
+      "domain": "creative",
+      "text_length": 161,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.322471857070923,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "creative"
+    },
+    {
+      "doc_id": "test_057_forum_001",
+      "domain": "forum",
+      "text_length": 144,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.9741220474243164,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "forum"
+    },
+    {
+      "doc_id": "test_006_template_002",
+      "domain": "template",
+      "text_length": 200,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.06702995300293,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "template"
+    },
+    {
+      "doc_id": "test_060_social_002",
+      "domain": "social",
+      "text_length": 142,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.439129829406738,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "social"
+    },
+    {
+      "doc_id": "test_022_review_002",
+      "domain": "review",
+      "text_length": 155,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.768342971801758,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "review"
+    },
+    {
+      "doc_id": "test_050_motivational_003",
+      "domain": "motivational",
+      "text_length": 152,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.906012773513794,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "motivational"
+    },
+    {
+      "doc_id": "test_053_news_001",
+      "domain": "news",
+      "text_length": 163,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.02485203742981,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.2,
+      "category": "news"
+    },
+    {
+      "doc_id": "test_014_personal_002",
+      "domain": "personal",
+      "text_length": 176,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.724606990814209,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "personal"
+    },
+    {
+      "doc_id": "test_058_product_002",
+      "domain": "product",
+      "text_length": 199,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.9092540740966797,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "product"
+    },
+    {
+      "doc_id": "test_031_business_003",
+      "domain": "business",
+      "text_length": 198,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.9390907287597656,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "business"
+    },
+    {
+      "doc_id": "test_062_tech_003",
+      "domain": "technical",
+      "text_length": 172,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.165822982788086,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "tech"
+    },
+    {
+      "doc_id": "test_073_hybrid_003",
+      "domain": "hybrid",
+      "text_length": 187,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.007673740386963,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.6,
+      "category": "hybrid"
+    },
+    {
+      "doc_id": "test_099_social_006",
+      "domain": "social",
+      "text_length": 150,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.9124531745910645,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "social"
+    },
+    {
+      "doc_id": "test_023_educational_003",
+      "domain": "educational",
+      "text_length": 194,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.8333630561828613,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "educational"
+    },
+    {
+      "doc_id": "test_079_tech_004",
+      "domain": "technical",
+      "text_length": 173,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.964763879776001,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "tech"
+    },
+    {
+      "doc_id": "test_100_review_004",
+      "domain": "review",
+      "text_length": 153,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.195399045944214,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "review"
+    },
+    {
+      "doc_id": "test_021_product_003",
+      "domain": "product",
+      "text_length": 197,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.49728798866272,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "product"
+    },
+    {
+      "doc_id": "test_083_creative_005",
+      "domain": "creative",
+      "text_length": 128,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.27134895324707,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "creative"
+    },
+    {
+      "doc_id": "test_044_docs_003",
+      "domain": "documentation",
+      "text_length": 136,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.331143856048584,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.2,
+      "category": "docs"
+    },
+    {
+      "doc_id": "test_101_review_005",
+      "domain": "review",
+      "text_length": 157,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.634037971496582,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "review"
+    },
+    {
+      "doc_id": "test_061_extreme_002",
+      "domain": "repetitive",
+      "text_length": 167,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.431049108505249,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "extreme"
+    },
+    {
+      "doc_id": "test_041_conversational_001",
+      "domain": "conversational",
+      "text_length": 123,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.341952085494995,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "conversational"
+    },
+    {
+      "doc_id": "test_077_personal_005",
+      "domain": "personal",
+      "text_length": 164,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 7.95245099067688,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "personal"
+    },
+    {
+      "doc_id": "test_065_academic_001",
+      "domain": "academic",
+      "text_length": 184,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 13.373968839645386,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "academic"
+    },
+    {
+      "doc_id": "test_028_corporate_002",
+      "domain": "corporate",
+      "text_length": 187,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 14.192933082580566,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "corporate"
+    },
+    {
+      "doc_id": "test_055_business_001",
+      "domain": "business",
+      "text_length": 204,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 8.383517980575562,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "business"
+    },
+    {
+      "doc_id": "test_056_forum_003",
+      "domain": "forum",
+      "text_length": 163,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.990024089813232,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "forum"
+    },
+    {
+      "doc_id": "test_026_forum_002",
+      "domain": "forum",
+      "text_length": 143,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 7.832895994186401,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "forum"
+    },
+    {
+      "doc_id": "test_037_advice_002",
+      "domain": "advice",
+      "text_length": 209,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.161050796508789,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "advice"
+    },
+    {
+      "doc_id": "test_036_marketing_001",
+      "domain": "marketing",
+      "text_length": 190,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.855044841766357,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "marketing"
+    },
+    {
+      "doc_id": "test_085_business_004",
+      "domain": "business",
+      "text_length": 160,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.472430944442749,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "business"
+    },
+    {
+      "doc_id": "test_034_academic_ai_002",
+      "domain": "academic_ai",
+      "text_length": 224,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.618295192718506,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "academic"
+    },
+    {
+      "doc_id": "test_035_mixed_002",
+      "domain": "mixed",
+      "text_length": 178,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.137483835220337,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.5,
+      "category": "mixed"
+    },
+    {
+      "doc_id": "test_020_template_001",
+      "domain": "template",
+      "text_length": 200,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 0.998093843460083,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "template"
+    },
+    {
+      "doc_id": "test_038_mixed_001",
+      "domain": "mixed",
+      "text_length": 202,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.213335752487183,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.5,
+      "category": "mixed"
+    },
+    {
+      "doc_id": "test_048_advice_003",
+      "domain": "advice",
+      "text_length": 207,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.601974964141846,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "advice"
+    },
+    {
+      "doc_id": "test_042_review_001",
+      "domain": "review",
+      "text_length": 175,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.931410312652588,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "review"
+    },
+    {
+      "doc_id": "test_102_review_006",
+      "domain": "review",
+      "text_length": 149,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.4863526821136475,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "review"
+    },
+    {
+      "doc_id": "test_068_social_003",
+      "domain": "social",
+      "text_length": 120,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.5758490562438965,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "social"
+    },
+    {
+      "doc_id": "test_094_news_004",
+      "domain": "news",
+      "text_length": 156,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.497036933898926,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.2,
+      "category": "news"
+    },
+    {
+      "doc_id": "test_071_docs_001",
+      "domain": "documentation",
+      "text_length": 138,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.638857126235962,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.2,
+      "category": "docs"
+    },
+    {
+      "doc_id": "test_003_corporate_003",
+      "domain": "corporate",
+      "text_length": 177,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 2.1374542713165283,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "corporate"
+    },
+    {
+      "doc_id": "test_030_news_003",
+      "domain": "news",
+      "text_length": 129,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.049316883087158,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.2,
+      "category": "news"
+    },
+    {
+      "doc_id": "test_087_business_006",
+      "domain": "business",
+      "text_length": 145,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 15.624099969863892,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "business"
+    },
+    {
+      "doc_id": "test_010_business_002",
+      "domain": "business",
+      "text_length": 209,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 11.147173881530762,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "business"
+    },
+    {
+      "doc_id": "test_092_corporate_005",
+      "domain": "corporate",
+      "text_length": 149,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 1.1162822246551514,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "corporate"
+    },
+    {
+      "doc_id": "test_051_extreme_001",
+      "domain": "repetitive",
+      "text_length": 182,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.760148048400879,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "extreme"
+    },
+    {
+      "doc_id": "test_049_corporate_001",
+      "domain": "corporate",
+      "text_length": 211,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.817754030227661,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "corporate"
+    },
+    {
+      "doc_id": "test_098_social_005",
+      "domain": "social",
+      "text_length": 128,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.193767070770264,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "social"
+    },
+    {
+      "doc_id": "test_002_academic_002",
+      "domain": "academic",
+      "text_length": 185,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.76081395149231,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "academic"
+    },
+    {
+      "doc_id": "test_009_formal_003",
+      "domain": "formal",
+      "text_length": 188,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.721113920211792,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "formal"
+    },
+    {
+      "doc_id": "test_072_academic_ai_003",
+      "domain": "academic_ai",
+      "text_length": 212,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 8.111134052276611,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "academic"
+    },
+    {
+      "doc_id": "test_019_conversational_003",
+      "domain": "conversational",
+      "text_length": 139,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.667126178741455,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "conversational"
+    },
+    {
+      "doc_id": "test_029_academic_003",
+      "domain": "academic",
+      "text_length": 172,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 9.351111888885498,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "academic"
+    },
+    {
+      "doc_id": "test_090_ai_006",
+      "domain": "ai_response",
+      "text_length": 162,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.163480997085571,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "ai"
+    },
+    {
+      "doc_id": "test_067_motivational_001",
+      "domain": "motivational",
+      "text_length": 171,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.122305154800415,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "motivational"
+    },
+    {
+      "doc_id": "test_040_edited_001",
+      "domain": "edited",
+      "text_length": 182,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.896607875823975,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "edited"
+    },
+    {
+      "doc_id": "test_096_news_006",
+      "domain": "news",
+      "text_length": 140,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.272511959075928,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.2,
+      "category": "news"
+    },
+    {
+      "doc_id": "test_089_ai_005",
+      "domain": "ai_response",
+      "text_length": 183,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.483107089996338,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "ai"
+    },
+    {
+      "doc_id": "test_001_conversational_002",
+      "domain": "conversational",
+      "text_length": 117,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.3677732944488525,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "conversational"
+    },
+    {
+      "doc_id": "test_007_hybrid_002",
+      "domain": "hybrid",
+      "text_length": 192,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.045706033706665,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.6,
+      "category": "hybrid"
+    },
+    {
+      "doc_id": "test_084_creative_006",
+      "domain": "creative",
+      "text_length": 128,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.12040901184082,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "creative"
+    },
+    {
+      "doc_id": "test_066_academic_ai_001",
+      "domain": "academic_ai",
+      "text_length": 232,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.383069038391113,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "academic"
+    },
+    {
+      "doc_id": "test_088_ai_004",
+      "domain": "ai_response",
+      "text_length": 191,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.720959901809692,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "ai"
+    },
+    {
+      "doc_id": "test_052_hybrid_001",
+      "domain": "hybrid",
+      "text_length": 177,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.781058073043823,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.6,
+      "category": "hybrid"
+    },
+    {
+      "doc_id": "test_076_personal_004",
+      "domain": "personal",
+      "text_length": 195,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.6614089012146,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "personal"
+    },
+    {
+      "doc_id": "test_047_news_002",
+      "domain": "news",
+      "text_length": 139,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.593827962875366,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.2,
+      "category": "news"
+    },
+    {
+      "doc_id": "test_032_creative_003",
+      "domain": "creative",
+      "text_length": 155,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.255820035934448,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "creative"
+    },
+    {
+      "doc_id": "test_097_social_004",
+      "domain": "social",
+      "text_length": 150,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 8.381941080093384,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "social"
+    },
+    {
+      "doc_id": "test_046_tech_001",
+      "domain": "technical",
+      "text_length": 179,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.9925239086151123,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "tech"
+    },
+    {
+      "doc_id": "test_082_creative_004",
+      "domain": "creative",
+      "text_length": 159,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.7216761112213135,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "creative"
+    },
+    {
+      "doc_id": "test_081_tech_006",
+      "domain": "technical",
+      "text_length": 142,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.512439012527466,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "tech"
+    },
+    {
+      "doc_id": "test_080_tech_005",
+      "domain": "technical",
+      "text_length": 149,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 8.004495859146118,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "tech"
+    },
+    {
+      "doc_id": "test_075_social_001",
+      "domain": "social",
+      "text_length": 151,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 9.493581056594849,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "social"
+    },
+    {
+      "doc_id": "test_027_template_003",
+      "domain": "template",
+      "text_length": 178,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.164265871047974,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "template"
+    },
+    {
+      "doc_id": "test_095_news_005",
+      "domain": "news",
+      "text_length": 127,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.986363172531128,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.2,
+      "category": "news"
+    },
+    {
+      "doc_id": "test_008_educational_002",
+      "domain": "educational",
+      "text_length": 186,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.155738115310669,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "educational"
+    },
+    {
+      "doc_id": "test_063_edited_003",
+      "domain": "edited",
+      "text_length": 148,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.747103214263916,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "edited"
+    },
+    {
+      "doc_id": "test_064_extreme_003",
+      "domain": "repetitive",
+      "text_length": 167,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 8.905017137527466,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "extreme"
+    },
+    {
+      "doc_id": "test_018_personal_003",
+      "domain": "personal",
+      "text_length": 176,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.6963210105896,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "personal"
+    },
+    {
+      "doc_id": "test_033_formal_001",
+      "domain": "formal",
+      "text_length": 223,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 9.615170001983643,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "formal"
+    },
+    {
+      "doc_id": "test_015_mixed_003",
+      "domain": "mixed",
+      "text_length": 173,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 8.625858068466187,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.5,
+      "category": "mixed"
+    },
+    {
+      "doc_id": "test_043_marketing_002",
+      "domain": "marketing",
+      "text_length": 169,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 7.190563917160034,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "marketing"
+    },
+    {
+      "doc_id": "test_025_motivational_002",
+      "domain": "motivational",
+      "text_length": 168,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.098468065261841,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.9,
+      "category": "motivational"
+    },
+    {
+      "doc_id": "test_017_ai_001",
+      "domain": "ai_response",
+      "text_length": 203,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 8.139667987823486,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "ai"
+    },
+    {
+      "doc_id": "test_039_edited_002",
+      "domain": "edited",
+      "text_length": 163,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.879430055618286,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.4,
+      "category": "edited"
+    },
+    {
+      "doc_id": "test_059_review_003",
+      "domain": "review",
+      "text_length": 154,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.647424936294556,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.3,
+      "category": "review"
+    },
+    {
+      "doc_id": "test_069_tech_002",
+      "domain": "technical",
+      "text_length": 156,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 6.3632447719573975,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.1,
+      "category": "tech"
+    },
+    {
+      "doc_id": "test_004_ai_002",
+      "domain": "ai_response",
+      "text_length": 191,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.058411121368408,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "ai"
+    },
+    {
+      "doc_id": "test_091_corporate_004",
+      "domain": "corporate",
+      "text_length": 143,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 1.1331400871276855,
+      "features": null,
+      "normalized_features": null,
+      "success": false,
+      "error": "'value'",
+      "expected_slop_range": 0.7,
+      "category": "corporate"
+    }
+  ]
+}

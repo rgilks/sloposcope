@@ -1,0 +1,716 @@
+[
+  {
+    "doc_id": "test_074_marketing_003",
+    "text": "Discover the secret to success with our proven methodology. Our expert team has helped countless individuals achieve their goals through personalized coaching and strategic guidance.",
+    "domain": "marketing",
+    "expected_slop_range": 0.4,
+    "category": "marketing"
+  },
+  {
+    "doc_id": "test_011_product_001",
+    "text": "This innovative product combines cutting-edge technology with user-friendly design to deliver exceptional performance. Its sleek appearance and intuitive interface make it perfect for both beginners and professionals.",
+    "domain": "product",
+    "expected_slop_range": 0.4,
+    "category": "product"
+  },
+  {
+    "doc_id": "test_024_advice_001",
+    "text": "To achieve success in this endeavor, it is essential to maintain a positive mindset and remain focused on your goals. Consistent effort and determination are key factors that will contribute to your overall achievement.",
+    "domain": "advice",
+    "expected_slop_range": 0.7,
+    "category": "advice"
+  },
+  {
+    "doc_id": "test_013_formal_002",
+    "text": "It is with great pleasure that I extend my warmest regards and best wishes for your continued success. May this communication serve as a testament to our ongoing commitment to excellence.",
+    "domain": "formal",
+    "expected_slop_range": 0.9,
+    "category": "formal"
+  },
+  {
+    "doc_id": "test_093_corporate_006",
+    "text": "The implementation of our new framework will optimize efficiency while maintaining the highest standards of quality and customer satisfaction.",
+    "domain": "corporate",
+    "expected_slop_range": 0.7,
+    "category": "corporate"
+  },
+  {
+    "doc_id": "test_070_educational_001",
+    "text": "Learning a new language opens doors to countless opportunities. Our comprehensive program utilizes proven methodologies and interactive exercises to accelerate your progress and build confidence.",
+    "domain": "educational",
+    "expected_slop_range": 0.4,
+    "category": "educational"
+  },
+  {
+    "doc_id": "test_086_business_005",
+    "text": "The client feedback has been overwhelmingly positive. We should leverage this success to expand into new markets and increase our market share.",
+    "domain": "business",
+    "expected_slop_range": 0.4,
+    "category": "business"
+  },
+  {
+    "doc_id": "test_078_personal_006",
+    "text": "I tried cooking a new recipe last night and it was a complete disaster. The chicken was burnt on the outside and raw on the inside. I ended up ordering pizza instead.",
+    "domain": "personal",
+    "expected_slop_range": 0.1,
+    "category": "personal"
+  },
+  {
+    "doc_id": "test_012_docs_002",
+    "text": "The API endpoint returns a JSON response with the following structure: {'status': 'success', 'data': {...}, 'message': 'Operation completed'}",
+    "domain": "documentation",
+    "expected_slop_range": 0.2,
+    "category": "docs"
+  },
+  {
+    "doc_id": "test_045_personal_001",
+    "text": "I woke up this morning feeling groggy. The coffee machine was broken again, so I had to make instant coffee. It tasted terrible, but I needed the caffeine to function.",
+    "domain": "personal",
+    "expected_slop_range": 0.1,
+    "category": "personal"
+  },
+  {
+    "doc_id": "test_016_creative_002",
+    "text": "Jake's hands trembled as he opened the letter. The paper was yellowed with age, and the handwriting was barely legible. It was from his father, written twenty years ago.",
+    "domain": "creative",
+    "expected_slop_range": 0.1,
+    "category": "creative"
+  },
+  {
+    "doc_id": "test_005_ai_003",
+    "text": "I would be happy to assist you with this request. Based on my analysis, I recommend implementing a strategic approach that leverages our core competencies and maximizes efficiency.",
+    "domain": "ai_response",
+    "expected_slop_range": 0.7,
+    "category": "ai"
+  },
+  {
+    "doc_id": "test_054_creative_001",
+    "text": "The old lighthouse stood sentinel on the rocky cliff, its beam cutting through the fog like a sword. Sarah could hear the waves crashing against the shore below.",
+    "domain": "creative",
+    "expected_slop_range": 0.1,
+    "category": "creative"
+  },
+  {
+    "doc_id": "test_057_forum_001",
+    "text": "Has anyone else experienced this issue? My computer keeps freezing when I try to open large files. I've tried restarting but it keeps happening.",
+    "domain": "forum",
+    "expected_slop_range": 0.3,
+    "category": "forum"
+  },
+  {
+    "doc_id": "test_006_template_002",
+    "text": "Our team of experts is dedicated to providing you with the highest quality service and support. We believe in the power of collaboration and are committed to helping you succeed in all your endeavors.",
+    "domain": "template",
+    "expected_slop_range": 0.9,
+    "category": "template"
+  },
+  {
+    "doc_id": "test_060_social_002",
+    "text": "Coffee shop vibes today ☕ Working on my novel and people-watching. There's something inspiring about being surrounded by other creative minds.",
+    "domain": "social",
+    "expected_slop_range": 0.3,
+    "category": "social"
+  },
+  {
+    "doc_id": "test_022_review_002",
+    "text": "The hotel room was clean and comfortable, but the WiFi was terrible. Location is great - walking distance to everything. Overall decent stay for the price.",
+    "domain": "review",
+    "expected_slop_range": 0.3,
+    "category": "review"
+  },
+  {
+    "doc_id": "test_050_motivational_003",
+    "text": "The future belongs to those who dare to dream big and take bold action. Embrace change, seize opportunities, and create the life you've always imagined.",
+    "domain": "motivational",
+    "expected_slop_range": 0.9,
+    "category": "motivational"
+  },
+  {
+    "doc_id": "test_053_news_001",
+    "text": "Scientists discover new species of deep-sea fish that glows in the dark. The bioluminescent creature was found 2,000 meters below the surface in the Pacific Ocean.",
+    "domain": "news",
+    "expected_slop_range": 0.2,
+    "category": "news"
+  },
+  {
+    "doc_id": "test_014_personal_002",
+    "text": "My grandmother's recipe for apple pie has been passed down for three generations. The secret is in the crust - she uses lard instead of butter, which makes it incredibly flaky.",
+    "domain": "personal",
+    "expected_slop_range": 0.1,
+    "category": "personal"
+  },
+  {
+    "doc_id": "test_058_product_002",
+    "text": "Experience the future of home automation with our smart device. Featuring advanced AI capabilities and seamless integration, it transforms your living space into a connected, intelligent environment.",
+    "domain": "product",
+    "expected_slop_range": 0.4,
+    "category": "product"
+  },
+  {
+    "doc_id": "test_031_business_003",
+    "text": "I wanted to follow up on our previous conversation regarding the proposal. We believe our solution offers significant value and would appreciate the opportunity to present our findings to your team.",
+    "domain": "business",
+    "expected_slop_range": 0.4,
+    "category": "business"
+  },
+  {
+    "doc_id": "test_062_tech_003",
+    "text": "The server crashed at 3 AM. I had to SSH in and restart the services manually. The logs showed a memory leak in the Python application that was consuming all available RAM.",
+    "domain": "technical",
+    "expected_slop_range": 0.1,
+    "category": "tech"
+  },
+  {
+    "doc_id": "test_073_hybrid_003",
+    "text": "Sustainable development requires balancing economic growth with environmental protection. This complex challenge demands innovative solutions and collaborative efforts across all sectors.",
+    "domain": "hybrid",
+    "expected_slop_range": 0.6,
+    "category": "hybrid"
+  },
+  {
+    "doc_id": "test_099_social_006",
+    "text": "My plants are thriving! 🌱 Started with just one succulent and now I have a whole collection. There's something so satisfying about watching them grow.",
+    "domain": "social",
+    "expected_slop_range": 0.3,
+    "category": "social"
+  },
+  {
+    "doc_id": "test_023_educational_003",
+    "text": "Effective communication is crucial in today's interconnected world. Our workshop focuses on developing clear, persuasive messaging that resonates with diverse audiences across various platforms.",
+    "domain": "educational",
+    "expected_slop_range": 0.4,
+    "category": "educational"
+  },
+  {
+    "doc_id": "test_079_tech_004",
+    "text": "The database query was taking forever because we forgot to add an index on the user_id column. After adding the index, the query time dropped from 30 seconds to 0.1 seconds.",
+    "domain": "technical",
+    "expected_slop_range": 0.1,
+    "category": "tech"
+  },
+  {
+    "doc_id": "test_100_review_004",
+    "text": "This book was absolutely incredible! The character development was amazing and the plot twists kept me guessing until the very end. Couldn't put it down.",
+    "domain": "review",
+    "expected_slop_range": 0.3,
+    "category": "review"
+  },
+  {
+    "doc_id": "test_021_product_003",
+    "text": "Our premium service offers unparalleled convenience and reliability. With 24/7 customer support and state-of-the-art infrastructure, we ensure your business operations run smoothly and efficiently.",
+    "domain": "product",
+    "expected_slop_range": 0.4,
+    "category": "product"
+  },
+  {
+    "doc_id": "test_083_creative_005",
+    "text": "The storm raged outside, but inside the cabin it was warm and cozy. Jake sat by the fireplace reading his grandfather's journal.",
+    "domain": "creative",
+    "expected_slop_range": 0.1,
+    "category": "creative"
+  },
+  {
+    "doc_id": "test_044_docs_003",
+    "text": "Error 404 occurs when the requested resource is not found. Check your URL path and ensure the resource exists before making the request.",
+    "domain": "documentation",
+    "expected_slop_range": 0.2,
+    "category": "docs"
+  },
+  {
+    "doc_id": "test_101_review_005",
+    "text": "The service at this restaurant was terrible. We waited 45 minutes for our food and when it finally arrived, it was cold and overcooked. Won't be coming back.",
+    "domain": "review",
+    "expected_slop_range": 0.3,
+    "category": "review"
+  },
+  {
+    "doc_id": "test_061_extreme_002",
+    "text": "Thank you for your inquiry. Thank you for your inquiry. Thank you for your inquiry. I appreciate your patience. I appreciate your patience. I appreciate your patience.",
+    "domain": "repetitive",
+    "expected_slop_range": 0.9,
+    "category": "extreme"
+  },
+  {
+    "doc_id": "test_041_conversational_001",
+    "text": "Hey, did you see that movie last night? I thought it was pretty good, but the ending was kind of weird. What did you think?",
+    "domain": "conversational",
+    "expected_slop_range": 0.1,
+    "category": "conversational"
+  },
+  {
+    "doc_id": "test_077_personal_005",
+    "text": "My cat knocked over my coffee cup this morning, spilling coffee all over my laptop. Thankfully it still works, but now my keyboard is sticky and smells like coffee.",
+    "domain": "personal",
+    "expected_slop_range": 0.1,
+    "category": "personal"
+  },
+  {
+    "doc_id": "test_065_academic_001",
+    "text": "The study examined the relationship between sleep quality and cognitive performance in college students. Participants completed questionnaires and underwent neuropsychological testing.",
+    "domain": "academic",
+    "expected_slop_range": 0.1,
+    "category": "academic"
+  },
+  {
+    "doc_id": "test_028_corporate_002",
+    "text": "Our organization remains committed to delivering exceptional value through our comprehensive suite of solutions. We continuously strive to exceed expectations and drive meaningful change.",
+    "domain": "corporate",
+    "expected_slop_range": 0.7,
+    "category": "corporate"
+  },
+  {
+    "doc_id": "test_055_business_001",
+    "text": "I hope this email finds you well. I wanted to reach out to discuss the upcoming project deadline and ensure we're all aligned on the deliverables. Please let me know if you have any questions or concerns.",
+    "domain": "business",
+    "expected_slop_range": 0.4,
+    "category": "business"
+  },
+  {
+    "doc_id": "test_056_forum_003",
+    "text": "Just wanted to share that I finally finished my first marathon! It was tough but so worth it. The training was brutal but crossing that finish line was incredible.",
+    "domain": "forum",
+    "expected_slop_range": 0.3,
+    "category": "forum"
+  },
+  {
+    "doc_id": "test_026_forum_002",
+    "text": "Looking for recommendations for a good hiking trail near the city. Preferably something with nice views and not too crowded. Thanks in advance!",
+    "domain": "forum",
+    "expected_slop_range": 0.3,
+    "category": "forum"
+  },
+  {
+    "doc_id": "test_037_advice_002",
+    "text": "Effective time management is crucial for maximizing productivity and achieving desired outcomes. By prioritizing tasks and eliminating distractions, you can optimize your performance and reach your objectives.",
+    "domain": "advice",
+    "expected_slop_range": 0.7,
+    "category": "advice"
+  },
+  {
+    "doc_id": "test_036_marketing_001",
+    "text": "Transform your business with our revolutionary platform. Join thousands of satisfied customers who have already experienced the benefits of our innovative approach to digital transformation.",
+    "domain": "marketing",
+    "expected_slop_range": 0.4,
+    "category": "marketing"
+  },
+  {
+    "doc_id": "test_085_business_004",
+    "text": "We need to schedule a meeting to discuss the Q4 budget allocation. Please review the attached spreadsheet and come prepared with your department's requirements.",
+    "domain": "business",
+    "expected_slop_range": 0.4,
+    "category": "business"
+  },
+  {
+    "doc_id": "test_034_academic_ai_002",
+    "text": "The methodology employed in this research follows established protocols and adheres to ethical guidelines. The data collection process was rigorous and comprehensive, ensuring the validity and reliability of our conclusions.",
+    "domain": "academic_ai",
+    "expected_slop_range": 0.7,
+    "category": "academic"
+  },
+  {
+    "doc_id": "test_035_mixed_002",
+    "text": "The weather has been unpredictable lately. Yesterday it was sunny and warm, but today it's cold and rainy. I'm looking forward to spring when the weather becomes more consistent.",
+    "domain": "mixed",
+    "expected_slop_range": 0.5,
+    "category": "mixed"
+  },
+  {
+    "doc_id": "test_020_template_001",
+    "text": "Welcome to our platform! We're excited to have you join our community of like-minded individuals who are passionate about achieving their goals and making a positive impact in their respective fields.",
+    "domain": "template",
+    "expected_slop_range": 0.9,
+    "category": "template"
+  },
+  {
+    "doc_id": "test_038_mixed_001",
+    "text": "I had an interesting conversation with my colleague today about machine learning. While AI can be helpful for certain tasks, I think human creativity and intuition are still irreplaceable in many areas.",
+    "domain": "mixed",
+    "expected_slop_range": 0.5,
+    "category": "mixed"
+  },
+  {
+    "doc_id": "test_048_advice_003",
+    "text": "Building strong relationships requires genuine communication and mutual respect. Investing time in understanding others' perspectives will create meaningful connections and foster collaborative environments.",
+    "domain": "advice",
+    "expected_slop_range": 0.7,
+    "category": "advice"
+  },
+  {
+    "doc_id": "test_042_review_001",
+    "text": "This restaurant has the best pasta I've ever had. The sauce is rich and flavorful, and the pasta is perfectly cooked. Service was friendly and fast. Will definitely come back!",
+    "domain": "review",
+    "expected_slop_range": 0.3,
+    "category": "review"
+  },
+  {
+    "doc_id": "test_102_review_006",
+    "text": "Great product overall, but the shipping was slower than expected. The item arrived in good condition though, and the quality is exactly as described.",
+    "domain": "review",
+    "expected_slop_range": 0.3,
+    "category": "review"
+  },
+  {
+    "doc_id": "test_068_social_003",
+    "text": "Weekend plans: hiking, farmers market, and maybe a movie. Sometimes the simple things are the best things. #weekendvibes",
+    "domain": "social",
+    "expected_slop_range": 0.3,
+    "category": "social"
+  },
+  {
+    "doc_id": "test_094_news_004",
+    "text": "Local library receives $50,000 grant to expand digital resources. The funding will be used to purchase new computers and online databases for community use.",
+    "domain": "news",
+    "expected_slop_range": 0.2,
+    "category": "news"
+  },
+  {
+    "doc_id": "test_071_docs_001",
+    "text": "To install the package, run 'pip install package-name' in your terminal. Make sure you have Python 3.7 or higher installed on your system.",
+    "domain": "documentation",
+    "expected_slop_range": 0.2,
+    "category": "docs"
+  },
+  {
+    "doc_id": "test_003_corporate_003",
+    "text": "The implementation of our new framework will optimize operational efficiency while maintaining the highest standards of quality and customer satisfaction across all touchpoints.",
+    "domain": "corporate",
+    "expected_slop_range": 0.7,
+    "category": "corporate"
+  },
+  {
+    "doc_id": "test_030_news_003",
+    "text": "City council approves new bike lane project despite opposition from some residents. Construction is expected to begin next month.",
+    "domain": "news",
+    "expected_slop_range": 0.2,
+    "category": "news"
+  },
+  {
+    "doc_id": "test_087_business_006",
+    "text": "Our quarterly results exceeded expectations across all key metrics. This performance demonstrates the effectiveness of our strategic initiatives.",
+    "domain": "business",
+    "expected_slop_range": 0.4,
+    "category": "business"
+  },
+  {
+    "doc_id": "test_010_business_002",
+    "text": "Thank you for your interest in our services. We would be delighted to schedule a meeting to discuss your requirements in detail. Our team is committed to providing exceptional solutions tailored to your needs.",
+    "domain": "business",
+    "expected_slop_range": 0.4,
+    "category": "business"
+  },
+  {
+    "doc_id": "test_092_corporate_005",
+    "text": "We are pleased to announce our continued commitment to delivering exceptional value to our stakeholders through our comprehensive suite of solutions.",
+    "domain": "corporate",
+    "expected_slop_range": 0.7,
+    "category": "corporate"
+  },
+  {
+    "doc_id": "test_051_extreme_001",
+    "text": "I understand your concern. I understand your concern. I understand your concern. Let me help you with this matter. Let me help you with this matter. Let me help you with this matter.",
+    "domain": "repetitive",
+    "expected_slop_range": 0.9,
+    "category": "extreme"
+  },
+  {
+    "doc_id": "test_049_corporate_001",
+    "text": "We are excited to announce our strategic partnership that will revolutionize the industry landscape. This collaboration represents a significant milestone in our journey toward sustainable growth and innovation.",
+    "domain": "corporate",
+    "expected_slop_range": 0.7,
+    "category": "corporate"
+  },
+  {
+    "doc_id": "test_098_social_005",
+    "text": "Weekend vibes: farmers market, coffee shop, and a long walk in the park. Sometimes the simple things really are the best things.",
+    "domain": "social",
+    "expected_slop_range": 0.3,
+    "category": "social"
+  },
+  {
+    "doc_id": "test_002_academic_002",
+    "text": "Climate change poses significant challenges for agricultural systems worldwide. Farmers must adapt their practices to cope with changing precipitation patterns and temperature extremes.",
+    "domain": "academic",
+    "expected_slop_range": 0.1,
+    "category": "academic"
+  },
+  {
+    "doc_id": "test_009_formal_003",
+    "text": "I respectfully submit this response in accordance with established protocols and procedures. Please be advised that all necessary measures have been implemented to ensure optimal outcomes.",
+    "domain": "formal",
+    "expected_slop_range": 0.9,
+    "category": "formal"
+  },
+  {
+    "doc_id": "test_072_academic_ai_003",
+    "text": "This analysis reveals important patterns that warrant further investigation. The implications of these findings extend beyond the immediate scope of this study and suggest promising directions for future inquiry.",
+    "domain": "academic_ai",
+    "expected_slop_range": 0.7,
+    "category": "academic"
+  },
+  {
+    "doc_id": "test_019_conversational_003",
+    "text": "That restaurant we went to was amazing. The pasta was incredible, and the service was perfect. We should definitely go back there sometime.",
+    "domain": "conversational",
+    "expected_slop_range": 0.1,
+    "category": "conversational"
+  },
+  {
+    "doc_id": "test_029_academic_003",
+    "text": "The economic impact of the pandemic has been profound and far-reaching. Unemployment rates soared, supply chains were disrupted, and consumer behavior shifted dramatically.",
+    "domain": "academic",
+    "expected_slop_range": 0.1,
+    "category": "academic"
+  },
+  {
+    "doc_id": "test_090_ai_006",
+    "text": "I would be happy to assist you with this request. Based on my analysis, I recommend implementing a systematic approach that addresses all aspects of your inquiry.",
+    "domain": "ai_response",
+    "expected_slop_range": 0.7,
+    "category": "ai"
+  },
+  {
+    "doc_id": "test_067_motivational_001",
+    "text": "Success is not a destination, but a journey of continuous improvement and growth. Every challenge presents an opportunity to learn, adapt, and emerge stronger than before.",
+    "domain": "motivational",
+    "expected_slop_range": 0.9,
+    "category": "motivational"
+  },
+  {
+    "doc_id": "test_040_edited_001",
+    "text": "My grandmother's stories about growing up during the war were both fascinating and heartbreaking. She had such resilience and strength that I can only hope to emulate in my own life.",
+    "domain": "edited",
+    "expected_slop_range": 0.4,
+    "category": "edited"
+  },
+  {
+    "doc_id": "test_096_news_006",
+    "text": "School district hires 15 new teachers for the upcoming school year. The new hires will help reduce class sizes and improve student outcomes.",
+    "domain": "news",
+    "expected_slop_range": 0.2,
+    "category": "news"
+  },
+  {
+    "doc_id": "test_089_ai_005",
+    "text": "Thank you for bringing this to my attention. I appreciate your patience as I work to address your concerns. I will ensure that all necessary steps are taken to resolve this situation.",
+    "domain": "ai_response",
+    "expected_slop_range": 0.7,
+    "category": "ai"
+  },
+  {
+    "doc_id": "test_001_conversational_002",
+    "text": "I'm so tired of this weather. It's been raining for like a week straight. I just want to see the sun again, you know?",
+    "domain": "conversational",
+    "expected_slop_range": 0.1,
+    "category": "conversational"
+  },
+  {
+    "doc_id": "test_007_hybrid_002",
+    "text": "The integration of artificial intelligence into healthcare systems offers tremendous potential for improving patient outcomes. Nevertheless, ethical considerations must be carefully addressed.",
+    "domain": "hybrid",
+    "expected_slop_range": 0.6,
+    "category": "hybrid"
+  },
+  {
+    "doc_id": "test_084_creative_006",
+    "text": "The garden was alive with color in the morning light. Bees buzzed among the flowers, and butterflies danced from bloom to bloom.",
+    "domain": "creative",
+    "expected_slop_range": 0.1,
+    "category": "creative"
+  },
+  {
+    "doc_id": "test_066_academic_ai_001",
+    "text": "The findings of this study demonstrate a statistically significant correlation between the variables under investigation. These results contribute to the existing body of literature and provide valuable insights for future research.",
+    "domain": "academic_ai",
+    "expected_slop_range": 0.7,
+    "category": "academic"
+  },
+  {
+    "doc_id": "test_088_ai_004",
+    "text": "I understand your concern and I'm committed to resolving this matter promptly. Please rest assured that I will investigate this issue thoroughly and provide you with a comprehensive solution.",
+    "domain": "ai_response",
+    "expected_slop_range": 0.7,
+    "category": "ai"
+  },
+  {
+    "doc_id": "test_052_hybrid_001",
+    "text": "In today's rapidly evolving digital landscape, businesses must adapt to stay competitive. However, maintaining authentic human connections remains crucial for long-term success.",
+    "domain": "hybrid",
+    "expected_slop_range": 0.6,
+    "category": "hybrid"
+  },
+  {
+    "doc_id": "test_076_personal_004",
+    "text": "I forgot my umbrella today and got completely soaked walking to work. The rain came out of nowhere, and I had to sit in wet clothes all morning. Lesson learned: always check the weather forecast.",
+    "domain": "personal",
+    "expected_slop_range": 0.1,
+    "category": "personal"
+  },
+  {
+    "doc_id": "test_047_news_002",
+    "text": "Local bakery wins national award for best chocolate chip cookies. Owner credits secret family recipe passed down through three generations.",
+    "domain": "news",
+    "expected_slop_range": 0.2,
+    "category": "news"
+  },
+  {
+    "doc_id": "test_032_creative_003",
+    "text": "The garden was overgrown and wild, but beautiful in its own way. Roses climbed up the trellis, and morning glories wound their way through the fence posts.",
+    "domain": "creative",
+    "expected_slop_range": 0.1,
+    "category": "creative"
+  },
+  {
+    "doc_id": "test_097_social_004",
+    "text": "Just discovered this amazing podcast! The host has such great insights and the production quality is incredible. Already binge-listened to 5 episodes.",
+    "domain": "social",
+    "expected_slop_range": 0.3,
+    "category": "social"
+  },
+  {
+    "doc_id": "test_046_tech_001",
+    "text": "The bug was in the database connection pool. When we increased the pool size from 10 to 50, the timeout errors disappeared. The issue was that we had too many concurrent requests.",
+    "domain": "technical",
+    "expected_slop_range": 0.1,
+    "category": "tech"
+  },
+  {
+    "doc_id": "test_082_creative_004",
+    "text": "The old bookstore smelled of dust and paper, with sunlight streaming through the dusty windows. Sarah found the book she'd been searching for on the top shelf.",
+    "domain": "creative",
+    "expected_slop_range": 0.1,
+    "category": "creative"
+  },
+  {
+    "doc_id": "test_081_tech_006",
+    "text": "The API was returning 500 errors because our Redis cache was full. We had to increase the memory limit and implement a better eviction policy.",
+    "domain": "technical",
+    "expected_slop_range": 0.1,
+    "category": "tech"
+  },
+  {
+    "doc_id": "test_080_tech_005",
+    "text": "I spent all day debugging a memory leak in our Python application. Turns out we weren't properly closing database connections in our async functions.",
+    "domain": "technical",
+    "expected_slop_range": 0.1,
+    "category": "tech"
+  },
+  {
+    "doc_id": "test_075_social_001",
+    "text": "Just finished reading an amazing book! The plot twists were incredible and I couldn't put it down. Highly recommend to anyone who loves mystery novels.",
+    "domain": "social",
+    "expected_slop_range": 0.3,
+    "category": "social"
+  },
+  {
+    "doc_id": "test_027_template_003",
+    "text": "Thank you for choosing our services. We value your trust and are committed to delivering exceptional results that exceed your expectations. Your satisfaction is our top priority.",
+    "domain": "template",
+    "expected_slop_range": 0.9,
+    "category": "template"
+  },
+  {
+    "doc_id": "test_095_news_005",
+    "text": "City announces new recycling program starting next month. Residents will receive new bins and collection schedules in the mail.",
+    "domain": "news",
+    "expected_slop_range": 0.2,
+    "category": "news"
+  },
+  {
+    "doc_id": "test_008_educational_002",
+    "text": "Understanding financial markets requires both theoretical knowledge and practical experience. Our course provides real-world examples and hands-on activities to develop essential skills.",
+    "domain": "educational",
+    "expected_slop_range": 0.4,
+    "category": "educational"
+  },
+  {
+    "doc_id": "test_063_edited_003",
+    "text": "I spent the weekend hiking in the mountains with my dog. The trail was steep and challenging, but the view from the summit made every step worth it.",
+    "domain": "edited",
+    "expected_slop_range": 0.4,
+    "category": "edited"
+  },
+  {
+    "doc_id": "test_064_extreme_003",
+    "text": "I'm here to help. I'm here to help. I'm here to help. Please let me know. Please let me know. Please let me know. How can I assist? How can I assist? How can I assist?",
+    "domain": "repetitive",
+    "expected_slop_range": 0.9,
+    "category": "extreme"
+  },
+  {
+    "doc_id": "test_018_personal_003",
+    "text": "The traffic was awful today. I sat in my car for an hour just to go three miles. I should have taken the subway, but I was running late and didn't want to deal with the crowds.",
+    "domain": "personal",
+    "expected_slop_range": 0.1,
+    "category": "personal"
+  },
+  {
+    "doc_id": "test_033_formal_001",
+    "text": "I hereby acknowledge receipt of your correspondence and wish to express my sincere gratitude for bringing this matter to my attention. I shall endeavor to address your concerns with the utmost diligence and professionalism.",
+    "domain": "formal",
+    "expected_slop_range": 0.9,
+    "category": "formal"
+  },
+  {
+    "doc_id": "test_015_mixed_003",
+    "text": "I've been learning Spanish for six months now. It's challenging but rewarding. The grammar is complex, but I enjoy practicing with native speakers whenever I get the chance.",
+    "domain": "mixed",
+    "expected_slop_range": 0.5,
+    "category": "mixed"
+  },
+  {
+    "doc_id": "test_043_marketing_002",
+    "text": "Don't miss out on this exclusive opportunity. Limited time offer with significant savings on our premium packages. Act now to secure your spot and unlock your potential.",
+    "domain": "marketing",
+    "expected_slop_range": 0.4,
+    "category": "marketing"
+  },
+  {
+    "doc_id": "test_025_motivational_002",
+    "text": "Believe in yourself and your ability to overcome any obstacle. With determination, perseverance, and a positive attitude, you can achieve anything you set your mind to.",
+    "domain": "motivational",
+    "expected_slop_range": 0.9,
+    "category": "motivational"
+  },
+  {
+    "doc_id": "test_017_ai_001",
+    "text": "I understand your concern and I'm here to help. Let me provide you with a comprehensive solution that addresses all aspects of your inquiry. This approach has been proven effective in similar situations.",
+    "domain": "ai_response",
+    "expected_slop_range": 0.7,
+    "category": "ai"
+  },
+  {
+    "doc_id": "test_039_edited_002",
+    "text": "The local farmers market has the freshest produce I've ever seen. The tomatoes taste like they were picked this morning, and the bread is still warm from the oven.",
+    "domain": "edited",
+    "expected_slop_range": 0.4,
+    "category": "edited"
+  },
+  {
+    "doc_id": "test_059_review_003",
+    "text": "Amazing concert! The band sounded incredible live and the energy was electric. Only complaint is that the venue was too crowded and hard to see the stage.",
+    "domain": "review",
+    "expected_slop_range": 0.3,
+    "category": "review"
+  },
+  {
+    "doc_id": "test_069_tech_002",
+    "text": "I spent three hours debugging this CSS issue. Turns out the problem was a missing semicolon on line 47. One character caused the entire stylesheet to break.",
+    "domain": "technical",
+    "expected_slop_range": 0.1,
+    "category": "tech"
+  },
+  {
+    "doc_id": "test_004_ai_002",
+    "text": "Thank you for reaching out. I appreciate your patience as I work to resolve this matter. Please rest assured that I am committed to finding the best possible outcome for all parties involved.",
+    "domain": "ai_response",
+    "expected_slop_range": 0.7,
+    "category": "ai"
+  },
+  {
+    "doc_id": "test_091_corporate_004",
+    "text": "Our organization is committed to fostering innovation and driving sustainable growth through strategic partnerships and operational excellence.",
+    "domain": "corporate",
+    "expected_slop_range": 0.7,
+    "category": "corporate"
+  }
+]

@@ -1,0 +1,65 @@
+{
+  "test_metadata": {
+    "timestamp": 1758889089.996886,
+    "total_tests": 5,
+    "successful_tests": 0,
+    "accuracy": 0
+  },
+  "results": [
+    {
+      "name": "Clean Human Text",
+      "text_length": 167,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 7.777079105377197,
+      "expected_range": "low",
+      "success": false,
+      "error": "'value'",
+      "correct": false
+    },
+    {
+      "name": "AI-Generated Business Email",
+      "text_length": 204,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 5.325401067733765,
+      "expected_range": "medium",
+      "success": false,
+      "error": "'value'",
+      "correct": false
+    },
+    {
+      "name": "High AI Content",
+      "text_length": 203,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.038290977478027,
+      "expected_range": "high",
+      "success": false,
+      "error": "'value'",
+      "correct": false
+    },
+    {
+      "name": "Repetitive AI Text",
+      "text_length": 182,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 4.318363189697266,
+      "expected_range": "very_high",
+      "success": false,
+      "error": "'value'",
+      "correct": false
+    },
+    {
+      "name": "Technical Documentation",
+      "text_length": 138,
+      "slop_score": null,
+      "confidence": null,
+      "processing_time": 3.8641579151153564,
+      "expected_range": "low",
+      "success": false,
+      "error": "'value'",
+      "correct": false
+    }
+  ]
+}
