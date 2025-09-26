@@ -7,11 +7,9 @@ name = "sloplint"
 version = "0.1.0"
 description = "AI Slop CLI - Detect low-quality AI-generated text with interpretable metrics"
 readme = "README.md"
-license = {text = "Apache-2.0"}
+license = { text = "Apache-2.0" }
 requires-python = ">=3.11"
-authors = [
-    {name = "Rob Gilks", email = "rob@example.com"},
-]
+authors = [{ name = "Rob Gilks", email = "rob@example.com" }]
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
@@ -69,13 +67,8 @@ dev = [
     "black>=23.10.0",
     "pre-commit>=3.5.0",
 ]
-aws = [
-    "boto3>=1.29.0",
-    "botocore>=1.32.0",
-]
-all = [
-    "sloplint[dev,aws]",
-]
+aws = ["boto3>=1.29.0", "botocore>=1.32.0"]
+all = ["sloplint[dev,aws]"]
 
 [project.scripts]
 sloplint = "sloplint.cli:main"
@@ -93,7 +86,7 @@ packages = ["sloplint"]
 line-length = 88
 target-version = "py311"
 extend-exclude = [
-    "sloplint/models/*",  # Model files may have different style requirements
+    "sloplint/models/*", # Model files may have different style requirements
 ]
 
 [tool.ruff.lint]

@@ -16,6 +16,7 @@ from . import __version__
 from .combine import combine_scores, normalize_scores
 from .io import load_text, save_json_output
 from .nlp.pipeline import NLPPipeline
+from .feature_extractor import FeatureExtractor
 
 app = typer.Typer()
 console = Console()
@@ -59,20 +60,39 @@ def analyze_command(
 
         console.print(f"[green]Analyzing {len(text_content)} characters of text...[/green]")
 
-        # Initialize NLP pipeline
-        pipeline = NLPPipeline(language=language)
+        # Initialize feature extractor
+        extractor = FeatureExtractor(language=language)
 
-        # Process text
-        doc = pipeline.process(text_content)
+        # Extract all features
+        raw_features = extractor.extract_all_features(text_content)
 
-        # Calculate metrics (placeholder for now)
-        metrics = {
-            "density": {"value": 0.5, "details": {"ppl": 25.0, "idea_density": 4.5}},
-            "relevance": {"value": 0.6, "mean_sim": 0.45, "low_sim_frac": 0.3},
-            "coherence": {"value": 0.4, "entity_grid": 0.65, "drift_outliers": 2},
-            "repetition": {"value": 0.3, "compression_ratio": 0.4},
-            "verbosity": {"value": 0.7, "wps": 22.0, "listiness": 0.15},
-        }
+        # Extract spans
+        spans_collection = extractor.extract_spans(text_content)
+
+        # Convert features to metrics format
+        metrics = {}
+        for feature_name, feature_data in raw_features.items():
+            if isinstance(feature_data, dict) and "value" in feature_data:
+                # Already has value key
+                metrics[feature_name] = feature_data
+            else:
+                # Calculate value from feature data
+                if feature_name == "density":
+                    value = feature_data.get("combined_density", 0.5)
+                elif feature_name == "repetition":
+                    value = feature_data.get("overall_repetition", 0.3)
+                elif feature_name == "templated":
+                    value = feature_data.get("templated_score", 0.4)
+                elif feature_name == "coherence":
+                    value = feature_data.get("coherence_score", 0.5)
+                elif feature_name == "verbosity":
+                    value = feature_data.get("overall_verbosity", 0.6)
+                elif feature_name == "tone":
+                    value = feature_data.get("tone_score", 0.4)
+                else:
+                    value = feature_data.get("value", 0.5)
+
+                metrics[feature_name] = {"value": value, **feature_data}
 
         # Normalize and combine scores
         normalized_metrics = normalize_scores(metrics, domain)
@@ -86,7 +106,7 @@ def analyze_command(
             "confidence": confidence,
             "level": get_slop_level(slop_score),
             "metrics": normalized_metrics,
-            "spans": [],  # Placeholder
+            "spans": spans_collection.to_dict_list(),
             "timings_ms": {"total": 500, "nlp": 200, "features": 300},
         }
 
