@@ -8,6 +8,7 @@ into a composite slop score with domain-specific weighting.
 from pathlib import Path
 from typing import Any
 
+import math
 import numpy as np
 from scipy import stats
 
@@ -107,6 +108,40 @@ class ScoreNormalizer:
             normalized = 1 / (1 + np.exp(-z_score))
 
         return float(max(0.0, min(1.0, normalized)))
+    
+    def normalize_score_with_inversion(self, metric_name: str, raw_score: float, domain: str) -> float:
+        """Normalize a raw metric score with proper inversion for certain metrics."""
+        # Define which metrics should be inverted (lower is better for slop detection)
+        inverted_metrics = {
+            # These metrics: lower values = more slop, higher values = less slop
+            "perplexity_score", "idea_density_score", "semantic_density_score", 
+            "conceptual_density_score", "combined_density",
+            "sentence_repetition", "compression_ratio", "overall_repetition",
+            "tone_score", "hedging_ratio", "sycophancy_ratio", "formality_ratio", "passive_ratio",
+            "overall_verbosity", "filler_ratio", "listiness", "sentence_variance",
+            "coherence_score", "entity_continuity", "embedding_drift",
+            "relevance_score", "mean_similarity", "min_similarity", "low_relevance_ratio", "relevance_variance",
+            "factuality_score", "unsupported_ratio", "contradictions_count",
+            "subjectivity_score", "subjective_ratio", "bias_ratio", "neutral_ratio",
+            "fluency_score", "grammar_error_ratio", "unnatural_phrase_ratio", "fragment_ratio",
+            "complexity_score", "complex_word_ratio", "complex_phrase_ratio", "flesch_kincaid_grade",
+            # These are metadata and should be neutral
+            "model_name", "has_transformer", "processing_times", "total_processing_time",
+            "has_semantic_features", "coherence_spans", "repetition_spans", "templated_spans",
+            "tone_spans", "verbosity_spans", "relevance_spans", "factual_claims", "hedging_spans",
+            "unsupported_spans", "contradiction_spans", "grammar_errors", "unnatural_phrases",
+            "fragments", "subjective_by_category", "bias_by_category", "subjective_spans",
+            "bias_spans", "neutral_spans", "complex_words", "complex_phrases", "value"
+        }
+        
+        # Normalize the score first
+        normalized = self.normalize_score(metric_name, raw_score, domain)
+        
+        # Invert if this metric should be inverted
+        if metric_name in inverted_metrics:
+            return 1.0 - normalized
+        
+        return normalized
 
 
 def get_domain_weights(domain: str) -> dict[str, float]:
@@ -166,7 +201,7 @@ def normalize_scores(
     for metric_name, metric_data in metrics.items():
         # Extract the main score value - different extractors use different key names
         raw_score = _extract_main_score(metric_name, metric_data)
-        normalized_score = normalizer.normalize_score(metric_name, raw_score, domain)
+        normalized_score = normalizer.normalize_score_with_inversion(metric_name, raw_score, domain)
 
         normalized[metric_name] = {
             **metric_data,
