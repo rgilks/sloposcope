@@ -8,6 +8,9 @@ RUN apt-get update && apt-get install -y \
     git \
     && rm -rf /var/lib/apt/lists/*
 
+# Install uv
+RUN pip install uv
+
 # Create app user
 RUN useradd --create-home --shell /bin/bash app
 USER app
@@ -17,8 +20,8 @@ WORKDIR /home/app
 COPY pyproject.toml ./
 COPY README.md ./
 
-# Install Python dependencies
-RUN pip install --no-cache-dir --user -e .
+# Install Python dependencies with uv
+RUN uv pip install --system -e .
 
 # Download spaCy model
 RUN python -m spacy download en_core_web_sm

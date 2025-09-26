@@ -7,42 +7,48 @@ help: ## Show this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 install: ## Install the package
-	pip install -e .
+	uv pip install -e .
 
 install-dev: ## Install development dependencies
-	pip install -e ".[dev]"
+	uv pip install -e ".[dev]"
+
+sync: ## Sync dependencies with uv
+	uv sync
+
+sync-dev: ## Sync development dependencies with uv
+	uv sync --dev
 
 test: ## Run all tests
-	python scripts/run_tests_with_localstack.py
+	uv run python scripts/run_tests_with_localstack.py
 
 test-unit: ## Run unit tests only (fast)
-	python -m pytest tests/test_cli.py -v --tb=short
+	uv run python -m pytest tests/test_cli.py -v --tb=short
 
 test-aws: ## Run AWS Worker tests with LocalStack
-	python scripts/run_tests_with_localstack.py tests/test_aws_worker.py -v --tb=short
+	uv run python scripts/run_tests_with_localstack.py tests/test_aws_worker.py -v --tb=short
 
 test-localstack: ## Start LocalStack for testing
-	python scripts/start_localstack_for_tests.py start
+	uv run python scripts/start_localstack_for_tests.py start
 
 clean-localstack: ## Stop and remove LocalStack container
-	python scripts/start_localstack_for_tests.py stop
+	uv run python scripts/start_localstack_for_tests.py stop
 
 lint: ## Run linting
-	ruff check sloplint/ tests/ scripts/
-	black --check sloplint/ tests/ scripts/
+	uv run ruff check sloplint/ tests/ scripts/
+	uv run black --check sloplint/ tests/ scripts/
 
 format: ## Format code
-	black sloplint/ tests/ scripts/
-	ruff check --fix sloplint/ tests/ scripts/
+	uv run black sloplint/ tests/ scripts/
+	uv run ruff check --fix sloplint/ tests/ scripts/
 
 type-check: ## Run type checking
-	mypy sloplint/
+	uv run mypy sloplint/
 
 pre-commit: ## Install pre-commit hooks
-	pre-commit install
+	uv run pre-commit install
 
 pre-commit-run: ## Run pre-commit hooks on all files
-	pre-commit run --all-files
+	uv run pre-commit run --all-files
 
 # Docker commands
 docker-build: ## Build Docker image
@@ -51,7 +57,7 @@ docker-build: ## Build Docker image
 docker-test: ## Test with Docker and LocalStack
 	cd docker && docker-compose up -d localstack
 	sleep 10
-	python docker/setup_localstack.py
+	uv run python docker/setup_localstack.py
 	cd docker && docker-compose up sloplint-worker
 
 docker-clean: ## Clean up Docker containers
@@ -60,7 +66,7 @@ docker-clean: ## Clean up Docker containers
 	docker rm localstack-test 2>/dev/null || true
 
 # Development workflow
-dev-setup: install-dev pre-commit ## Set up development environment
+dev-setup: sync-dev pre-commit ## Set up development environment
 	@echo "Development environment set up complete!"
 	@echo "Run 'make test' to run all tests with LocalStack"
 

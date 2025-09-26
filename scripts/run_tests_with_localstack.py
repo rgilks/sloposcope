@@ -120,7 +120,7 @@ def run_tests(test_args=None):
     )
 
     # Build pytest command
-    cmd = ["python", "-m", "pytest"]
+    cmd = ["uv", "run", "python", "-m", "pytest"]
 
     # Add test configuration
     cmd.extend(["-c", "pytest-localstack.ini"])

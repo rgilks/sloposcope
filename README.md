@@ -13,8 +13,11 @@ A comprehensive command-line tool for detecting AI-generated text patterns and m
 ## Quick Start
 
 ```bash
-# Install locally
-pip install -e .
+# Install locally with uv
+uv pip install -e .
+
+# Or sync dependencies (recommended)
+uv sync
 
 # Analyze text
 sloplint analyze "Your text here" --domain general

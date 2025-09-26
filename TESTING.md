@@ -18,6 +18,13 @@ This document describes how to run tests for the AI Slop project, including Loca
 
 ## Quick Start
 
+### Prerequisites
+Make sure you have `uv` installed:
+```bash
+# Install uv if you haven't already
+curl -LsSf https://astral.sh/uv/install.sh | sh
+```
+
 ### Run All Tests
 ```bash
 make test
@@ -37,17 +44,17 @@ make test-aws
 
 ### Start LocalStack
 ```bash
-python scripts/start_localstack_for_tests.py start
+uv run python scripts/start_localstack_for_tests.py start
 ```
 
 ### Run Tests with LocalStack
 ```bash
-python scripts/run_tests_with_localstack.py
+uv run python scripts/run_tests_with_localstack.py
 ```
 
 ### Stop LocalStack
 ```bash
-python scripts/start_localstack_for_tests.py stop
+uv run python scripts/start_localstack_for_tests.py stop
 ```
 
 ## Pre-commit Hooks
@@ -62,6 +69,15 @@ make pre-commit
 ### Run Pre-commit Hooks Manually
 ```bash
 make pre-commit-run
+```
+
+### Development Setup with uv
+```bash
+# Sync dependencies
+uv sync --dev
+
+# Install pre-commit hooks
+uv run pre-commit install
 ```
 
 ### Hook Behavior
