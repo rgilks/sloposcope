@@ -1,4 +1,4 @@
-# Sloposcope - Research-Based AI Slop Detection
+# Sloposcope - AI Slop Detection System
 
 A production-ready tool for detecting AI-generated text patterns and measuring "slop" based on the latest research in AI text quality assessment. Implements the 7-dimensional slop detection framework from "Measuring AI 'SLOP' in Text" (Shaib et al., 2025).
 
@@ -35,7 +35,7 @@ uv sync --dev
 pip install -e ".[dev]"
 
 # Download required models
-python -m spacy download en_core_web_trf
+python -m spacy download en_core_web_sm
 ```
 
 ### Local Development
@@ -92,8 +92,6 @@ cd docker && terraform apply
 # Build and push Docker image
 docker build -f docker/Dockerfile -t sloplint-worker .
 ```
-
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
 
 ## 📡 API Usage
 
@@ -241,3 +239,10 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENS
 - Built with [spaCy](https://spacy.io/) and [sentence-transformers](https://www.sbert.net/)
 - Deployed on [Fly.io](https://fly.io/) and [AWS](https://aws.amazon.com/)
 - Inspired by ongoing research in AI text detection and quality assessment
+
+## 📖 Additional Documentation
+
+- [Deployment Guide](DEPLOYMENT.md) - Detailed deployment instructions
+- [Technical Specification](SPEC.md) - Complete technical documentation
+- [Testing Guide](TESTING.md) - How to run and write tests
+- [Development History](IMPROVEMENT_HISTORY.md) - Project evolution and achievements

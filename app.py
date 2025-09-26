@@ -433,12 +433,12 @@ async def analyze_text(request: AnalysisRequest):
 
         # Analyze text for slop
         analysis_start = time.time()
-        result = detector.analyze_slop(request.text)
+        result = detector.detect_slop(request.text)
         analysis_time = int((time.time() - analysis_start) * 1000)
 
         # Extract slop score and level
         slop_score = result["slop_score"]
-        slop_level = result["slop_level"]
+        slop_level = result["level"]
 
         # Convert to metrics format for compatibility
         metrics = {}

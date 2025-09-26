@@ -79,9 +79,7 @@ def start_localstack_if_needed():
                     f"⏳ Attempt {attempt + 1}/{max_retries}: Waiting for LocalStack..."
                 )
             else:
-                print(
-                    f"❌ LocalStack failed to start after {max_retries} attempts: {e}"
-                )
+                print(f"❌ LocalStack failed to start after {max_retries} attempts: {e}")
                 return False
 
     return False

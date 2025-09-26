@@ -10,7 +10,6 @@ This module provides:
 
 import logging
 import time
-from functools import lru_cache
 from typing import Any
 
 from .features import (
@@ -177,7 +176,6 @@ class FeatureExtractor:
         self._processing_times.clear()
         logger.info("All caches cleared")
 
-    @lru_cache(maxsize=128)
     def _cached_feature_extraction(
         self, text_hash: str, feature_name: str
     ) -> dict[str, Any]:

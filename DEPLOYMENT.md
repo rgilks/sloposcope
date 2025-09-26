@@ -28,6 +28,67 @@ Sloposcope supports multiple deployment architectures:
 - **Monitoring**: CloudWatch metrics and logging
 - **Benefits**: Auto-scaling, enterprise-grade infrastructure
 
+#### Architecture
+
+```
+┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
+│   Input Queue   │───▶│   ECS Worker    │───▶│  Output Queue   │
+│     (SQS)       │    │   (Fargate)     │    │     (SQS)       │
+└─────────────────┘    └─────────────────┘    └─────────────────┘
+                              │
+                              ▼
+                       ┌─────────────────┐
+                       │  CloudWatch     │
+                       │   Metrics       │
+                       └─────────────────┘
+```
+
+#### Message Format
+
+**Input Message:**
+```json
+{
+  "doc_id": "unique-document-id",
+  "domain": "news",
+  "text": "Full text content to analyze",
+  "s3_uri": "s3://bucket/path/to/file.txt",
+  "prompt": "Optional analysis prompt",
+  "references": ["s3://bucket/ref1.txt", "s3://bucket/ref2.txt"],
+  "options": {
+    "custom_thresholds": {...}
+  }
+}
+```
+
+**Output Message:**
+```json
+{
+  "doc_id": "unique-document-id",
+  "status": "ok",
+  "result": {
+    "version": "1.0",
+    "domain": "news",
+    "slop_score": 0.347,
+    "confidence": 1.0,
+    "level": "Watch",
+    "metrics": {
+      "density": {"value": 0.5, "perplexity": 25.0},
+      "repetition": {"value": 0.3, "compression_ratio": 0.4}
+    },
+    "spans": [
+      {
+        "start": 120,
+        "end": 165,
+        "axis": "repetition",
+        "note": "Repeated sentence stem"
+      }
+    ],
+    "timings_ms": {"total": 500, "nlp": 200, "features": 300}
+  },
+  "error": null
+}
+```
+
 ## 📋 Prerequisites
 
 ### For Fly.io Deployment (Recommended)

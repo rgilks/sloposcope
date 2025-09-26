@@ -29,7 +29,8 @@ def version_callback(value: bool) -> None:
 
 @app.callback()
 def main(
-    version: bool | None = typer.Option(
+    version: bool
+    | None = typer.Option(
         None,
         "--version",
         "-v",
@@ -46,15 +47,13 @@ def analyze_command(
     domain: str = typer.Option(
         "general", "--domain", help="Domain for analysis (news, qa, general)"
     ),
-    prompt: str | None = typer.Option(
-        None, "--prompt", help="Intended instruction/prompt"
-    ),
+    prompt: str
+    | None = typer.Option(None, "--prompt", help="Intended instruction/prompt"),
     reference: list[Path] = typer.Option(
         [], "--reference", help="Reference files for factuality"
     ),
-    json_output: Path | None = typer.Option(
-        None, "--json", help="JSON output file path"
-    ),
+    json_output: Path
+    | None = typer.Option(None, "--json", help="JSON output file path"),
     explain: bool = typer.Option(False, "--explain", help="Show detailed explanations"),
     spans: bool = typer.Option(False, "--spans", help="Show character spans"),
     language: str = typer.Option("en", "--language", help="Language code"),
