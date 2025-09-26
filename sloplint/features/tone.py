@@ -18,36 +18,101 @@ class ToneAnalyzer:
         """Initialize with tone pattern lists."""
         # Hedging patterns (words that indicate uncertainty)
         self.hedging_patterns = [
-            r"perhaps", r"maybe", r"might", r"could", r"may", r"possibly",
-            r"potentially", r"likely", r"probably", r"somewhat", r"rather",
-            r"tends to", r"appears to", r"seems to", r"allegedly", r"arguably",
-            r"supposedly", r"reportedly", r"understandably", r"reasonably",
-            r"comparatively", r"relatively", r"fairly", r"quite", r"pretty",
-            r"almost", r"nearly", r"approximately", r"roughly", r"about",
+            r"perhaps",
+            r"maybe",
+            r"might",
+            r"could",
+            r"may",
+            r"possibly",
+            r"potentially",
+            r"likely",
+            r"probably",
+            r"somewhat",
+            r"rather",
+            r"tends to",
+            r"appears to",
+            r"seems to",
+            r"allegedly",
+            r"arguably",
+            r"supposedly",
+            r"reportedly",
+            r"understandably",
+            r"reasonably",
+            r"comparatively",
+            r"relatively",
+            r"fairly",
+            r"quite",
+            r"pretty",
+            r"almost",
+            r"nearly",
+            r"approximately",
+            r"roughly",
+            r"about",
         ]
 
         # Sycophancy patterns (overly agreeable or flattering language)
         self.sycophancy_patterns = [
-            r"absolutely", r"definitely", r"certainly", r"obviously",
-            r"clearly", r"undoubtedly", r"unquestionably", r"beyond doubt",
-            r"of course", r"naturally", r"exactly", r"precisely", r"perfect",
-            r"excellent", r"wonderful", r"amazing", r"fantastic", r"brilliant",
-            r"outstanding", r"superb", r"impressive", r"remarkable", r"exceptional",
+            r"absolutely",
+            r"definitely",
+            r"certainly",
+            r"obviously",
+            r"clearly",
+            r"undoubtedly",
+            r"unquestionably",
+            r"beyond doubt",
+            r"of course",
+            r"naturally",
+            r"exactly",
+            r"precisely",
+            r"perfect",
+            r"excellent",
+            r"wonderful",
+            r"amazing",
+            r"fantastic",
+            r"brilliant",
+            r"outstanding",
+            r"superb",
+            r"impressive",
+            r"remarkable",
+            r"exceptional",
         ]
 
         # Formality markers (excessively formal language)
         self.formality_patterns = [
-            r"moreover", r"furthermore", r"nevertheless", r"notwithstanding",
-            r"albeit", r"henceforth", r"herein", r"therein", r"hereby",
-            r"thereby", r"whereas", r"whilst", r"utilize", r"facilitate",
-            r"implement", r"comprehensive", r"extensive", r"significant",
-            r"substantial", r"considerable", r"numerous", r"various",
+            r"moreover",
+            r"furthermore",
+            r"nevertheless",
+            r"notwithstanding",
+            r"albeit",
+            r"henceforth",
+            r"herein",
+            r"therein",
+            r"hereby",
+            r"thereby",
+            r"whereas",
+            r"whilst",
+            r"utilize",
+            r"facilitate",
+            r"implement",
+            r"comprehensive",
+            r"extensive",
+            r"significant",
+            r"substantial",
+            r"considerable",
+            r"numerous",
+            r"various",
         ]
 
         # Compile all patterns
-        self.compiled_hedging = [re.compile(p, re.IGNORECASE) for p in self.hedging_patterns]
-        self.compiled_sycophancy = [re.compile(p, re.IGNORECASE) for p in self.sycophancy_patterns]
-        self.compiled_formality = [re.compile(p, re.IGNORECASE) for p in self.formality_patterns]
+        self.compiled_hedging = [
+            re.compile(p, re.IGNORECASE) for p in self.hedging_patterns
+        ]
+        self.compiled_sycophancy = [
+            re.compile(p, re.IGNORECASE) for p in self.sycophancy_patterns
+        ]
+        self.compiled_formality = [
+            re.compile(p, re.IGNORECASE) for p in self.formality_patterns
+        ]
 
     def count_hedging(self, text: str) -> int:
         """Count hedging expressions in text."""
@@ -77,22 +142,26 @@ class ToneAnalyzer:
         # Find hedging spans
         for pattern in self.compiled_hedging:
             for match in pattern.finditer(text):
-                spans.append({
-                    "start": match.start(),
-                    "end": match.end(),
-                    "type": "hedging",
-                    "note": f"Hedging expression: '{match.group()}'",
-                })
+                spans.append(
+                    {
+                        "start": match.start(),
+                        "end": match.end(),
+                        "type": "hedging",
+                        "note": f"Hedging expression: '{match.group()}'",
+                    }
+                )
 
         # Find sycophancy spans
         for pattern in self.compiled_sycophancy:
             for match in pattern.finditer(text):
-                spans.append({
-                    "start": match.start(),
-                    "end": match.end(),
-                    "type": "sycophancy",
-                    "note": f"Sycophantic expression: '{match.group()}'",
-                })
+                spans.append(
+                    {
+                        "start": match.start(),
+                        "end": match.end(),
+                        "type": "sycophancy",
+                        "note": f"Sycophantic expression: '{match.group()}'",
+                    }
+                )
 
         return spans
 
@@ -102,7 +171,7 @@ def calculate_passive_voice_ratio(sentences: list[str]) -> float:
     # This is a simplified implementation
     # In practice would use dependency parsing
 
-    passive_indicators = ['was', 'were', 'been', 'being', 'is', 'are', 'am']
+    passive_indicators = ["was", "were", "been", "being", "is", "are", "am"]
 
     passive_sentences = 0
     total_sentences = len(sentences)
@@ -117,14 +186,16 @@ def calculate_passive_voice_ratio(sentences: list[str]) -> float:
             for i, word in enumerate(words):
                 if word in passive_indicators:
                     # Check if followed by past participle (ends with ed)
-                    if i + 1 < len(words) and words[i + 1].endswith('ed'):
+                    if i + 1 < len(words) and words[i + 1].endswith("ed"):
                         passive_sentences += 1
                         break
 
     return passive_sentences / total_sentences
 
 
-def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict[str, Any]:
+def extract_features(
+    text: str, sentences: list[str], tokens: list[str]
+) -> dict[str, Any]:
     """Extract all tone-related features."""
     try:
         analyzer = ToneAnalyzer()
@@ -154,9 +225,9 @@ def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict
         # Calculate overall tone score
         # Higher hedging, sycophancy, and formality = more problematic tone
         tone_score = (
-            min(1.0, hedging_ratio / 10.0) * 0.4 +      # Hedging (normalized)
-            min(1.0, sycophancy_ratio / 5.0) * 0.4 +    # Sycophancy (normalized)
-            min(1.0, formality_ratio / 8.0) * 0.2       # Formality (normalized)
+            min(1.0, hedging_ratio / 10.0) * 0.4  # Hedging (normalized)
+            + min(1.0, sycophancy_ratio / 5.0) * 0.4  # Sycophancy (normalized)
+            + min(1.0, formality_ratio / 8.0) * 0.2  # Formality (normalized)
         )
 
         return {

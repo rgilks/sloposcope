@@ -10,6 +10,7 @@ from typing import Any
 
 try:
     import spacy
+
     SPACY_AVAILABLE = True
 except ImportError:
     SPACY_AVAILABLE = False
@@ -36,12 +37,16 @@ class NLPPipeline:
             self.nlp = spacy.load(self.model_name)
             logger.info(f"Loaded spaCy model: {self.model_name}")
         except OSError:
-            logger.warning(f"Model {self.model_name} not found. Using basic English model.")
+            logger.warning(
+                f"Model {self.model_name} not found. Using basic English model."
+            )
             try:
                 # Fallback to basic English model
                 self.nlp = spacy.load("en_core_web_sm")
             except OSError:
-                logger.error("No spaCy models available. Some features will be limited.")
+                logger.error(
+                    "No spaCy models available. Some features will be limited."
+                )
                 self.nlp = None
 
         if self.nlp:
@@ -84,7 +89,7 @@ class NLPPipeline:
         logger.warning("Using fallback text processing")
 
         # Simple sentence splitting
-        sentences = [s.strip() for s in text.split('.') if s.strip()]
+        sentences = [s.strip() for s in text.split(".") if s.strip()]
 
         # Simple tokenization
         tokens = text.split()

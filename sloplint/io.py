@@ -21,13 +21,13 @@ def load_text(source: str | Path) -> str:
 
     if path.is_file():
         try:
-            with open(path, encoding='utf-8') as f:
+            with open(path, encoding="utf-8") as f:
                 content = f.read()
             return normalize_text(content)
         except UnicodeDecodeError:
             # Try with different encodings
             try:
-                with open(path, encoding='latin-1') as f:
+                with open(path, encoding="latin-1") as f:
                     content = f.read()
                 return normalize_text(content)
             except Exception as e:
@@ -52,12 +52,12 @@ def normalize_text(text: str) -> str:
     import unicodedata
 
     # Normalize Unicode
-    text = unicodedata.normalize('NFKC', text)
+    text = unicodedata.normalize("NFKC", text)
 
     # Remove control characters (keep newlines and tabs)
     normalized = ""
     for char in text:
-        if unicodedata.category(char)[0] != 'C' or char in '\n\r\t':
+        if unicodedata.category(char)[0] != "C" or char in "\n\r\t":
             normalized += char
 
     return normalized.strip()
@@ -80,7 +80,7 @@ def save_json_output(data: dict[str, Any], output_path: str | Path) -> None:
     # Ensure parent directory exists
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(path, 'w', encoding='utf-8') as f:
+    with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
@@ -93,7 +93,7 @@ def load_config(config_path: str | Path) -> dict[str, Any]:
         return {}
 
     try:
-        with open(path, 'rb') as f:
+        with open(path, "rb") as f:
             return tomli.load(f)
     except Exception as e:
         raise ValueError(f"Could not load config file {path}: {e}") from e
@@ -106,5 +106,5 @@ def save_config(config: dict[str, Any], config_path: str | Path) -> None:
     path = Path(config_path)
     path.parent.mkdir(parents=True, exist_ok=True)
 
-    with open(path, 'wb') as f:
+    with open(path, "wb") as f:
         tomli_w.dump(config, f)

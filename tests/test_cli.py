@@ -27,9 +27,16 @@ def test_feature_extractor():
 
     # Check that all expected features are present
     expected_features = [
-        "density", "relevance", "subjectivity", "repetition",
-        "templated", "coherence", "verbosity", "fluency",
-        "complexity", "tone"
+        "density",
+        "relevance",
+        "subjectivity",
+        "repetition",
+        "templated",
+        "coherence",
+        "verbosity",
+        "fluency",
+        "complexity",
+        "tone",
     ]
 
     for feature in expected_features:
@@ -56,7 +63,7 @@ def test_score_combination():
 
 def test_cli_with_file():
     """Test CLI with a temporary file."""
-    with tempfile.NamedTemporaryFile(mode='w', suffix='.txt', delete=False) as f:
+    with tempfile.NamedTemporaryFile(mode="w", suffix=".txt", delete=False) as f:
         f.write("This is a test document for CLI analysis.")
         temp_file = f.name
 
@@ -64,7 +71,10 @@ def test_cli_with_file():
         # This would need to be updated to handle the new CLI structure
         # For now, just test that the file exists and has content
         assert Path(temp_file).exists()
-        assert Path(temp_file).read_text().strip() == "This is a test document for CLI analysis."
+        assert (
+            Path(temp_file).read_text().strip()
+            == "This is a test document for CLI analysis."
+        )
     finally:
         Path(temp_file).unlink()
 

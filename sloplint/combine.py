@@ -54,7 +54,7 @@ class ScoreNormalizer:
                 "verbosity": {"mean": 0.4, "std": 0.14},
                 "tone": {"mean": 0.3, "std": 0.12},
                 "fluency": {"mean": 0.6, "std": 0.18},
-            }
+            },
         }
 
     def normalize_score(self, metric_name: str, raw_score: float, domain: str) -> float:
@@ -123,13 +123,15 @@ def get_domain_weights(domain: str) -> dict[str, float]:
             "verbosity": 0.10,
             "tone": 0.05,
             "fluency": 0.15,
-        }
+        },
     }
 
     return weights.get(domain, weights["general"])
 
 
-def normalize_scores(metrics: dict[str, dict[str, Any]], domain: str) -> dict[str, dict[str, Any]]:
+def normalize_scores(
+    metrics: dict[str, dict[str, Any]], domain: str
+) -> dict[str, dict[str, Any]]:
     """Normalize all metric scores for a domain."""
     normalizer = ScoreNormalizer()
 
@@ -147,7 +149,9 @@ def normalize_scores(metrics: dict[str, dict[str, Any]], domain: str) -> dict[st
     return normalized
 
 
-def combine_scores(metrics: dict[str, dict[str, Any]], domain: str) -> tuple[float, float]:
+def combine_scores(
+    metrics: dict[str, dict[str, Any]], domain: str
+) -> tuple[float, float]:
     """Combine normalized metrics into a composite slop score."""
     weights = get_domain_weights(domain)
 
@@ -190,7 +194,9 @@ def get_slop_level(score: float) -> str:
         return "High-Slop"
 
 
-def calculate_confidence_intervals(metrics: dict[str, dict[str, Any]], domain: str) -> dict[str, Any]:
+def calculate_confidence_intervals(
+    metrics: dict[str, dict[str, Any]], domain: str
+) -> dict[str, Any]:
     """Calculate confidence intervals for the composite score."""
     # This is a simplified version - in practice would use bootstrap sampling
     weights = get_domain_weights(domain)
@@ -203,7 +209,7 @@ def calculate_confidence_intervals(metrics: dict[str, dict[str, Any]], domain: s
         return {"lower": 0.0, "upper": 1.0, "method": "none"}
 
     # Simplified confidence interval calculation
-    std_error = 1.0 / (n_metrics ** 0.5)  # Simplified
+    std_error = 1.0 / (n_metrics**0.5)  # Simplified
     z_score = stats.norm.ppf(0.975)  # 95% confidence
 
     margin = z_score * std_error
@@ -215,5 +221,5 @@ def calculate_confidence_intervals(metrics: dict[str, dict[str, Any]], domain: s
         "lower": max(0.0, score - margin),
         "upper": min(1.0, score + margin),
         "method": "normal_approximation",
-        "confidence_level": 0.95
+        "confidence_level": 0.95,
     }

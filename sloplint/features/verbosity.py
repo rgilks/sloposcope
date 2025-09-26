@@ -29,11 +29,38 @@ def calculate_filler_words_ratio(text: str, tokens: list[str]) -> float:
     """Calculate ratio of filler/discourse words."""
     # Common filler and discourse words
     filler_words = {
-        'actually', 'basically', 'essentially', 'literally', 'really', 'very',
-        'quite', 'rather', 'somewhat', 'kind of', 'sort of', 'you know',
-        'like', 'well', 'so', 'then', 'now', 'here', 'there', 'just',
-        'even', 'also', 'and', 'but', 'or', 'however', 'moreover',
-        'furthermore', 'therefore', 'thus', 'hence', 'consequently'
+        "actually",
+        "basically",
+        "essentially",
+        "literally",
+        "really",
+        "very",
+        "quite",
+        "rather",
+        "somewhat",
+        "kind of",
+        "sort of",
+        "you know",
+        "like",
+        "well",
+        "so",
+        "then",
+        "now",
+        "here",
+        "there",
+        "just",
+        "even",
+        "also",
+        "and",
+        "but",
+        "or",
+        "however",
+        "moreover",
+        "furthermore",
+        "therefore",
+        "thus",
+        "hence",
+        "consequently",
     }
 
     total_tokens = len(tokens)
@@ -46,7 +73,7 @@ def calculate_filler_words_ratio(text: str, tokens: list[str]) -> float:
 
 def calculate_listiness(text: str) -> float:
     """Calculate how much of the text consists of lists."""
-    lines = text.split('\n')
+    lines = text.split("\n")
     total_lines = len(lines)
 
     if total_lines == 0:
@@ -58,9 +85,27 @@ def calculate_listiness(text: str) -> float:
         line = line.strip()
         if line:
             # Check for bullet points, numbered lists, etc.
-            if (line.startswith(('-', '*', '•', '1.', '2.', '3.', '4.', '5.', '6.', '7.', '8.', '9.', '10.'))
-                or re.match(r'^\d+\.', line)
-                or re.match(r'^[a-zA-Z]\.', line)):
+            if (
+                line.startswith(
+                    (
+                        "-",
+                        "*",
+                        "•",
+                        "1.",
+                        "2.",
+                        "3.",
+                        "4.",
+                        "5.",
+                        "6.",
+                        "7.",
+                        "8.",
+                        "9.",
+                        "10.",
+                    )
+                )
+                or re.match(r"^\d+\.", line)
+                or re.match(r"^[a-zA-Z]\.", line)
+            ):
                 list_lines += 1
 
     return list_lines / total_lines
@@ -87,7 +132,7 @@ def detect_verbosity_spans(text: str, tokens: list[str]) -> list[dict[str, Any]]
     spans = []
 
     # Look for long sentences (more than 25 words)
-    sentences = text.split('.')
+    sentences = text.split(".")
     current_pos = 0
 
     for sentence in sentences:
@@ -95,19 +140,23 @@ def detect_verbosity_spans(text: str, tokens: list[str]) -> list[dict[str, Any]]
         if len(sentence.split()) > 25:
             span_start = current_pos
             span_end = current_pos + len(sentence)
-            spans.append({
-                "start": span_start,
-                "end": span_end,
-                "type": "long_sentence",
-                "note": f"Very long sentence ({len(sentence.split())} words)",
-            })
+            spans.append(
+                {
+                    "start": span_start,
+                    "end": span_end,
+                    "type": "long_sentence",
+                    "note": f"Very long sentence ({len(sentence.split())} words)",
+                }
+            )
 
         current_pos += len(sentence) + 1  # +1 for the period
 
     return spans
 
 
-def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict[str, Any]:
+def extract_features(
+    text: str, sentences: list[str], tokens: list[str]
+) -> dict[str, Any]:
     """Extract all verbosity-related features."""
     try:
         # Calculate words per sentence
@@ -128,10 +177,10 @@ def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict
         # Calculate overall verbosity score
         # Higher scores indicate more verbosity (worse)
         overall_verbosity = (
-            min(1.0, words_per_sentence / 30.0) * 0.4 +  # Words per sentence (normalized)
-            filler_ratio * 0.3 +                         # Filler words
-            listiness * 0.2 +                            # Listiness
-            min(1.0, sentence_variance / 50.0) * 0.1    # Sentence length variance
+            min(1.0, words_per_sentence / 30.0) * 0.4  # Words per sentence (normalized)
+            + filler_ratio * 0.3  # Filler words
+            + listiness * 0.2  # Listiness
+            + min(1.0, sentence_variance / 50.0) * 0.1  # Sentence length variance
         )
 
         return {

@@ -1,12 +1,12 @@
 
 # Default thresholds for each metric (from SPEC and literature)
-relevance_threshold: 0.55
-coherence_drift_threshold: 0.80
-perplexity_spike_threshold: 95
-compression_ratio_threshold: 0.35
-entity_continuity_threshold: 0.70
-verbosity_words_per_sentence: 20
-complexity_fkgl_news_min: 8
-complexity_fkgl_news_max: 12
-complexity_fkgl_qa_min: 6
-complexity_fkgl_qa_max: 10
+relevance_threshold = 0.55
+coherence_drift_threshold = 0.80
+perplexity_spike_threshold = 95
+compression_ratio_threshold = 0.35
+entity_continuity_threshold = 0.70
+verbosity_words_per_sentence = 20
+complexity_fkgl_news_min = 8
+complexity_fkgl_news_max = 12
+complexity_fkgl_qa_min = 6
+complexity_fkgl_qa_max = 10

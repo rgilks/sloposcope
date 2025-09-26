@@ -11,6 +11,7 @@ from typing import Any
 
 class SpanType(Enum):
     """Types of problematic spans that can be detected."""
+
     REPETITION = "repetition"
     TEMPLATED = "templated"
     OFF_TOPIC = "off_topic"
@@ -23,6 +24,7 @@ class SpanType(Enum):
 @dataclass
 class Span:
     """Represents a character span with associated metadata."""
+
     start: int
     end: int
     span_type: SpanType
@@ -94,9 +96,10 @@ class SpanCollection:
         current = self.spans[0]
 
         for span in self.spans[1:]:
-            if (span.start <= current.end + max_gap and
-                span.span_type == current.span_type):
-
+            if (
+                span.start <= current.end + max_gap
+                and span.span_type == current.span_type
+            ):
                 # Merge spans
                 current = Span(
                     start=min(current.start, span.start),
@@ -104,7 +107,7 @@ class SpanCollection:
                     span_type=current.span_type,
                     confidence=max(current.confidence, span.confidence),
                     note=current.note or span.note,
-                    metadata={**(current.metadata or {}), **(span.metadata or {})}
+                    metadata={**(current.metadata or {}), **(span.metadata or {})},
                 )
             else:
                 merged.append(current)
@@ -136,8 +139,7 @@ class SpanCollection:
     def get_spans_in_range(self, start: int, end: int) -> "SpanCollection":
         """Get spans that overlap with the given range."""
         overlapping = [
-            span for span in self.spans
-            if span.start < end and span.end > start
+            span for span in self.spans if span.start < end and span.end > start
         ]
         return SpanCollection(overlapping)
 
@@ -158,7 +160,7 @@ class SpanCollection:
         """Return number of spans."""
         return len(self.spans)
 
-    def __iter__(self) -> iter[Span]:  # type: ignore
+    def __iter__(self):
         """Iterate over spans."""
         return iter(self.spans)
 

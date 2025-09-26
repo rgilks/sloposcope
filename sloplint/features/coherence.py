@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 
 try:
     import spacy
+
     SPACY_AVAILABLE = True
 except ImportError:
     SPACY_AVAILABLE = False
@@ -24,7 +25,7 @@ class EntityGridCoherence:
 
     def __init__(self) -> None:
         """Initialize entity grid analyzer."""
-        self.entity_roles = ['S', 'O', 'X', '-']  # Subject, Object, Other, None
+        self.entity_roles = ["S", "O", "X", "-"]  # Subject, Object, Other, None
 
     def extract_entities(self, sentences: list[str]) -> dict[int, list[str]]:
         """Extract entities and their roles from sentences."""
@@ -41,14 +42,14 @@ class EntityGridCoherence:
                 sentence_entities = []
                 for token in doc:
                     # Determine entity role
-                    if token.dep_ == 'nsubj':
-                        role = 'S'  # Subject
-                    elif token.dep_ == 'dobj' or token.dep_ == 'pobj':
-                        role = 'O'  # Object
+                    if token.dep_ == "nsubj":
+                        role = "S"  # Subject
+                    elif token.dep_ == "dobj" or token.dep_ == "pobj":
+                        role = "O"  # Object
                     elif token.ent_type_:
-                        role = 'X'  # Other entity
+                        role = "X"  # Other entity
                     else:
-                        role = '-'  # None
+                        role = "-"  # None
 
                     sentence_entities.append(role)
 
@@ -70,22 +71,26 @@ class EntityGridCoherence:
             roles = []
 
             for word in words:
-                word_lower = word.lower().strip('.,!?;:')
+                word_lower = word.lower().strip(".,!?;:")
                 # Simple heuristics for entity roles
-                if word_lower in ['the', 'a', 'an']:
-                    roles.append('O')  # Determiner -> object
-                elif word_lower.endswith('ing') or word_lower.endswith('ed'):
-                    roles.append('S')  # Verb form -> subject
-                elif len(word_lower) > 6 and not word_lower.endswith(('ing', 'ed', 'ly')):
-                    roles.append('X')  # Long word -> entity
+                if word_lower in ["the", "a", "an"]:
+                    roles.append("O")  # Determiner -> object
+                elif word_lower.endswith("ing") or word_lower.endswith("ed"):
+                    roles.append("S")  # Verb form -> subject
+                elif len(word_lower) > 6 and not word_lower.endswith(
+                    ("ing", "ed", "ly")
+                ):
+                    roles.append("X")  # Long word -> entity
                 else:
-                    roles.append('-')  # Other
+                    roles.append("-")  # Other
 
             entities_by_sentence[i] = roles
 
         return entities_by_sentence
 
-    def calculate_entity_continuity(self, entities_by_sentence: dict[int, list[str]]) -> float:
+    def calculate_entity_continuity(
+        self, entities_by_sentence: dict[int, list[str]]
+    ) -> float:
         """Calculate entity continuity score using transition probabilities."""
         if not entities_by_sentence:
             return 0.0
@@ -125,7 +130,8 @@ class EntityGridCoherence:
 
         try:
             from sentence_transformers import SentenceTransformer
-            model = SentenceTransformer('all-MiniLM-L6-v2')
+
+            model = SentenceTransformer("all-MiniLM-L6-v2")
 
             # Get embeddings for all sentences
             embeddings = model.encode(sentences)
@@ -137,7 +143,9 @@ class EntityGridCoherence:
                 emb2 = embeddings[i + 1]
 
                 # Cosine similarity
-                similarity = float(np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2)))
+                similarity = float(
+                    np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2))
+                )
 
                 # Convert to drift (lower similarity = higher drift)
                 drift = float(1.0 - similarity)
@@ -149,7 +157,9 @@ class EntityGridCoherence:
             logger.error(f"Error calculating embedding drift: {e}")
             return 0.0
 
-    def detect_coherence_breaks(self, sentences: list[str], threshold: float = 0.3) -> list[dict[str, Any]]:
+    def detect_coherence_breaks(
+        self, sentences: list[str], threshold: float = 0.3
+    ) -> list[dict[str, Any]]:
         """Detect coherence breaks between sentences."""
         if len(sentences) < 2:
             return []
@@ -162,17 +172,21 @@ class EntityGridCoherence:
             if drift > threshold:
                 # Estimate character position
                 char_pos = sum(len(sentences[j]) + 1 for j in range(i + 1))
-                breaks.append({
-                    "start": char_pos,
-                    "end": char_pos + 1,
-                    "type": "coherence_break",
-                    "note": f"High topic drift (drift: {drift:.3f})",
-                })
+                breaks.append(
+                    {
+                        "start": char_pos,
+                        "end": char_pos + 1,
+                        "type": "coherence_break",
+                        "note": f"High topic drift (drift: {drift:.3f})",
+                    }
+                )
 
         return breaks
 
 
-def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict[str, Any]:
+def extract_features(
+    text: str, sentences: list[str], tokens: list[str]
+) -> dict[str, Any]:
     """Extract all coherence-related features."""
     try:
         analyzer = EntityGridCoherence()
@@ -181,7 +195,9 @@ def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict
         entities_by_sentence = analyzer.extract_entities(sentences)
 
         # Calculate entity continuity
-        entity_continuity = float(analyzer.calculate_entity_continuity(entities_by_sentence))
+        entity_continuity = float(
+            analyzer.calculate_entity_continuity(entities_by_sentence)
+        )
 
         # Calculate embedding drift
         embedding_drift = analyzer.calculate_embedding_drift(sentences)
@@ -192,8 +208,8 @@ def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict
         # Calculate overall coherence score
         # Higher continuity and lower drift = higher coherence
         coherence_score = (
-            entity_continuity * 0.6 +  # Entity continuity
-            (1.0 - embedding_drift) * 0.4  # Low drift = high coherence
+            entity_continuity * 0.6  # Entity continuity
+            + (1.0 - embedding_drift) * 0.4  # Low drift = high coherence
         )
 
         return {

@@ -49,18 +49,26 @@ class FeatureExtractor:
 
         try:
             # Information Utility
-            density_features = extract_density_features(text, sentences, tokens, pos_tags)
+            density_features = extract_density_features(
+                text, sentences, tokens, pos_tags
+            )
             features["density"] = density_features
 
             # Information Quality (placeholder - would need factuality and subjectivity)
-            features["relevance"] = {"value": 0.5, "mean_sim": 0.5, "low_sim_frac": 0.2}  # Placeholder
+            features["relevance"] = {
+                "value": 0.5,
+                "mean_sim": 0.5,
+                "low_sim_frac": 0.2,
+            }  # Placeholder
             features["subjectivity"] = {"value": 0.3, "top_terms": []}  # Placeholder
 
             # Style Quality
             repetition_features = extract_repetition_features(text, sentences, tokens)
             features["repetition"] = repetition_features
 
-            templated_features = extract_templated_features(text, sentences, tokens, pos_tags)
+            templated_features = extract_templated_features(
+                text, sentences, tokens, pos_tags
+            )
             features["templated"] = templated_features
 
             coherence_features = extract_coherence_features(text, sentences, tokens)
@@ -70,7 +78,11 @@ class FeatureExtractor:
             features["verbosity"] = verbosity_features
 
             # Placeholder for fluency
-            features["fluency"] = {"value": 0.2, "grammar_errors_k": 1.0, "ppl_spikes": 0}
+            features["fluency"] = {
+                "value": 0.2,
+                "grammar_errors_k": 1.0,
+                "ppl_spikes": 0,
+            }
 
             # Placeholder for complexity
             features["complexity"] = {"value": 0.4, "fkgl": 10.5, "fog": 12.0}
@@ -87,12 +99,20 @@ class FeatureExtractor:
     def _create_empty_features(self) -> dict[str, Any]:
         """Create empty feature set for error cases."""
         return {
-            "density": {"combined_density": 0.0, "perplexity": 25.0, "idea_density": 0.0},
+            "density": {
+                "combined_density": 0.0,
+                "perplexity": 25.0,
+                "idea_density": 0.0,
+            },
             "relevance": {"value": 0.0, "mean_sim": 0.0, "low_sim_frac": 0.0},
             "subjectivity": {"value": 0.0, "top_terms": []},
             "repetition": {"overall_repetition": 0.0, "compression_ratio": 0.0},
             "templated": {"templated_score": 0.0, "boilerplate_hits": 0},
-            "coherence": {"coherence_score": 0.0, "entity_continuity": 0.0, "embedding_drift": 0.0},
+            "coherence": {
+                "coherence_score": 0.0,
+                "entity_continuity": 0.0,
+                "embedding_drift": 0.0,
+            },
             "verbosity": {"overall_verbosity": 0.0, "words_per_sentence": 0.0},
             "fluency": {"value": 0.0, "grammar_errors_k": 0.0, "ppl_spikes": 0},
             "complexity": {"value": 0.0, "fkgl": 0.0, "fog": 0.0},
@@ -108,7 +128,10 @@ class FeatureExtractor:
         # Extract spans from each feature module
         try:
             # Repetition spans
-            if "repetition" in features and "repetition_spans" in features["repetition"]:
+            if (
+                "repetition" in features
+                and "repetition_spans" in features["repetition"]
+            ):
                 for span_data in features["repetition"]["repetition_spans"]:
                     span = Span(
                         start=span_data["start"],

@@ -20,7 +20,7 @@ def calculate_ngram_repetition(tokens: list[str], n: int) -> float:
 
     ngrams = []
     for i in range(len(tokens) - n + 1):
-        ngram = tuple(tokens[i:i+n])
+        ngram = tuple(tokens[i : i + n])
         ngrams.append(ngram)
 
     if not ngrams:
@@ -58,7 +58,7 @@ def calculate_compression_ratio(text: str) -> float:
         return 1.0
 
     # Convert to bytes
-    text_bytes = text.encode('utf-8')
+    text_bytes = text.encode("utf-8")
 
     # Compress with gzip
     compressed_bytes = gzip.compress(text_bytes)
@@ -73,7 +73,9 @@ def calculate_compression_ratio(text: str) -> float:
     return max(0.0, min(1.0, repetition_score))
 
 
-def detect_repetition_spans(tokens: list[str], threshold: float = 0.1) -> list[dict[str, Any]]:
+def detect_repetition_spans(
+    tokens: list[str], threshold: float = 0.1
+) -> list[dict[str, Any]]:
     """Detect spans of repetitive content."""
     spans = []
 
@@ -84,7 +86,7 @@ def detect_repetition_spans(tokens: list[str], threshold: float = 0.1) -> list[d
 
         seen_ngrams: dict[tuple[str, ...], int] = {}
         for i in range(len(tokens) - n + 1):
-            ngram = tuple(tokens[i:i+n])
+            ngram = tuple(tokens[i : i + n])
 
             if ngram in seen_ngrams:
                 # Found repetition
@@ -95,19 +97,23 @@ def detect_repetition_spans(tokens: list[str], threshold: float = 0.1) -> list[d
                 span_start = prev_start * len(tokens[0])  # Rough character position
                 span_end = (current_start + n) * len(tokens[0])
 
-                spans.append({
-                    "start": span_start,
-                    "end": span_end,
-                    "type": f"repeated_{n}gram",
-                    "note": f"Repeated {n}-gram: {' '.join(tokens[i:i+n])}",
-                })
+                spans.append(
+                    {
+                        "start": span_start,
+                        "end": span_end,
+                        "type": f"repeated_{n}gram",
+                        "note": f"Repeated {n}-gram: {' '.join(tokens[i : i + n])}",
+                    }
+                )
             else:
                 seen_ngrams[ngram] = i
 
     return spans
 
 
-def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict[str, Any]:
+def extract_features(
+    text: str, sentences: list[str], tokens: list[str]
+) -> dict[str, Any]:
     """Extract all repetition-related features."""
     try:
         # Calculate n-gram repetition rates
@@ -128,12 +134,12 @@ def extract_features(text: str, sentences: list[str], tokens: list[str]) -> dict
         # Calculate overall repetition score
         # Weighted combination of different repetition measures
         overall_repetition = (
-            ngram_repetition[1] * 0.3 +  # Unigram repetition
-            ngram_repetition[2] * 0.25 + # Bigram repetition
-            ngram_repetition[3] * 0.25 + # Trigram repetition
-            ngram_repetition[4] * 0.2 +  # 4-gram repetition
-            sentence_repetition * 0.5 +  # Sentence repetition
-            compression_ratio * 0.3      # Compression ratio
+            ngram_repetition[1] * 0.3  # Unigram repetition
+            + ngram_repetition[2] * 0.25  # Bigram repetition
+            + ngram_repetition[3] * 0.25  # Trigram repetition
+            + ngram_repetition[4] * 0.2  # 4-gram repetition
+            + sentence_repetition * 0.5  # Sentence repetition
+            + compression_ratio * 0.3  # Compression ratio
         )
 
         return {

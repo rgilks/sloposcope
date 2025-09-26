@@ -14,10 +14,13 @@ logger = logging.getLogger(__name__)
 try:
     import torch
     from transformers import AutoModelForCausalLM, AutoTokenizer
+
     TRANSFORMERS_AVAILABLE = True
 except ImportError:
     TRANSFORMERS_AVAILABLE = False
-    logger.warning("Transformers not available. Perplexity calculation will be limited.")
+    logger.warning(
+        "Transformers not available. Perplexity calculation will be limited."
+    )
 
 
 class DensityCalculator:
@@ -55,7 +58,9 @@ class DensityCalculator:
 
         try:
             # Tokenize text
-            inputs = self.tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
+            inputs = self.tokenizer(
+                text, return_tensors="pt", truncation=True, max_length=512
+            )
 
             # Get model predictions
             with torch.no_grad():
@@ -84,7 +89,9 @@ class DensityCalculator:
 
         return base_perplexity * complexity_factor
 
-    def calculate_idea_density(self, sentences: list[str], pos_tags: list[str]) -> float:
+    def calculate_idea_density(
+        self, sentences: list[str], pos_tags: list[str]
+    ) -> float:
         """Calculate idea density (propositions per 100 words)."""
         if not sentences:
             return 0.0
@@ -103,11 +110,13 @@ class DensityCalculator:
             words = sentence.split()
             # Look for verbs and content words
             for i, word in enumerate(words):
-                if (word.lower() in ['is', 'are', 'was', 'were', 'be', 'been', 'being'] and
-                    i < len(words) - 1):
+                if (
+                    word.lower() in ["is", "are", "was", "were", "be", "been", "being"]
+                    and i < len(words) - 1
+                ):
                     # Potential predicate
                     idea_indicators += 0.5  # Partial credit for copula
-                elif word.endswith('ing') or word.endswith('ed'):
+                elif word.endswith("ing") or word.endswith("ed"):
                     # Potential verb form
                     idea_indicators += 0.8
 
@@ -117,7 +126,12 @@ class DensityCalculator:
         return min(idea_density, 20.0)  # Cap at reasonable maximum
 
 
-def extract_features(text: str, sentences: list[str], tokens: list[str], pos_tags: list[str] | None = None) -> dict[str, Any]:
+def extract_features(
+    text: str,
+    sentences: list[str],
+    tokens: list[str],
+    pos_tags: list[str] | None = None,
+) -> dict[str, Any]:
     """Extract all density-related features."""
     try:
         calculator = DensityCalculator()
@@ -137,7 +151,9 @@ def extract_features(text: str, sentences: list[str], tokens: list[str], pos_tag
             perplexity_score = 1.0
 
         # Normalize idea density to [0,1]
-        idea_density_score = min(idea_density / 15.0, 1.0)  # Normalize around 15 ideas/100 words
+        idea_density_score = min(
+            idea_density / 15.0, 1.0
+        )  # Normalize around 15 ideas/100 words
 
         # Combine with equal weights (as per SPEC)
         combined_density = (perplexity_score + idea_density_score) / 2.0

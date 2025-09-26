@@ -26,9 +26,16 @@ def version_callback(value: bool) -> None:
         console.print(f"sloplint v{__version__}")
         sys.exit(0)
 
+
 @app.callback()
 def main(
-    version: bool | None = typer.Option(None, "--version", "-v", help="Show version information", callback=version_callback),
+    version: bool | None = typer.Option(
+        None,
+        "--version",
+        "-v",
+        help="Show version information",
+        callback=version_callback,
+    ),
 ) -> None:
     """AI Slop CLI - Detect low-quality AI-generated text with interpretable metrics."""
 
@@ -36,10 +43,18 @@ def main(
 @app.command("analyze")
 def analyze_command(
     files: list[Path] = typer.Argument(..., help="Text files to analyze"),
-    domain: str = typer.Option("general", "--domain", help="Domain for analysis (news, qa, general)"),
-    prompt: str | None = typer.Option(None, "--prompt", help="Intended instruction/prompt"),
-    reference: list[Path] = typer.Option([], "--reference", help="Reference files for factuality"),
-    json_output: Path | None = typer.Option(None, "--json", help="JSON output file path"),
+    domain: str = typer.Option(
+        "general", "--domain", help="Domain for analysis (news, qa, general)"
+    ),
+    prompt: str | None = typer.Option(
+        None, "--prompt", help="Intended instruction/prompt"
+    ),
+    reference: list[Path] = typer.Option(
+        [], "--reference", help="Reference files for factuality"
+    ),
+    json_output: Path | None = typer.Option(
+        None, "--json", help="JSON output file path"
+    ),
     explain: bool = typer.Option(False, "--explain", help="Show detailed explanations"),
     spans: bool = typer.Option(False, "--spans", help="Show character spans"),
     language: str = typer.Option("en", "--language", help="Language code"),
@@ -56,7 +71,9 @@ def analyze_command(
             console.print("[red]Error: No text content found in provided files[/red]")
             sys.exit(2)
 
-        console.print(f"[green]Analyzing {len(text_content)} characters of text...[/green]")
+        console.print(
+            f"[green]Analyzing {len(text_content)} characters of text...[/green]"
+        )
 
         # Initialize feature extractor
         extractor = FeatureExtractor(language=language)
@@ -168,7 +185,9 @@ def display_results(result: dict, explain: bool = False, spans: bool = False) ->
         console.print("• Repetition: N-gram repetition and compression")
         console.print("• Verbosity: Wordiness and structural complexity")
 
-    console.print(f"\n[blue]Analysis completed in {result['timings_ms']['total']}ms[/blue]")
+    console.print(
+        f"\n[blue]Analysis completed in {result['timings_ms']['total']}ms[/blue]"
+    )
 
 
 if __name__ == "__main__":

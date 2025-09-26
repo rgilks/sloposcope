@@ -63,7 +63,9 @@ class TemplateDetector:
         ]
 
         # Compile patterns for efficiency
-        self.compiled_patterns = [re.compile(pattern, re.IGNORECASE) for pattern in self.boilerplate_patterns]
+        self.compiled_patterns = [
+            re.compile(pattern, re.IGNORECASE) for pattern in self.boilerplate_patterns
+        ]
 
     def detect_boilerplate_spans(self, text: str) -> list[dict[str, Any]]:
         """Detect spans containing boilerplate phrases."""
@@ -72,16 +74,20 @@ class TemplateDetector:
         for pattern in self.compiled_patterns:
             matches = list(pattern.finditer(text))
             for match in matches:
-                spans.append({
-                    "start": match.start(),
-                    "end": match.end(),
-                    "type": "boilerplate",
-                    "note": f"Boilerplate phrase: '{match.group()}'",
-                })
+                spans.append(
+                    {
+                        "start": match.start(),
+                        "end": match.end(),
+                        "type": "boilerplate",
+                        "note": f"Boilerplate phrase: '{match.group()}'",
+                    }
+                )
 
         return spans
 
-    def calculate_pos_diversity(self, pos_tags: list[str], window_size: int = 5) -> float:
+    def calculate_pos_diversity(
+        self, pos_tags: list[str], window_size: int = 5
+    ) -> float:
         """Calculate diversity of POS tag 5-grams."""
         if len(pos_tags) < window_size:
             return 0.0
@@ -89,7 +95,7 @@ class TemplateDetector:
         # Create 5-grams of POS tags
         pos_ngrams = []
         for i in range(len(pos_tags) - window_size + 1):
-            ngram = tuple(pos_tags[i:i+window_size])
+            ngram = tuple(pos_tags[i : i + window_size])
             pos_ngrams.append(ngram)
 
         if not pos_ngrams:
@@ -131,7 +137,12 @@ class TemplateDetector:
         return repetition_rate
 
 
-def extract_features(text: str, sentences: list[str], tokens: list[str], pos_tags: list[str] | None = None) -> dict[str, Any]:
+def extract_features(
+    text: str,
+    sentences: list[str],
+    tokens: list[str],
+    pos_tags: list[str] | None = None,
+) -> dict[str, Any]:
     """Extract all templated content features."""
     try:
         detector = TemplateDetector()
@@ -153,9 +164,9 @@ def extract_features(text: str, sentences: list[str], tokens: list[str], pos_tag
         # Calculate overall templated score
         # Lower diversity and higher repetition = more templated
         templated_score = (
-            (1.0 - pos_diversity) * 0.5 +    # Low diversity = templated
-            pattern_repetition * 0.3 +       # High repetition = templated
-            min(1.0, boilerplate_hits / 10.0) * 0.2  # Boilerplate phrases
+            (1.0 - pos_diversity) * 0.5  # Low diversity = templated
+            + pattern_repetition * 0.3  # High repetition = templated
+            + min(1.0, boilerplate_hits / 10.0) * 0.2  # Boilerplate phrases
         )
 
         return {

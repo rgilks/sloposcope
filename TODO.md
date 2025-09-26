@@ -1,8 +1,8 @@
 # AI Slop CLI - Implementation TODO
 
-**Project:** AI Slop CLI - Cross-platform CLI for detecting "AI slop" in text  
-**Status:** Planning Phase  
-**Target:** v0.1 MVP Implementation  
+**Project:** AI Slop CLI - Cross-platform CLI for detecting "AI slop" in text
+**Status:** Planning Phase
+**Target:** v0.1 MVP Implementation
 **Based on:** SPEC.md + "Measuring AI Slop in Text" (arXiv:2509.19163v1)
 
 ---
