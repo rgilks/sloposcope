@@ -1,0 +1,19 @@
+
+# Entity Grid Transition Probabilities
+# Format: from_role -> to_role : probability
+S -> S: 0.60
+S -> O: 0.15
+S -> X: 0.10
+S -> -: 0.15
+O -> S: 0.20
+O -> O: 0.40
+O -> X: 0.20
+O -> -: 0.20
+X -> S: 0.25
+X -> O: 0.25
+X -> X: 0.30
+X -> -: 0.20
+- -> S: 0.30
+- -> O: 0.25
+- -> X: 0.15
+- -> -: 0.30

@@ -1,0 +1,15 @@
+
+type=weaksubj len=1 word1=abandoned pos1=adj stemmed1=n
+type=weaksubj len=1 word1=abandonment pos1=nn stemmed1=n
+type=strongsubj len=1 word1=abhor pos1=vb stemmed1=y
+type=strongsubj len=1 word1=abhorred pos1=adj stemmed1=y
+type=strongsubj len=1 word1=abhorrence pos1=nn stemmed1=y
+type=strongsubj len=1 word1=abhorrent pos1=adj stemmed1=y
+type=strongsubj len=1 word1=abomination pos1=nn stemmed1=y
+type=strongsubj len=1 word1=abominable pos1=adj stemmed1=y
+type=weaksubj len=1 word1=absurd pos1=adj stemmed1=y
+type=strongsubj len=1 word1=absurdity pos1=nn stemmed1=y
+type=strongsubj len=1 word1=abuse pos1=nn stemmed1=y
+type=strongsubj len=1 word1=abuse pos1=vb stemmed1=y
+type=strongsubj len=1 word1=abused pos1=adj stemmed1=y
+type=strongsubj len=1 word1=abusive pos1=adj stemmed1=y

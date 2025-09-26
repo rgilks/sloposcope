@@ -1,0 +1,20 @@
+
+template:In conclusion
+template:As an AI
+template:Here are [0-9]+ ways
+template:It is important to note
+template:As previously mentioned
+template:This is because
+template:In other words
+template:It should be noted that
+template:As we can see
+template:This suggests that
+template:Based on the above
+template:To summarize
+template:All in all
+template:In summary
+template:As a result
+template:Therefore
+template:Consequently
+template:Moreover
+template:Furthermore

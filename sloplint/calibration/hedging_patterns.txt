@@ -1,0 +1,16 @@
+
+hedge:perhaps
+hedge:might
+hedge:could
+hedge:may
+hedge:somewhat
+hedge:tends to
+hedge:arguably
+hedge:allegedly
+hedge:appears to
+hedge:seems to
+hedge:likely
+hedge:probably
+hedge:possibly
+hedge:potentially
+hedge:supposedly
