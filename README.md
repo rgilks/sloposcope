@@ -1,51 +1,133 @@
-# AI Slop CLI
+# Sloposcope - AI Text Analysis
 
-A comprehensive command-line tool for detecting AI-generated text patterns and measuring "slop" across multiple dimensions.
+A comprehensive tool for detecting AI-generated text patterns and measuring "slop" across multiple dimensions.
 
 ## Features
 
 - **Multi-dimensional Analysis**: 11 different metrics including density, repetition, coherence, templatedness, and more
 - **Configurable Scoring**: Domain-specific weighting and calibration
-- **AWS Integration**: Full ECS + SQS worker deployment
-- **High Performance**: Optimized for batch processing and scaling
-- **Production Ready**: Comprehensive error handling and monitoring
+- **Real-time Web Interface**: Modern web UI with instant analysis
+- **REST API**: Full API for integration with other applications
+- **High Performance**: Optimized for production deployment
 
 ## Quick Start
 
+### Local Development
+
 ```bash
-# Install locally with uv
-uv pip install -e .
+# Install dependencies
+pip install -r requirements.txt
 
-# Or sync dependencies (recommended)
-uv sync
+# Download spaCy model
+python -m spacy download en_core_web_sm
 
-# Analyze text
-sloplint analyze "Your text here" --domain general
-
-# AWS deployment
-cd docker && docker-compose up
+# Run the application
+uvicorn app:app --reload
 ```
 
-## Testing
+Visit http://localhost:8000 to use the web interface.
 
-The project includes comprehensive testing with LocalStack integration:
+### Fly.io Deployment
+
+1. **Install flyctl**:
+
+   ```bash
+   curl -L https://fly.io/install.sh | sh
+   ```
+
+2. **Login to Fly.io**:
+
+   ```bash
+   flyctl auth login
+   ```
+
+3. **Deploy**:
+   ```bash
+   ./deploy-fly.sh
+   ```
+
+Your application will be available at `https://sloposcope.fly.dev`
+
+## API Usage
+
+### Analyze Text
 
 ```bash
-# Run all tests
+curl -X POST "https://sloposcope.fly.dev/analyze" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Your text here",
+    "domain": "general",
+    "explain": true,
+    "spans": true
+  }'
+```
+
+### Health Check
+
+```bash
+curl "https://sloposcope.fly.dev/health"
+```
+
+### Get Metrics Info
+
+```bash
+curl "https://sloposcope.fly.dev/metrics"
+```
+
+## Analysis Metrics
+
+The tool analyzes text across 11 dimensions:
+
+1. **Density** - Information density and perplexity measures
+2. **Relevance** - How well content matches prompt/references
+3. **Coherence** - Entity continuity and topic flow
+4. **Repetition** - N-gram repetition and compression
+5. **Verbosity** - Wordiness and structural complexity
+6. **Templated** - Templated phrases and boilerplate detection
+7. **Tone** - Hedging, sycophancy, and tone analysis
+8. **Subjectivity** - Bias and subjectivity detection
+9. **Fluency** - Grammar and fluency assessment
+10. **Factuality** - Factual accuracy proxy
+11. **Complexity** - Lexical and syntactic complexity
+
+## Slop Levels
+
+- **Clean** (≤ 0.30): High-quality, human-like text
+- **Watch** (0.30 - 0.55): Some AI patterns detected
+- **Sloppy** (0.55 - 0.75): Clear AI-generated characteristics
+- **High-Slop** (> 0.75): Obvious AI-generated content
+
+## Domains
+
+The analysis can be customized for different domains:
+
+- **General**: General purpose text analysis
+- **News**: News articles and journalism
+- **Q&A**: Question and answer content
+
+## Development
+
+### Running Tests
+
+```bash
 make test
-
-# Run unit tests only (fast)
-make test-unit
-
-# Run AWS Worker tests with LocalStack
-make test-aws
-
-# Set up development environment
-make dev-setup
 ```
 
-See [TESTING.md](TESTING.md) for detailed testing instructions.
+### Code Quality
 
-## Documentation
+```bash
+make lint
+make format
+```
 
-See the full documentation in the `docs/` directory for detailed usage instructions, API reference, and deployment guides.
+## Architecture
+
+- **Backend**: FastAPI with Python
+- **Frontend**: Vanilla HTML/CSS/JavaScript with Tailwind CSS
+- **Deployment**: Fly.io with Docker
+- **ML Models**: spaCy, transformers, scikit-learn
+
+## License
+
+Apache 2.0 License - see LICENSE file for details.

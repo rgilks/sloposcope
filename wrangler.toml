@@ -1,0 +1,26 @@
+name = "sloposcope"
+main = "cloudflare/worker.js"
+compatibility_date = "2024-01-15"
+
+[env.production]
+name = "sloposcope-prod"
+vars = { ENVIRONMENT = "production" }
+
+[env.staging]
+name = "sloposcope-staging"
+vars = { ENVIRONMENT = "staging" }
+
+# KV storage for caching (optional)
+# [[kv_namespaces]]
+# binding = "CACHE"
+# id = "your-kv-namespace-id"
+
+# Durable Objects (if needed for state)
+# [[durable_objects.bindings]]
+# name = "ANALYSIS_STATE"
+# class_name = "AnalysisState"
+
+# R2 storage for file uploads (optional)
+# [[r2_buckets]]
+# binding = "UPLOADS"
+# bucket_name = "sloposcope-uploads"
