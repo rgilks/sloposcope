@@ -18,6 +18,7 @@ from functools import lru_cache
 try:
     import spacy
     from spacy.language import Language
+
     SPACY_AVAILABLE = True
 except ImportError:
     SPACY_AVAILABLE = False
@@ -26,6 +27,7 @@ except ImportError:
 
 try:
     from sentence_transformers import SentenceTransformer
+
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
     SENTENCE_TRANSFORMERS_AVAILABLE = False
@@ -50,7 +52,7 @@ class OptimizedNLPPipeline:
         self.use_transformer = use_transformer
         self.enable_caching = enable_caching
         self.cache_dir = cache_dir or os.path.join(os.getcwd(), ".nlp_cache")
-        
+
         # Create cache directory if it doesn't exist
         if self.enable_caching and not os.path.exists(self.cache_dir):
             os.makedirs(self.cache_dir, exist_ok=True)
@@ -106,7 +108,9 @@ class OptimizedNLPPipeline:
                     logger.info(f"Loaded transformer model: {self._model_name}")
                     return nlp
                 except OSError:
-                    logger.warning(f"Transformer model {self._model_name} not found, trying fallback")
+                    logger.warning(
+                        f"Transformer model {self._model_name} not found, trying fallback"
+                    )
 
             # Fallback to small model
             fallback_model = "en_core_web_sm"
@@ -117,7 +121,9 @@ class OptimizedNLPPipeline:
                 logger.info(f"Loaded fallback model: {fallback_model}")
                 return nlp
             except OSError:
-                logger.error(f"Neither {self._model_name} nor {fallback_model} available")
+                logger.error(
+                    f"Neither {self._model_name} nor {fallback_model} available"
+                )
                 return None
 
         except Exception as e:
@@ -264,13 +270,16 @@ class OptimizedNLPPipeline:
 
         try:
             from sklearn.metrics.pairwise import cosine_similarity
+
             similarity = cosine_similarity(embeddings1, embeddings2)[0][0]
             return float(similarity)
         except ImportError:
             logger.warning("scikit-learn not available for similarity calculation")
             return 0.0
 
-    def detect_semantic_drift(self, sentences: List[str], threshold: float = 0.8) -> List[int]:
+    def detect_semantic_drift(
+        self, sentences: List[str], threshold: float = 0.8
+    ) -> List[int]:
         """Detect semantic drift points in a sequence of sentences."""
         if not self.sentence_model or len(sentences) < 2:
             return []

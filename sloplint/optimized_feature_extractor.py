@@ -43,30 +43,30 @@ class OptimizedFeatureExtractor:
         """Initialize optimized feature extractor."""
         self.use_transformer = use_transformer
         self.enable_caching = enable_caching
-        
+
         # Initialize NLP pipeline with optimizations
         self.nlp_pipeline = OptimizedNLPPipeline(
             use_transformer=use_transformer,
             enable_caching=enable_caching,
             cache_dir=cache_dir,
         )
-        
+
         # Cache for processed documents
         self._doc_cache: Dict[str, Any] = {}
-        
+
         # Performance tracking
         self._processing_times: Dict[str, float] = {}
 
     def extract_all_features(self, text: str) -> Dict[str, Any]:
         """Extract all features with performance optimizations."""
         start_time = time.time()
-        
+
         # Process text through NLP pipeline
         doc_result = self.nlp_pipeline.process(text)
-        
+
         # Extract individual features
         features = {}
-        
+
         # Extract density features (with semantic embeddings)
         density_start = time.time()
         features.update(
@@ -119,17 +119,20 @@ class OptimizedFeatureExtractor:
             except Exception as e:
                 logger.error(f"Error extracting {feature_name} features: {e}")
                 features[f"{feature_name}_error"] = str(e)
-            
+
             self._processing_times[feature_name] = time.time() - feature_start
 
         # Add metadata
-        features.update({
-            "has_semantic_features": doc_result.get("sentence_embeddings") is not None,
-            "model_name": doc_result["model_name"],
-            "has_transformer": doc_result["has_transformer"],
-            "processing_times": self._processing_times.copy(),
-            "total_processing_time": time.time() - start_time,
-        })
+        features.update(
+            {
+                "has_semantic_features": doc_result.get("sentence_embeddings")
+                is not None,
+                "model_name": doc_result["model_name"],
+                "has_transformer": doc_result["has_transformer"],
+                "processing_times": self._processing_times.copy(),
+                "total_processing_time": time.time() - start_time,
+            }
+        )
 
         return features
 
@@ -143,22 +146,28 @@ class OptimizedFeatureExtractor:
     def get_processing_stats(self) -> Dict[str, Any]:
         """Get processing performance statistics."""
         total_time = sum(self._processing_times.values())
-        
+
         stats = {
             "total_time": total_time,
             "feature_times": self._processing_times.copy(),
-            "average_feature_time": total_time / len(self._processing_times) if self._processing_times else 0,
-            "slowest_feature": max(self._processing_times.items(), key=lambda x: x[1]) if self._processing_times else None,
-            "fastest_feature": min(self._processing_times.items(), key=lambda x: x[1]) if self._processing_times else None,
+            "average_feature_time": total_time / len(self._processing_times)
+            if self._processing_times
+            else 0,
+            "slowest_feature": max(self._processing_times.items(), key=lambda x: x[1])
+            if self._processing_times
+            else None,
+            "fastest_feature": min(self._processing_times.items(), key=lambda x: x[1])
+            if self._processing_times
+            else None,
         }
-        
+
         # Add NLP pipeline stats
         stats["nlp_pipeline"] = {
             "model_name": self.nlp_pipeline.model_name,
             "has_transformer": self.nlp_pipeline.has_transformer,
             "cache_stats": self.nlp_pipeline.get_cache_stats(),
         }
-        
+
         return stats
 
     def clear_caches(self) -> None:
@@ -169,7 +178,9 @@ class OptimizedFeatureExtractor:
         logger.info("All caches cleared")
 
     @lru_cache(maxsize=128)
-    def _cached_feature_extraction(self, text_hash: str, feature_name: str) -> Dict[str, Any]:
+    def _cached_feature_extraction(
+        self, text_hash: str, feature_name: str
+    ) -> Dict[str, Any]:
         """Cached feature extraction for repeated texts."""
         # This is a placeholder - actual implementation would extract specific features
         return {f"{feature_name}_cached": True}

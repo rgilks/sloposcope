@@ -116,3 +116,4 @@ models/
 # Local development
 .local/
 local/
+.nlp_cache/
