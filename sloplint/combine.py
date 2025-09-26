@@ -137,7 +137,8 @@ def normalize_scores(
 
     normalized = {}
     for metric_name, metric_data in metrics.items():
-        raw_score = metric_data["value"]
+        # Extract the main score value - different extractors use different key names
+        raw_score = _extract_main_score(metric_name, metric_data)
         normalized_score = normalizer.normalize_score(metric_name, raw_score, domain)
 
         normalized[metric_name] = {
@@ -147,6 +148,33 @@ def normalize_scores(
         }
 
     return normalized
+
+
+def _extract_main_score(metric_name: str, metric_data: dict[str, Any]) -> float:
+    """Extract the main score value from metric data based on metric type."""
+    # Map metric names to their main score keys
+    score_keys = {
+        "density": "combined_density",
+        "repetition": "overall_repetition",
+        "templated": "templated_score",
+        "coherence": "coherence_score",
+        "verbosity": "overall_verbosity",
+        "tone": "tone_score",
+        "relevance": "value",
+        "subjectivity": "value",
+        "fluency": "value",
+        "complexity": "value",
+    }
+
+    # Try the specific key first, then fall back to "value"
+    key = score_keys.get(metric_name, "value")
+    if key in metric_data:
+        return float(metric_data[key])
+    elif "value" in metric_data:
+        return float(metric_data["value"])
+    else:
+        # If no score found, return 0.5 as neutral
+        return 0.5
 
 
 def combine_scores(
