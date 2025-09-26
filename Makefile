@@ -36,7 +36,7 @@ test: ## Run all tests
 	python3 -m pytest tests/ -v
 
 test-unit: ## Run unit tests only (fast)
-	python3 -m pytest test_optimized_components.py -v --tb=short
+	python3 -m pytest tests/test_cli.py -v --tb=short
 
 # Code Quality
 lint: ## Run linting

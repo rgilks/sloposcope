@@ -1,477 +1,126 @@
 # Sloposcope Deployment Guide
 
-This comprehensive guide explains how to deploy Sloposcope across multiple platforms, from local development to production cloud environments.
-
-## 🏗️ Architecture Overview
-
-Sloposcope supports multiple deployment architectures:
-
-### Option 1: Fly.io (Recommended for Production)
-
-- **Backend**: FastAPI Python application with transformer models
-- **Frontend**: Embedded HTML/CSS/JavaScript with Tailwind CSS
-- **Deployment**: Single Fly.io app with Docker
-- **Benefits**: Global CDN, automatic scaling, easy SSL, generous free tier
-
-### Option 2: Docker (Local Development & Self-Hosted)
-
-- **Backend**: FastAPI Python application
-- **Frontend**: Embedded HTML/CSS/JavaScript with Tailwind CSS
-- **Deployment**: Docker container with docker-compose
-- **Benefits**: Consistent environment, easy local development
-
-## 📋 Prerequisites
-
-### For Fly.io Deployment (Recommended)
-
-1. **Fly.io Account**: Sign up at [fly.io](https://fly.io)
-2. **flyctl CLI**: Install Fly.io's CLI tool
-   ```bash
-   curl -L https://fly.io/install.sh | sh
-   ```
-3. **Python**: Version 3.11 or higher
-4. **Docker**: For building the container image
-
-### For Docker Deployment
-
-1. **Docker**: Install Docker and Docker Compose
-2. **Python**: Version 3.11 or higher
-3. **Git**: For cloning the repository
-
-## 🚀 Deployment Instructions
-
-### Option 1: Fly.io Deployment (Recommended)
-
-#### 1. Install Dependencies
-
-```bash
-# Clone the repository
-git clone https://github.com/your-org/sloposcope.git
-cd sloposcope
-
-# Install Python dependencies
-uv sync --dev
-
-# Download required models
-python -m spacy download en_core_web_trf
-python -m spacy download en_core_web_sm
-```
-
-#### 2. Configure Fly.io
-
-```bash
-# Login to Fly.io
-flyctl auth login
-
-# Verify your account
-flyctl auth whoami
-
-# Initialize Fly.io app (if not already done)
-flyctl launch --no-deploy
-```
-
-#### 3. Deploy to Fly.io
-
-```bash
-# Deploy using the provided script
-./deploy-fly.sh
-
-# Or deploy manually
-flyctl deploy
-
-# Check deployment status
-flyctl status
-```
-
-Your application will be available at `https://sloposcope.fly.dev`
-
-#### 4. Custom Domain Setup
-
-```bash
-# Add custom domain
-flyctl certs add your-domain.com
-
-# Check certificate status
-flyctl certs show your-domain.com
-```
-
-### Option 2: Docker Deployment
-
-#### 1. Build and Run with Docker Compose
-
-```bash
-# Build and start services
-docker-compose up --build
-
-# Or run in background
-docker-compose up -d --build
-
-# Check logs
-docker-compose logs -f
-```
-
-#### 2. Access the Application
-
-The application will be available at `http://localhost:8000`
-
-#### 3. Production Docker Setup
-
-```bash
-# Build production image
-docker build -f Dockerfile -t sloposcope:latest .
-
-# Run production container
-docker run -d \
-  --name sloposcope \
-  -p 8000:8000 \
-  -e ENVIRONMENT=production \
-  sloposcope:latest
-```
-
-## ⚙️ Configuration
-
-### Environment Variables
-
-Set these in your deployment platform:
-
-```bash
-# Application Configuration
-PORT=8000
-ENVIRONMENT=production
-LOG_LEVEL=INFO
-
-# Model Configuration
-SPACY_MODEL=en_core_web_trf
-SENTENCE_TRANSFORMER_MODEL=all-MiniLM-L6-v2
-
-# Performance Configuration
-MAX_WORKERS=4
-WORKER_TIMEOUT=30
-
-```
-
-### Fly.io Configuration
-
-Update `fly.toml` for your specific needs:
-
-```toml
-[app]
-  app = "sloposcope"
-  primary_region = "ord"
-
-[build]
-
-[http_service]
-  internal_port = 8000
-  force_https = true
-  auto_stop_machines = true
-  auto_start_machines = true
-  min_machines_running = 0
-
-[[vm]]
-  cpu_kind = "shared"
-  cpus = 1
-  memory_mb = 1024
-
-[env]
-  ENVIRONMENT = "production"
-  LOG_LEVEL = "INFO"
-```
-
-### Docker Configuration
-
-Update `docker-compose.yml` for your environment:
-
-```yaml
-version: "3.8"
-
-services:
-  sloposcope:
-    build: .
-    ports:
-      - "8000:8000"
-    environment:
-      - ENVIRONMENT=production
-      - LOG_LEVEL=INFO
-    volumes:
-      - ./models:/app/models
-    restart: unless-stopped
-```
-
-## 🔧 Development Workflow
+## Quick Start
 
 ### Local Development
 
 ```bash
-# Start the development server
-make run
+# Clone and setup
+git clone https://github.com/rgilks/sloposcope.git
+cd sloposcope
+uv sync --dev
 
-# Or with Docker
-make docker-run
+# Download models
+python -m spacy download en_core_web_sm
 
-# Run tests
-make test
-
-# Run linting
-make lint
+# Run locally
+uvicorn app:app --reload
+# Visit http://localhost:8000
 ```
 
-### Testing Deployments
+### Docker Deployment
 
 ```bash
-# Test Fly.io deployment
-curl https://sloposcope.fly.dev/health
+# Build and run
+docker-compose up --build
 
-# Test Docker deployment
-curl http://localhost:8000/health
-
+# Access at http://localhost:8000
 ```
 
-## 🔍 Monitoring and Observability
-
-### Health Checks
-
-All deployments include health check endpoints:
+### Fly.io Deployment (Production)
 
 ```bash
-# Basic health check
-curl https://sloposcope.fly.dev/health
+# Install flyctl
+curl -L https://fly.io/install.sh | sh
 
-# Detailed metrics
-curl https://sloposcope.fly.dev/metrics
+# Login to Fly.io
+flyctl auth login
+
+# Deploy
+./deploy-fly.sh
+
+# Your app will be available at https://sloposcope.fly.dev
 ```
 
-### Logging
+## Architecture
 
-#### Fly.io Logs
+- **Backend**: FastAPI Python application
+- **Frontend**: Embedded HTML/CSS/JavaScript with Tailwind CSS
+- **NLP**: spaCy with transformer models + sentence-transformers
+- **Deployment**: Docker container with Fly.io support
 
-```bash
-# View application logs
-flyctl logs
+## Configuration
 
-# Follow logs in real-time
-flyctl logs -f
+### Environment Variables
 
-# View logs for specific app
-flyctl logs -a sloposcope
-```
+- `TOKENIZERS_PARALLELISM=false` - Prevents tokenizer warnings
+- `SPACY_MODEL=en_core_web_sm` - spaCy model to use
+- `SENTENCE_TRANSFORMERS_MODEL=all-MiniLM-L6-v2` - Embedding model
 
-#### Docker Logs
+### Domains
 
-```bash
-# View container logs
-docker-compose logs -f
+- `general` - General purpose text analysis
+- `news` - News articles and journalism
+- `qa` - Question and answer content
 
-# View specific service logs
-docker-compose logs -f sloposcope
-```
+## Production Considerations
 
-### Metrics
+### Performance
+- Memory usage: ~400MB peak
+- Processing time: <1s for 1000 words
+- Concurrent requests: Handles multiple users
 
-#### Fly.io Metrics
+### Scaling
+- Fly.io: Automatic scaling based on traffic
+- Docker: Manual scaling with load balancer
+- Database: No database required (stateless)
 
-```bash
-# View app metrics
-flyctl metrics
+### Monitoring
+- Health check endpoint: `/health`
+- Metrics endpoint: `/metrics`
+- Logs: Available through deployment platform
 
-# View specific metrics
-flyctl metrics --type cpu,memory
-```
-
-## 🚨 Troubleshooting
+## Troubleshooting
 
 ### Common Issues
 
-#### 1. Memory Issues
+1. **Model loading errors**: Ensure spaCy model is installed
+2. **Memory issues**: Increase container memory limits
+3. **Performance**: Check tokenizer parallelism setting
+4. **API errors**: Verify request format and content type
 
-**Symptoms**: Application crashes, out of memory errors
-
-**Solutions**:
-
-```bash
-# Increase memory allocation (Fly.io)
-flyctl scale memory 2048
-
-# Increase Docker memory limit
-docker run -m 2g sloposcope:latest
-
-# Monitor memory usage
-flyctl metrics --type memory
-```
-
-#### 2. Model Loading Issues
-
-**Symptoms**: Slow startup, model not found errors
-
-**Solutions**:
+### Health Checks
 
 ```bash
-# Check if models are installed
-python -c "import spacy; spacy.load('en_core_web_trf')"
+# Check if service is running
+curl http://localhost:8000/health
 
-# Download missing models
-python -m spacy download en_core_web_trf
-
-# Pre-build models in Docker
-docker build --build-arg DOWNLOAD_MODELS=true -t sloposcope:latest .
+# Get metrics
+curl http://localhost:8000/metrics
 ```
 
-#### 3. Performance Issues
+## Security
 
-**Symptoms**: Slow response times, high CPU usage
+- CORS enabled for web interface
+- No authentication required (public API)
+- All processing happens locally
+- No external API calls
 
-**Solutions**:
+## Maintenance
 
-```bash
-# Scale horizontally (Fly.io)
-flyctl scale count 2
+### Updates
+- Pull latest changes: `git pull`
+- Rebuild container: `docker-compose up --build`
+- Redeploy to Fly.io: `./deploy-fly.sh`
 
-# Optimize Docker resources
-docker run --cpus=2 --memory=2g sloposcope:latest
+### Monitoring
+- Check logs regularly
+- Monitor memory usage
+- Verify health endpoints
+- Test analysis accuracy
 
-# Monitor performance
-flyctl metrics --type cpu,memory,latency
-```
+## Support
 
-### Debugging Commands
-
-```bash
-# Debug Fly.io deployment
-flyctl ssh console
-
-# Debug Docker container
-docker exec -it sloposcope-container /bin/bash
-
-```
-
-## 🔒 Security Considerations
-
-### 1. Input Validation
-
-- Validate all input text for length and content
-- Implement rate limiting for API endpoints
-- Sanitize user inputs to prevent injection attacks
-
-### 2. Authentication & Authorization
-
-```bash
-# Add API key authentication (optional)
-export API_KEY=your-secret-key
-
-# Configure CORS properly
-export CORS_ORIGINS=https://yourdomain.com
-```
-
-### 3. Data Protection
-
-- No sensitive data persisted unless explicitly configured
-- Use HTTPS for all communications
-- Implement proper logging without exposing sensitive information
-
-## 📈 Performance Optimization
-
-### 1. Caching
-
-```bash
-# Enable Redis caching (optional)
-export REDIS_URL=redis://localhost:6379
-
-# Enable model caching
-export CACHE_MODELS=true
-```
-
-### 2. CDN
-
-Fly.io automatically provides global CDN. For other deployments:
-
-```bash
-# Configure CloudFlare or similar CDN
-# Set appropriate cache headers
-# Enable compression
-```
-
-### 3. Resource Optimization
-
-```bash
-# Optimize Docker image size
-docker build --target production -t sloposcope:latest .
-
-# Use multi-stage builds
-# Minimize dependencies
-# Use Alpine Linux base images
-```
-
-## 💰 Cost Optimization
-
-### Fly.io
-
-- Use shared CPU instances for development
-- Enable auto-stop/start for non-production apps
-- Monitor usage with `flyctl metrics`
-
-### Docker
-
-- Use multi-stage builds to reduce image size
-- Implement health checks to restart unhealthy containers
-- Use resource limits to prevent runaway processes
-
-## 🔄 CI/CD Pipeline
-
-### GitHub Actions Example
-
-```yaml
-name: Deploy to Fly.io
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only
-        env:
-          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-```
-
-### Docker Hub Example
-
-```yaml
-name: Build and Push Docker Image
-
-on:
-  push:
-    branches: [main]
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: your-org/sloposcope:latest
-```
-
-## 📚 Additional Resources
-
-- [Fly.io Documentation](https://fly.io/docs/)
-- [Docker Documentation](https://docs.docker.com/)
-- [FastAPI Deployment Guide](https://fastapi.tiangolo.com/deployment/)
-- [spaCy Model Installation](https://spacy.io/usage/models)
-
-## 🆘 Support
-
-For deployment issues:
-
-1. Check the troubleshooting section above
-2. Review application logs
-3. Check platform-specific documentation
-4. Open an issue in the GitHub repository
-5. Join the community discussions
+- GitHub Issues: Report bugs and feature requests
+- Documentation: See README.md and DOCS.md
+- API Docs: Available at `/docs` when running

@@ -14,7 +14,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from research_compliant_slop_detector import ResearchCompliantSlopDetector
+from sloplint.feature_extractor import FeatureExtractor
+from sloplint.combine import combine_scores, normalize_scores
+from sloplint.spans import SpanCollection
 
 app = FastAPI(
     title="Sloposcope API", description="AI Slop Detection API", version="1.0.0"
@@ -29,8 +31,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global slop detector instance
-slop_detector: ResearchCompliantSlopDetector | None = None
+# Global feature extractor instance
+feature_extractor: FeatureExtractor | None = None
 
 
 class AnalysisRequest(BaseModel):
@@ -53,12 +55,24 @@ class AnalysisResponse(BaseModel):
     explanations: dict[str, str] | None = None
 
 
-def get_slop_detector() -> ResearchCompliantSlopDetector:
-    """Get or create slop detector instance."""
-    global slop_detector
-    if slop_detector is None:
-        slop_detector = ResearchCompliantSlopDetector()
-    return slop_detector
+def get_feature_extractor() -> FeatureExtractor:
+    """Get or create feature extractor instance."""
+    global feature_extractor
+    if feature_extractor is None:
+        feature_extractor = FeatureExtractor()
+    return feature_extractor
+
+
+def get_slop_level(score: float) -> str:
+    """Convert slop score to level category."""
+    if score <= 0.50:
+        return "Clean"
+    elif score <= 0.70:
+        return "Watch"
+    elif score <= 0.85:
+        return "Sloppy"
+    else:
+        return "High-Slop"
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -428,26 +442,29 @@ async def analyze_text(request: AnalysisRequest):
         if not request.text.strip():
             raise HTTPException(status_code=400, detail="No text provided")
 
-        # Get slop detector
-        detector = get_slop_detector()
+        # Get feature extractor
+        extractor = get_feature_extractor()
 
-        # Analyze text for slop
+        # Extract all features
         analysis_start = time.time()
-        result = detector.detect_slop(request.text)
+        raw_features = extractor.extract_all_features(request.text)
         analysis_time = int((time.time() - analysis_start) * 1000)
 
-        # Extract slop score and level
-        slop_score = result["slop_score"]
-        slop_level = result["level"]
-
-        # Convert to metrics format for compatibility
+        # Convert features to metrics format
         metrics = {}
-        for key, value in result.items():
-            if key not in ["slop_score", "slop_level", "is_slop", "confidence"]:
-                if isinstance(value, (int, float)):
-                    metrics[key] = {"value": value}
-                elif isinstance(value, dict):
-                    metrics[key] = value
+        for feature_name, feature_data in raw_features.items():
+            if isinstance(feature_data, dict):
+                metrics[feature_name] = feature_data
+            else:
+                metrics[feature_name] = {"value": float(feature_data) if isinstance(feature_data, (int, float)) else 0.5}
+
+        # Normalize and combine scores
+        normalized_metrics = normalize_scores(metrics, request.domain)
+        slop_score, confidence = combine_scores(normalized_metrics, request.domain)
+        slop_level = get_slop_level(slop_score)
+
+        # Create spans collection (placeholder for now)
+        spans_collection = SpanCollection()
 
         total_time = int((time.time() - start_time) * 1000)
 
@@ -456,20 +473,31 @@ async def analyze_text(request: AnalysisRequest):
             version="1.0",
             domain=request.domain,
             slop_score=slop_score,
-            confidence=result.get("confidence", 0.8),
+            confidence=confidence,
             level=slop_level,
-            metrics=metrics,
+            metrics=normalized_metrics,
             timings_ms={"total": total_time, "analysis": analysis_time},
         )
 
         # Add explanations if requested
         if request.explain:
             response.explanations = {
-                "density": "Information density analysis - detects verbose, low-value content",
-                "structure": "Structure analysis - identifies templated and repetitive patterns",
-                "tone": "Tone analysis - catches jargon and awkward phrasing",
-                "coherence": "Coherence analysis - measures logical flow and organization",
+                "density": "Information density and perplexity measures",
+                "relevance": "How well content matches prompt/references",
+                "coherence": "Entity continuity and topic flow",
+                "repetition": "N-gram repetition and compression",
+                "verbosity": "Wordiness and structural complexity",
+                "tone": "Jargon and awkward phrasing detection",
+                "templated": "Formulaic and boilerplate patterns",
+                "factuality": "Accuracy and truthfulness measures",
+                "subjectivity": "Bias and subjective language detection",
+                "fluency": "Grammar and natural language patterns",
+                "complexity": "Text complexity and readability measures",
             }
+
+        # Add spans if requested
+        if request.spans:
+            response.spans = spans_collection.to_dict_list()
 
         return response
 

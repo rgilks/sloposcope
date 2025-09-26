@@ -6,7 +6,7 @@ A production-ready tool for detecting AI-generated text patterns and measuring "
 
 - **🔬 Research-Based**: Implements 7 core slop dimensions from academic research
 - **🧠 Advanced NLP**: Transformer-based analysis with semantic understanding
-- **📊 Multi-dimensional Analysis**: Density, Structure, Tone, Coherence, and more
+- **📊 Multi-dimensional Analysis**: Density, Repetition, Templated, Tone, Coherence, Relevance, Factuality, Subjectivity, Fluency, and Complexity
 - **🎯 Natural Writing Protection**: Prevents false positives on human-written content
 - **⚡ High Performance**: Optimized for production with fast processing
 - **🌐 Modern Web Interface**: Real-time analysis with beautiful, responsive UI
@@ -38,7 +38,20 @@ pip install -e ".[dev]"
 python -m spacy download en_core_web_sm
 ```
 
-### Local Development
+### Command Line Usage
+
+```bash
+# Analyze text directly
+python -m sloplint.cli analyze "Your text here" --explain
+
+# Analyze a file
+python -m sloplint.cli analyze document.txt --domain news --explain
+
+# Get help
+python -m sloplint.cli --help
+```
+
+### Web Interface
 
 ```bash
 # Start the development server
@@ -50,17 +63,67 @@ make run
 
 Visit http://localhost:8000 to use the web interface.
 
-### Command Line Usage
+## 🔍 Research-Based Analysis
+
+The tool implements the 7 core slop dimensions from "Measuring AI 'SLOP' in Text" (Shaib et al., 2025):
+
+### Core Dimensions
+
+1. **Density** - Information content per word, detects verbose low-value content
+2. **Repetition** - N-gram repetition and compression patterns
+3. **Templated** - Formulaic and boilerplate language detection
+4. **Tone** - Jargon and awkward phrasing detection
+5. **Coherence** - Entity continuity and topic flow analysis
+6. **Relevance** - Appropriateness to context/task
+7. **Factuality** - Accuracy and truthfulness measures
+
+### Additional Dimensions
+
+- **Subjectivity** - Bias and subjective language detection
+- **Fluency** - Grammar and natural language patterns
+- **Complexity** - Text complexity and readability measures
+- **Verbosity** - Wordiness and structural complexity
+
+## 📈 Slop Levels
+
+- **🟢 Clean** (≤ 0.50): High-quality, human-like text
+- **🟡 Watch** (0.50 - 0.70): Some AI patterns detected
+- **🟠 Sloppy** (0.70 - 0.85): Clear AI-generated characteristics
+- **🔴 High-Slop** (> 0.85): Obvious AI-generated content
+
+## 🎯 Domains
+
+The analysis can be customized for different content types:
+
+- **General**: General purpose text analysis
+- **News**: News articles and journalism
+- **Q&A**: Question and answer content
+
+## 📡 API Usage
+
+### Analyze Text
 
 ```bash
-# Analyze text directly
-python research_compliant_slop_detector.py "Your text here"
+curl -X POST "http://localhost:8000/analyze" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "text": "Your text here",
+    "domain": "general",
+    "explain": true,
+    "spans": true
+  }'
+```
 
-# Analyze with detailed output
-python research_compliant_slop_detector.py "Your text here" --verbose
+### Health Check
 
-# Get help
-python research_compliant_slop_detector.py --help
+```bash
+curl "http://localhost:8000/health"
+```
+
+### Get Metrics Info
+
+```bash
+curl "http://localhost:8000/metrics"
 ```
 
 ## 🌐 Deployment Options
@@ -82,69 +145,6 @@ docker-compose up --build
 
 # Access at http://localhost:8000
 ```
-
-## 📡 API Usage
-
-### Analyze Text
-
-```bash
-curl -X POST "https://sloposcope.fly.dev/analyze" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Your text here",
-    "domain": "general",
-    "explain": true,
-    "spans": true
-  }'
-```
-
-### Health Check
-
-```bash
-curl "https://sloposcope.fly.dev/health"
-```
-
-### Get Metrics Info
-
-```bash
-curl "https://sloposcope.fly.dev/metrics"
-```
-
-## 🔍 Research-Based Analysis
-
-The tool implements the 7 core slop dimensions from "Measuring AI 'SLOP' in Text" (Shaib et al., 2025):
-
-### Core Dimensions
-
-1. **Density** - Information content per word, detects verbose low-value content
-2. **Structure** - Templated and repetitive patterns, identifies formulaic writing
-3. **Tone** - Jargon and awkward phrasing, catches corporate speak
-4. **Coherence** - Logical flow and organization (currently being refined)
-5. **Relevance** - Appropriateness to context/task (planned)
-6. **Factuality** - Accuracy and truthfulness (planned)
-7. **Bias** - One-sided or over-generalized claims (planned)
-
-### Advanced Features
-
-- **Natural Writing Detection**: Protects human-written content from false positives
-- **Pattern Recognition**: Research-validated slop patterns and templates
-- **Semantic Analysis**: Transformer-based understanding of text meaning
-- **Dynamic Thresholds**: Adjusts sensitivity based on content type
-
-## 📈 Slop Levels
-
-- **🟢 Clean** (≤ 0.30): High-quality, human-like text
-- **🟡 Watch** (0.30 - 0.55): Some AI patterns detected
-- **🟠 Sloppy** (0.55 - 0.75): Clear AI-generated characteristics
-- **🔴 High-Slop** (> 0.75): Obvious AI-generated content
-
-## 🎯 Domains
-
-The analysis can be customized for different content types:
-
-- **General**: General purpose text analysis
-- **News**: News articles and journalism
-- **Q&A**: Question and answer content
 
 ## 🛠️ Development
 
@@ -192,11 +192,11 @@ make run
 
 ## 🏗️ Architecture
 
-- **Main Detector**: `research_compliant_slop_detector.py` - Production-ready detector
-- **Backend**: FastAPI with Python 3.11+
-- **Frontend**: Vanilla HTML/CSS/JavaScript with Tailwind CSS
-- **NLP Pipeline**: spaCy with transformer models + sentence-transformers
-- **Core Library**: `sloplint/` - Feature extraction and analysis modules
+- **Main Library**: `sloplint/` - Core feature extraction and analysis modules
+- **CLI Interface**: `sloplint/cli.py` - Command-line interface
+- **Web App**: `app.py` - FastAPI web application
+- **NLP Pipeline**: `sloplint/nlp/` - spaCy with transformer models + sentence-transformers
+- **Feature Extractors**: `sloplint/features/` - Individual slop dimension analyzers
 - **Deployment**: Docker with Fly.io support
 - **Testing**: pytest with comprehensive test coverage
 
@@ -204,7 +204,7 @@ make run
 
 - **Speed**: <1s processing time for 1k words
 - **Memory**: <400MB peak memory consumption
-- **Accuracy**: 66.7% accuracy on test cases with zero false positives
+- **Accuracy**: Research-based implementation with high precision
 - **Coverage**: >95% test coverage for core functionality
 
 ## 📚 Research Foundation
@@ -229,10 +229,3 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENS
 - Built with [spaCy](https://spacy.io/) and [sentence-transformers](https://www.sbert.net/)
 - Deployed on [Fly.io](https://fly.io/)
 - Inspired by ongoing research in AI text detection and quality assessment
-
-## 📖 Additional Documentation
-
-- [Deployment Guide](DEPLOYMENT.md) - Detailed deployment instructions
-- [Technical Specification](SPEC.md) - Complete technical documentation
-- [Testing Guide](TESTING.md) - How to run and write tests
-- [Development History](IMPROVEMENT_HISTORY.md) - Project evolution and achievements
