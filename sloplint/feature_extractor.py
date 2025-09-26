@@ -73,7 +73,7 @@ class FeatureExtractor:
                 text,
                 doc_result["sentences"],
                 doc_result["tokens"],
-                doc_result["pos_tags"],
+                doc_result.get("pos_tags"),
                 doc_result.get("sentence_embeddings"),
             )
         )
@@ -86,7 +86,7 @@ class FeatureExtractor:
                 text,
                 doc_result["sentences"],
                 doc_result["tokens"],
-                doc_result["pos_tags"],
+                doc_result.get("sentence_embeddings"),
             )
         )
         self._processing_times["coherence"] = time.time() - coherence_start
@@ -107,12 +107,11 @@ class FeatureExtractor:
         for feature_name, extractor_func in feature_extractors:
             feature_start = time.time()
             try:
-                # All extractors use the same signature: (text, sentences, tokens, pos_tags)
+                # All extractors use the same signature: (text, sentences, tokens)
                 feature_result = extractor_func(
                     text,
                     doc_result["sentences"],
                     doc_result["tokens"],
-                    doc_result["pos_tags"],
                 )
                 features.update(feature_result)
             except Exception as e:

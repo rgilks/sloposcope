@@ -1,0 +1,17 @@
+The QuickSort algorithm is a divide-and-conquer sorting algorithm that works by selecting a 'pivot' element from the array and partitioning the other elements into two sub-arrays, according to whether they are less than or greater than the pivot. The sub-arrays are then sorted recursively.
+
+Here's how it works:
+
+1. Choose a pivot element from the array
+2. Partition the array so that all elements less than the pivot come before it, and all elements greater than the pivot come after it
+3. Recursively apply the same process to the sub-arrays
+
+The time complexity of QuickSort is O(n log n) on average, but O(n²) in the worst case when the pivot is always the smallest or largest element. The space complexity is O(log n) due to the recursive call stack.
+
+The choice of pivot significantly affects performance. Common strategies include:
+- Always pick the first element
+- Always pick the last element  
+- Pick a random element
+- Pick the median of first, middle, and last elements
+
+In practice, QuickSort is often faster than other O(n log n) algorithms like MergeSort because it has better cache performance and the constant factors are smaller.

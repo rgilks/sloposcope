@@ -29,8 +29,7 @@ def version_callback(value: bool) -> None:
 
 @app.callback()
 def main(
-    version: bool
-    | None = typer.Option(
+    version: bool | None = typer.Option(
         None,
         "--version",
         "-v",
@@ -47,13 +46,15 @@ def analyze_command(
     domain: str = typer.Option(
         "general", "--domain", help="Domain for analysis (news, qa, general)"
     ),
-    prompt: str
-    | None = typer.Option(None, "--prompt", help="Intended instruction/prompt"),
+    prompt: str | None = typer.Option(
+        None, "--prompt", help="Intended instruction/prompt"
+    ),
     reference: list[Path] = typer.Option(
         [], "--reference", help="Reference files for factuality"
     ),
-    json_output: Path
-    | None = typer.Option(None, "--json", help="JSON output file path"),
+    json_output: Path | None = typer.Option(
+        None, "--json", help="JSON output file path"
+    ),
     explain: bool = typer.Option(False, "--explain", help="Show detailed explanations"),
     spans: bool = typer.Option(False, "--spans", help="Show character spans"),
     language: str = typer.Option("en", "--language", help="Language code"),
@@ -75,38 +76,29 @@ def analyze_command(
         )
 
         # Initialize feature extractor
-        extractor = FeatureExtractor(language=language)
+        extractor = FeatureExtractor()
 
         # Extract all features
         raw_features = extractor.extract_all_features(text_content)
 
-        # Extract spans
-        spans_collection = extractor.extract_spans(text_content)
+        # Extract spans (placeholder for now)
+        from .spans import SpanCollection
+
+        spans_collection = SpanCollection()
 
         # Convert features to metrics format
         metrics = {}
         for feature_name, feature_data in raw_features.items():
-            if isinstance(feature_data, dict) and "value" in feature_data:
-                # Already has value key
+            if isinstance(feature_data, dict):
+                # Feature data is already a dictionary, use it as is
                 metrics[feature_name] = feature_data
             else:
-                # Calculate value from feature data
-                if feature_name == "density":
-                    value = feature_data.get("combined_density", 0.5)
-                elif feature_name == "repetition":
-                    value = feature_data.get("overall_repetition", 0.3)
-                elif feature_name == "templated":
-                    value = feature_data.get("templated_score", 0.4)
-                elif feature_name == "coherence":
-                    value = feature_data.get("coherence_score", 0.5)
-                elif feature_name == "verbosity":
-                    value = feature_data.get("overall_verbosity", 0.6)
-                elif feature_name == "tone":
-                    value = feature_data.get("tone_score", 0.4)
-                else:
-                    value = feature_data.get("value", 0.5)
-
-                metrics[feature_name] = {"value": value, **feature_data}
+                # If it's not a dict, wrap it
+                metrics[feature_name] = {
+                    "value": float(feature_data)
+                    if isinstance(feature_data, (int, float))
+                    else 0.5
+                }
 
         # Normalize and combine scores
         normalized_metrics = normalize_scores(metrics, domain)
