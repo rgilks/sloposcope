@@ -6,13 +6,11 @@ This version properly implements the 7 core slop dimensions from the research pa
 "Measuring AI 'SLOP' in Text" with span-level analysis and context awareness.
 """
 
-import re
-import json
-import sys
 import argparse
-from collections import Counter
-from typing import Dict, List, Any, Tuple
-import math
+import json
+import re
+import sys
+from typing import Any
 
 
 class ResearchCompliantSlopDetector:
@@ -79,7 +77,7 @@ class ResearchCompliantSlopDetector:
                 re.compile(pattern, re.IGNORECASE) for pattern in patterns
             ]
 
-    def _analyze_density(self, text: str) -> Dict[str, Any]:
+    def _analyze_density(self, text: str) -> dict[str, Any]:
         """
         Analyze Density: Many words, little information; filler or fluff.
         Based on research paper definition.
@@ -231,7 +229,7 @@ class ResearchCompliantSlopDetector:
             "verbosity_score": verbosity_score,
         }
 
-    def _analyze_structure(self, text: str) -> Dict[str, Any]:
+    def _analyze_structure(self, text: str) -> dict[str, Any]:
         """
         Analyze Structure: Repetitive or templated sentence/formula pattern.
         Based on research paper definition.
@@ -291,7 +289,7 @@ class ResearchCompliantSlopDetector:
             "similar_sentences": similar_sentences,
         }
 
-    def _analyze_coherence(self, text: str) -> Dict[str, Any]:
+    def _analyze_coherence(self, text: str) -> dict[str, Any]:
         """
         Analyze Coherence: Disjointed or ill-logical flow; hard to follow.
         Based on research paper definition.
@@ -348,7 +346,7 @@ class ResearchCompliantSlopDetector:
             "topic_changes": topic_changes,
         }
 
-    def _analyze_tone(self, text: str) -> Dict[str, Any]:
+    def _analyze_tone(self, text: str) -> dict[str, Any]:
         """
         Analyze Tone: Awkward fluency, needless jargon, verbosity, or style unsuited to context/audience.
         Based on research paper definition.
@@ -445,7 +443,7 @@ class ResearchCompliantSlopDetector:
 
     def _detect_patterns(
         self, text: str
-    ) -> Tuple[Dict[str, float], Dict[str, List[str]]]:
+    ) -> tuple[dict[str, float], dict[str, list[str]]]:
         """Detect slop patterns with optimized scoring."""
         pattern_scores = {}
         pattern_matches = {}
@@ -462,7 +460,7 @@ class ResearchCompliantSlopDetector:
         return pattern_scores, pattern_matches
 
     def _is_natural_human_writing(
-        self, text: str, slop_indicators: Dict[str, float]
+        self, text: str, slop_indicators: dict[str, float]
     ) -> bool:
         """Enhanced natural human writing detection."""
         natural_indicators = [
@@ -499,7 +497,7 @@ class ResearchCompliantSlopDetector:
 
         return False
 
-    def detect_slop(self, text: str) -> Dict[str, Any]:
+    def detect_slop(self, text: str) -> dict[str, Any]:
         """Detect slop using research-compliant 7-dimensional analysis."""
         if not text or not text.strip():
             return {
@@ -755,7 +753,7 @@ Examples:
     # Get input text
     if args.file:
         try:
-            with open(args.file, "r", encoding="utf-8") as f:
+            with open(args.file, encoding="utf-8") as f:
                 text = f.read().strip()
         except FileNotFoundError:
             print(f"❌ File not found: {args.file}")
@@ -790,7 +788,7 @@ Examples:
             print(f"Explanation: {result['explanation']}")
             print(f"Natural Writing: {result.get('is_natural_writing', False)}")
 
-            print(f"\n7-Dimensional Analysis:")
+            print("\n7-Dimensional Analysis:")
             print(
                 f"  Density: {result.get('density_analysis', {}).get('density_score', 0):.1f}"
             )
@@ -802,7 +800,7 @@ Examples:
             )
             print(f"  Tone: {result.get('tone_analysis', {}).get('tone_score', 0):.1f}")
 
-            print(f"\nDetailed Indicators:")
+            print("\nDetailed Indicators:")
             for indicator, score in result["slop_indicators"].items():
                 if score > 0:
                     print(f"  {indicator}: {score:.1f}")

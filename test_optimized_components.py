@@ -9,23 +9,23 @@ This module tests:
 - Performance improvements
 """
 
-import pytest
-import numpy as np
-import tempfile
 import os
-from unittest.mock import patch, MagicMock
+import tempfile
 
-from sloplint.nlp.optimized_pipeline import OptimizedNLPPipeline
-from sloplint.optimized_feature_extractor import OptimizedFeatureExtractor
-from sloplint.ml_integration import AnomalyDetector, LearnedCombiner, EnsembleDetector
+import numpy as np
+import pytest
+
+from sloplint.feature_extractor import FeatureExtractor
+from sloplint.ml_integration import AnomalyDetector, EnsembleDetector, LearnedCombiner
+from sloplint.nlp.pipeline import NLPPipeline
 
 
-class TestOptimizedNLPPipeline:
+class TestNLPPipeline:
     """Test optimized NLP pipeline."""
 
     def test_lazy_loading(self):
         """Test that models are loaded lazily."""
-        pipeline = OptimizedNLPPipeline(use_transformer=True)
+        pipeline = NLPPipeline(use_transformer=True)
 
         # Models should not be loaded initially
         assert pipeline._nlp is None
@@ -37,14 +37,13 @@ class TestOptimizedNLPPipeline:
             nlp is not None or pipeline._nlp is None
         )  # May be None if spaCy not available
 
-        sentence_model = pipeline.sentence_model
         # After accessing, the model should be loaded (if available)
         assert pipeline._sentence_model is not None or not pipeline.use_transformer
 
     def test_caching(self):
         """Test caching functionality."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            pipeline = OptimizedNLPPipeline(
+            pipeline = NLPPipeline(
                 use_transformer=False,  # Use smaller model for testing
                 enable_caching=True,
                 cache_dir=temp_dir,
@@ -67,7 +66,7 @@ class TestOptimizedNLPPipeline:
     def test_cache_stats(self):
         """Test cache statistics."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            pipeline = OptimizedNLPPipeline(enable_caching=True, cache_dir=temp_dir)
+            pipeline = NLPPipeline(enable_caching=True, cache_dir=temp_dir)
 
             # Process some text to create cache entries
             pipeline.process("Test text 1")
@@ -79,7 +78,7 @@ class TestOptimizedNLPPipeline:
 
     def test_batch_processing(self):
         """Test batch processing functionality."""
-        pipeline = OptimizedNLPPipeline(use_transformer=False)
+        pipeline = NLPPipeline(use_transformer=False)
 
         texts = [
             "First test sentence.",
@@ -95,7 +94,7 @@ class TestOptimizedNLPPipeline:
 
     def test_semantic_similarity(self):
         """Test semantic similarity calculation."""
-        pipeline = OptimizedNLPPipeline(use_transformer=False)
+        pipeline = NLPPipeline(use_transformer=False)
 
         text1 = "The cat sat on the mat."
         text2 = "A feline rested on the rug."
@@ -106,7 +105,7 @@ class TestOptimizedNLPPipeline:
 
     def test_semantic_drift_detection(self):
         """Test semantic drift detection."""
-        pipeline = OptimizedNLPPipeline(use_transformer=False)
+        pipeline = NLPPipeline(use_transformer=False)
 
         sentences = [
             "The weather is nice today.",
@@ -121,12 +120,12 @@ class TestOptimizedNLPPipeline:
         assert all(isinstance(point, int) for point in drift_points)
 
 
-class TestOptimizedFeatureExtractor:
+class TestFeatureExtractor:
     """Test optimized feature extractor."""
 
     def test_feature_extraction(self):
         """Test feature extraction with optimizations."""
-        extractor = OptimizedFeatureExtractor(use_transformer=False)
+        extractor = FeatureExtractor(use_transformer=False)
 
         text = "This is a test document with some content for analysis."
 
@@ -144,7 +143,7 @@ class TestOptimizedFeatureExtractor:
 
     def test_batch_feature_extraction(self):
         """Test batch feature extraction."""
-        extractor = OptimizedFeatureExtractor(use_transformer=False)
+        extractor = FeatureExtractor(use_transformer=False)
 
         texts = [
             "First test document.",
@@ -161,7 +160,7 @@ class TestOptimizedFeatureExtractor:
 
     def test_processing_stats(self):
         """Test processing statistics."""
-        extractor = OptimizedFeatureExtractor(use_transformer=False)
+        extractor = FeatureExtractor(use_transformer=False)
 
         # Extract features to generate stats
         extractor.extract_all_features("Test text for statistics.")
@@ -175,7 +174,7 @@ class TestOptimizedFeatureExtractor:
 
     def test_cache_clearing(self):
         """Test cache clearing functionality."""
-        extractor = OptimizedFeatureExtractor(enable_caching=True)
+        extractor = FeatureExtractor(enable_caching=True)
 
         # Extract features to populate caches
         extractor.extract_all_features("Test text for cache clearing.")
@@ -546,7 +545,7 @@ class TestPerformanceImprovements:
     def test_optimized_pipeline_performance(self):
         """Test that optimized pipeline is faster than original."""
         # This is a basic test - in practice, we'd measure actual performance
-        pipeline = OptimizedNLPPipeline(use_transformer=False)
+        pipeline = NLPPipeline(use_transformer=False)
 
         text = "This is a test sentence for performance testing."
 
@@ -557,7 +556,7 @@ class TestPerformanceImprovements:
     def test_caching_improves_performance(self):
         """Test that caching improves performance on repeated texts."""
         with tempfile.TemporaryDirectory() as temp_dir:
-            pipeline = OptimizedNLPPipeline(
+            pipeline = NLPPipeline(
                 use_transformer=False, enable_caching=True, cache_dir=temp_dir
             )
 

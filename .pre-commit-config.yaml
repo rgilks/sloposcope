@@ -20,7 +20,17 @@ repos:
     rev: v1.18.2
     hooks:
       - id: mypy
-        args: [--ignore-missing-imports, --no-error-summary, --disable-error-code=valid-type, --disable-error-code=no-any-return, --disable-error-code=misc, --disable-error-code=no-untyped-def, --disable-error-code=import-untyped, --disable-error-code=assignment]
+        args:
+          [
+            --ignore-missing-imports,
+            --no-error-summary,
+            --disable-error-code=valid-type,
+            --disable-error-code=no-any-return,
+            --disable-error-code=misc,
+            --disable-error-code=no-untyped-def,
+            --disable-error-code=import-untyped,
+            --disable-error-code=assignment,
+          ]
         files: ^sloplint/aws_worker/
 
   # Check for trailing whitespace and other issues
@@ -41,7 +51,7 @@ repos:
         name: pytest-unit
         entry: uv run python -m pytest
         language: system
-        args: [test_unit_enhanced.py, -v, --tb=short]
+        args: [test_optimized_components.py, -v, --tb=short]
         pass_filenames: false
         always_run: true
 
@@ -51,8 +61,8 @@ ci:
 
     for more information, see https://pre-commit.ci
   autofix_prs: true
-  autoupdate_branch: ''
-  autoupdate_commit_msg: '[pre-commit.ci] pre-commit autoupdate'
+  autoupdate_branch: ""
+  autoupdate_commit_msg: "[pre-commit.ci] pre-commit autoupdate"
   autoupdate_schedule: weekly
   skip: []
   submodules: false

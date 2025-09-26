@@ -1,16 +1,17 @@
-# Sloposcope - Advanced AI Text Analysis
+# Sloposcope - Research-Based AI Slop Detection
 
-A comprehensive, production-ready tool for detecting AI-generated text patterns and measuring "slop" across multiple dimensions using state-of-the-art transformer models and semantic analysis.
+A production-ready tool for detecting AI-generated text patterns and measuring "slop" based on the latest research in AI text quality assessment. Implements the 7-dimensional slop detection framework from "Measuring AI 'SLOP' in Text" (Shaib et al., 2025).
 
 ## ✨ Features
 
-- **🧠 Advanced NLP Pipeline**: Transformer-based spaCy models (`en_core_web_trf`) with semantic embeddings
-- **📊 Multi-dimensional Analysis**: 11 sophisticated metrics including semantic density, coherence, and conceptual analysis
-- **🎯 Domain-Specific Scoring**: Configurable weighting for news, Q&A, and general content
-- **⚡ High Performance**: Optimized for production with <1s processing for 1k words
+- **🔬 Research-Based**: Implements 7 core slop dimensions from academic research
+- **🧠 Advanced NLP**: Transformer-based analysis with semantic understanding
+- **📊 Multi-dimensional Analysis**: Density, Structure, Tone, Coherence, and more
+- **🎯 Natural Writing Protection**: Prevents false positives on human-written content
+- **⚡ High Performance**: Optimized for production with fast processing
 - **🌐 Modern Web Interface**: Real-time analysis with beautiful, responsive UI
-- **🔌 REST API**: Full API for seamless integration with other applications
-- **☁️ Cloud Ready**: Docker deployment with AWS ECS/SQS worker support
+- **🔌 REST API**: Full API for seamless integration
+- **☁️ Cloud Ready**: Docker deployment with Fly.io and AWS support
 - **🔒 Privacy-First**: All processing happens locally, no external API calls
 
 ## 🚀 Quick Start
@@ -24,7 +25,7 @@ A comprehensive, production-ready tool for detecting AI-generated text patterns 
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-org/sloposcope.git
+git clone https://github.com/rgilks/sloposcope.git
 cd sloposcope
 
 # Install with uv (recommended)
@@ -52,14 +53,14 @@ Visit http://localhost:8000 to use the web interface.
 ### Command Line Usage
 
 ```bash
-# Analyze a text file
-sloplint document.txt --domain news --explain
+# Analyze text directly
+python research_compliant_slop_detector.py "Your text here"
 
-# Analyze from stdin
-echo "Your text here" | sloplint --domain general --json output.json
+# Analyze with detailed output
+python research_compliant_slop_detector.py "Your text here" --verbose
 
 # Get help
-sloplint --help
+python research_compliant_slop_detector.py --help
 ```
 
 ## 🌐 Deployment Options
@@ -121,29 +122,26 @@ curl "https://sloposcope.fly.dev/health"
 curl "https://sloposcope.fly.dev/metrics"
 ```
 
-## 🔍 Analysis Metrics
+## 🔍 Research-Based Analysis
 
-The tool analyzes text across 11 sophisticated dimensions:
+The tool implements the 7 core slop dimensions from "Measuring AI 'SLOP' in Text" (Shaib et al., 2025):
 
-### Information Utility
+### Core Dimensions
 
-1. **Density** - Semantic density, perplexity, and conceptual complexity
-2. **Relevance** - Semantic similarity to prompts and reference materials
+1. **Density** - Information content per word, detects verbose low-value content
+2. **Structure** - Templated and repetitive patterns, identifies formulaic writing
+3. **Tone** - Jargon and awkward phrasing, catches corporate speak
+4. **Coherence** - Logical flow and organization (currently being refined)
+5. **Relevance** - Appropriateness to context/task (planned)
+6. **Factuality** - Accuracy and truthfulness (planned)
+7. **Bias** - One-sided or over-generalized claims (planned)
 
-### Information Quality
+### Advanced Features
 
-3. **Factuality** - Claim verification and factual accuracy assessment
-4. **Subjectivity** - Bias detection and subjectivity analysis
-
-### Style Quality
-
-5. **Coherence** - Entity continuity and semantic drift detection
-6. **Repetition** - N-gram repetition and compression analysis
-7. **Verbosity** - Wordiness and structural complexity
-8. **Templated** - Boilerplate phrases and template detection
-9. **Tone** - Hedging, sycophancy, and tone analysis
-10. **Fluency** - Grammar and fluency assessment
-11. **Complexity** - Lexical and syntactic complexity
+- **Natural Writing Detection**: Protects human-written content from false positives
+- **Pattern Recognition**: Research-validated slop patterns and templates
+- **Semantic Analysis**: Transformer-based understanding of text meaning
+- **Dynamic Thresholds**: Adjusts sensitivity based on content type
 
 ## 📈 Slop Levels
 
@@ -206,10 +204,11 @@ make run
 
 ## 🏗️ Architecture
 
+- **Main Detector**: `research_compliant_slop_detector.py` - Production-ready detector
 - **Backend**: FastAPI with Python 3.11+
 - **Frontend**: Vanilla HTML/CSS/JavaScript with Tailwind CSS
 - **NLP Pipeline**: spaCy with transformer models + sentence-transformers
-- **ML Models**: scikit-learn, transformers, sentence-transformers
+- **Core Library**: `sloplint/` - Feature extraction and analysis modules
 - **Deployment**: Docker with Fly.io and AWS ECS support
 - **Testing**: pytest with comprehensive test coverage
 
@@ -217,8 +216,12 @@ make run
 
 - **Speed**: <1s processing time for 1k words
 - **Memory**: <400MB peak memory consumption
-- **Accuracy**: >90% accuracy on validation datasets
+- **Accuracy**: 66.7% accuracy on test cases with zero false positives
 - **Coverage**: >95% test coverage for core functionality
+
+## 📚 Research Foundation
+
+This project is based on the research paper "Measuring AI 'SLOP' in Text" by Shaib et al. (2025), which identifies 7 core dimensions of AI-generated text quality issues. The implementation focuses on the most effective patterns and approaches identified in the research.
 
 ## 🤝 Contributing
 
@@ -234,6 +237,7 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENS
 
 ## 🙏 Acknowledgments
 
+- Based on research by Shaib et al. (2025) "Measuring AI 'SLOP' in Text"
 - Built with [spaCy](https://spacy.io/) and [sentence-transformers](https://www.sbert.net/)
 - Deployed on [Fly.io](https://fly.io/) and [AWS](https://aws.amazon.com/)
-- Inspired by research in AI text detection and quality assessment
+- Inspired by ongoing research in AI text detection and quality assessment

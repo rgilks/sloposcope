@@ -14,8 +14,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from sloplint.combine import combine_scores, get_slop_level, normalize_scores
-from sloplint.feature_extractor import FeatureExtractor
+from research_compliant_slop_detector import ResearchCompliantSlopDetector
 
 app = FastAPI(
     title="Sloposcope API", description="AI Slop Detection API", version="1.0.0"
@@ -30,8 +29,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global feature extractor instance
-feature_extractor: FeatureExtractor | None = None
+# Global slop detector instance
+slop_detector: ResearchCompliantSlopDetector | None = None
 
 
 class AnalysisRequest(BaseModel):
@@ -54,12 +53,12 @@ class AnalysisResponse(BaseModel):
     explanations: dict[str, str] | None = None
 
 
-def get_feature_extractor(language: str = "en") -> FeatureExtractor:
-    """Get or create feature extractor instance."""
-    global feature_extractor
-    if feature_extractor is None or feature_extractor.language != language:
-        feature_extractor = FeatureExtractor(language=language)
-    return feature_extractor
+def get_slop_detector() -> ResearchCompliantSlopDetector:
+    """Get or create slop detector instance."""
+    global slop_detector
+    if slop_detector is None:
+        slop_detector = ResearchCompliantSlopDetector()
+    return slop_detector
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -429,83 +428,50 @@ async def analyze_text(request: AnalysisRequest):
         if not request.text.strip():
             raise HTTPException(status_code=400, detail="No text provided")
 
-        # Get feature extractor
-        extractor = get_feature_extractor(request.language)
+        # Get slop detector
+        detector = get_slop_detector()
 
-        # Extract features
-        feature_start = time.time()
-        raw_features = extractor.extract_all_features(request.text)
-        feature_time = int((time.time() - feature_start) * 1000)
+        # Analyze text for slop
+        analysis_start = time.time()
+        result = detector.analyze_slop(request.text)
+        analysis_time = int((time.time() - analysis_start) * 1000)
 
-        # Extract spans if requested
-        spans_collection = None
-        if request.spans:
-            spans_collection = extractor.extract_spans(request.text)
+        # Extract slop score and level
+        slop_score = result["slop_score"]
+        slop_level = result["slop_level"]
 
-        # Convert features to metrics format
+        # Convert to metrics format for compatibility
         metrics = {}
-        for feature_name, feature_data in raw_features.items():
-            if isinstance(feature_data, dict) and "value" in feature_data:
-                metrics[feature_name] = feature_data
-            else:
-                # Extract main score based on feature type
-                score_keys = {
-                    "density": "combined_density",
-                    "repetition": "overall_repetition",
-                    "templated": "templated_score",
-                    "coherence": "coherence_score",
-                    "verbosity": "overall_verbosity",
-                    "tone": "tone_score",
-                    "relevance": "relevance_score",
-                    "factuality": "factuality_score",
-                    "subjectivity": "subjectivity_score",
-                    "fluency": "fluency_score",
-                    "complexity": "complexity_score",
-                }
-
-                key = score_keys.get(feature_name, "value")
-                value = feature_data.get(key, feature_data.get("value", 0.5))
-
-                metrics[feature_name] = {"value": value, **feature_data}
-
-        # Normalize and combine scores
-        normalized_metrics = normalize_scores(metrics, request.domain)
-        slop_score, confidence = combine_scores(normalized_metrics, request.domain)
+        for key, value in result.items():
+            if key not in ["slop_score", "slop_level", "is_slop", "confidence"]:
+                if isinstance(value, (int, float)):
+                    metrics[key] = {"value": value}
+                elif isinstance(value, dict):
+                    metrics[key] = value
 
         total_time = int((time.time() - start_time) * 1000)
 
         # Create response
-        result = AnalysisResponse(
+        response = AnalysisResponse(
             version="1.0",
             domain=request.domain,
             slop_score=slop_score,
-            confidence=confidence,
-            level=get_slop_level(slop_score),
-            metrics=normalized_metrics,
-            timings_ms={"total": total_time, "nlp": 50, "features": feature_time},
+            confidence=result.get("confidence", 0.8),
+            level=slop_level,
+            metrics=metrics,
+            timings_ms={"total": total_time, "analysis": analysis_time},
         )
-
-        # Add spans if requested
-        if request.spans and spans_collection:
-            result.spans = spans_collection.to_dict_list()
 
         # Add explanations if requested
         if request.explain:
-            result.explanations = {
-                "density": "Information density and perplexity measures",
-                "relevance": "How well content matches prompt/references",
-                "coherence": "Entity continuity and topic flow",
-                "repetition": "N-gram repetition and compression",
-                "verbosity": "Wordiness and structural complexity",
-                "templated": "Templated phrases and boilerplate detection",
-                "tone": "Hedging, sycophancy, and tone analysis",
-                "subjectivity": "Bias and subjectivity detection",
-                "fluency": "Grammar and fluency assessment",
-                "factuality": "Factual accuracy proxy",
-                "complexity": "Lexical and syntactic complexity",
+            response.explanations = {
+                "density": "Information density analysis - detects verbose, low-value content",
+                "structure": "Structure analysis - identifies templated and repetitive patterns",
+                "tone": "Tone analysis - catches jargon and awkward phrasing",
+                "coherence": "Coherence analysis - measures logical flow and organization",
             }
 
-        return result
+        return response
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}") from e

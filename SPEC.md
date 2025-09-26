@@ -1,10 +1,10 @@
-# Sloposcope AI Text Analysis — Technical Specification (v1.0)
+# Sloposcope AI Text Analysis — Technical Specification (v2.0)
 
-**Status:** Production Ready
+**Status:** Production Ready - Research-Based Implementation
 **Owner:** Development Team
-**Target:** Cross‑platform CLI; containerized worker for AWS ECS + SQS
+**Target:** Cross‑platform CLI; containerized worker for AWS ECS + SQS; Web API
 **License:** Apache‑2.0
-**Scope:** Implement interpretable, per‑axis _"AI slop"_ metrics + an optional combined score; expose spans and explanations suitable for editors and automated pipelines.
+**Scope:** Implement research-based 7-dimensional AI slop detection with natural writing protection, based on "Measuring AI 'SLOP' in Text" (Shaib et al., 2025).
 
 ---
 
@@ -33,11 +33,11 @@
 
 ## 2) Background & Definitions
 
-**AI slop (working definition):** Low‑utility, low‑quality, or stylistically padded text common in unedited LLM outputs. Dimensions include: **Information Utility** (density, relevance), **Information Quality** (factuality proxy, bias/subjectivity), and **Style Quality** (repetition, templatedness, coherence proxy, fluency proxy, verbosity, word complexity, tone/hedging/sycophancy).
+**AI slop (research definition):** Based on "Measuring AI 'SLOP' in Text" (Shaib et al., 2025), AI slop is characterized by 7 core dimensions: **Density** (information content per word), **Relevance** (appropriateness to context), **Factuality** (accuracy and truthfulness), **Bias** (one-sided claims), **Structure** (templated and repetitive patterns), **Coherence** (logical flow), and **Tone** (jargon and awkward phrasing).
 
-**Composite slop score:** A normalized [0,1] index summarizing per‑axis metrics with **domain‑specific weighting** and a credibility band reflecting missing/weakly observed axes.
+**Research-Based Implementation:** The system implements the 7-dimensional framework with focus on the most effective patterns identified in academic research, including natural writing protection to prevent false positives.
 
-**Enhanced Features:** The system now includes transformer-based NLP processing with semantic embeddings, providing deeper linguistic analysis and more accurate detection of AI-generated patterns.
+**Composite slop score:** A normalized [0,1] index based on research-validated weighting of the 7 core dimensions, with dynamic thresholds based on content type.
 
 ---
 

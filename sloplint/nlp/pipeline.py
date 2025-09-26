@@ -1,11 +1,17 @@
 """
-NLP processing pipeline for text analysis.
+Optimized NLP processing pipeline with lazy loading and caching.
 
-Provides unified interface for spaCy processing, sentence segmentation,
-tokenization, and linguistic feature extraction with enhanced semantic analysis.
+This module provides performance optimizations for the NLP pipeline including:
+- Lazy model loading
+- Caching of processed results
+- Memory-efficient processing
+- Batch processing capabilities
 """
 
+import hashlib
 import logging
+import os
+import pickle
 from typing import Any
 
 try:
@@ -30,102 +36,162 @@ logger = logging.getLogger(__name__)
 
 
 class NLPPipeline:
-    """Unified NLP processing pipeline with enhanced semantic analysis."""
+    """Optimized NLP processing pipeline with lazy loading and caching."""
 
     def __init__(
         self,
         language: str = "en",
         model_name: str | None = None,
         use_transformer: bool = True,
+        cache_dir: str | None = None,
+        enable_caching: bool = True,
     ):
-        """Initialize NLP pipeline with optional transformer-based models."""
+        """Initialize optimized NLP pipeline."""
         self.language = language
         self.use_transformer = use_transformer
+        self.enable_caching = enable_caching
+        self.cache_dir = cache_dir or os.path.join(os.getcwd(), ".nlp_cache")
 
-        # Try transformer model first, fallback to small model
+        # Create cache directory if it doesn't exist
+        if self.enable_caching and not os.path.exists(self.cache_dir):
+            os.makedirs(self.cache_dir, exist_ok=True)
+
+        # Lazy loading - models will be loaded on first use
+        self._nlp: Language | None = None
+        self._sentence_model: SentenceTransformer | None = None
+        self._model_name: str | None = None
+        self._has_transformer: bool = False
+
+        # Set model name
         if use_transformer:
-            self.model_name = model_name or "en_core_web_trf"
+            self._model_name = model_name or "en_core_web_trf"
         else:
-            self.model_name = model_name or "en_core_web_sm"
+            self._model_name = model_name or "en_core_web_sm"
 
-        self.nlp: Language | None = None
-        self.sentence_model: SentenceTransformer | None = None
+    @property
+    def nlp(self) -> Language | None:
+        """Lazy load spaCy model."""
+        if self._nlp is None:
+            self._nlp = self._load_spacy_model()
+        return self._nlp
 
-        self._initialize_spacy()
-        self._initialize_sentence_transformer()
+    @property
+    def sentence_model(self) -> SentenceTransformer | None:
+        """Lazy load sentence transformer model."""
+        if self._sentence_model is None and self.use_transformer:
+            self._sentence_model = self._load_sentence_transformer()
+        return self._sentence_model
 
-    def _initialize_spacy(self) -> None:
-        """Initialize spaCy model."""
+    @property
+    def model_name(self) -> str:
+        """Get the current model name."""
+        return self._model_name or "unknown"
+
+    @property
+    def has_transformer(self) -> bool:
+        """Check if transformer model is available."""
+        return self._has_transformer
+
+    def _load_spacy_model(self) -> Language | None:
+        """Load spaCy model with fallback strategy."""
         if not SPACY_AVAILABLE:
-            logger.warning("spaCy not available. Install with: pip install spacy")
-            return
+            logger.warning("spaCy not available")
+            return None
 
         try:
-            # Try to load the specified model
-            self.nlp = spacy.load(self.model_name)
-            logger.info(f"Loaded spaCy model: {self.model_name}")
-        except OSError:
-            logger.warning(
-                f"Model {self.model_name} not found. Trying fallback models."
-            )
-
-            # Try transformer model if small model was requested
-            if self.model_name == "en_core_web_sm" and self.use_transformer:
+            # Try transformer model first
+            if self.use_transformer:
                 try:
-                    self.nlp = spacy.load("en_core_web_trf")
-                    self.model_name = "en_core_web_trf"
-                    logger.info("Fallback to transformer model: en_core_web_trf")
+                    nlp = spacy.load(self._model_name)
+                    self._has_transformer = "trf" in self._model_name
+                    logger.info(f"Loaded transformer model: {self._model_name}")
+                    return nlp
                 except OSError:
-                    pass
-
-            # Try small model if transformer was requested
-            if not self.nlp:
-                try:
-                    self.nlp = spacy.load("en_core_web_sm")
-                    self.model_name = "en_core_web_sm"
-                    logger.info("Fallback to small model: en_core_web_sm")
-                except OSError:
-                    logger.error(
-                        "No spaCy models available. Some features will be limited."
+                    logger.warning(
+                        f"Transformer model {self._model_name} not found, trying fallback"
                     )
-                    self.nlp = None
 
-        if self.nlp:
-            # Add custom components if needed
-            self._add_custom_components()
+            # Fallback to small model
+            fallback_model = "en_core_web_sm"
+            try:
+                nlp = spacy.load(fallback_model)
+                self._has_transformer = False
+                self._model_name = fallback_model
+                logger.info(f"Loaded fallback model: {fallback_model}")
+                return nlp
+            except OSError:
+                logger.error(
+                    f"Neither {self._model_name} nor {fallback_model} available"
+                )
+                return None
 
-    def _initialize_sentence_transformer(self) -> None:
-        """Initialize sentence transformer for semantic embeddings."""
+        except Exception as e:
+            logger.error(f"Error loading spaCy model: {e}")
+            return None
+
+    def _load_sentence_transformer(self) -> SentenceTransformer | None:
+        """Load sentence transformer model."""
         if not SENTENCE_TRANSFORMERS_AVAILABLE:
-            logger.warning(
-                "sentence-transformers not available. Install with: pip install sentence-transformers"
-            )
-            return
+            logger.warning("sentence-transformers not available")
+            return None
 
         try:
-            # Use a lightweight but effective model
-            self.sentence_model = SentenceTransformer("all-MiniLM-L6-v2")
-            logger.info("Loaded sentence transformer: all-MiniLM-L6-v2")
+            model = SentenceTransformer("all-MiniLM-L6-v2")
+            logger.info("Loaded sentence transformer model: all-MiniLM-L6-v2")
+            return model
         except Exception as e:
-            logger.warning(f"Failed to load sentence transformer: {e}")
-            self.sentence_model = None
+            logger.error(f"Error loading sentence transformer: {e}")
+            return None
 
-    def _add_custom_components(self) -> None:
-        """Add custom spaCy components for slop analysis."""
-        if not self.nlp:
+    def _get_cache_key(self, text: str) -> str:
+        """Generate cache key for text."""
+        return hashlib.md5(text.encode()).hexdigest()
+
+    def _get_cached_result(self, cache_key: str) -> dict[str, Any] | None:
+        """Get cached result if available."""
+        if not self.enable_caching:
+            return None
+
+        cache_file = os.path.join(self.cache_dir, f"{cache_key}.pkl")
+        if os.path.exists(cache_file):
+            try:
+                with open(cache_file, "rb") as f:
+                    return pickle.load(f)
+            except Exception as e:
+                logger.warning(f"Error loading cache: {e}")
+        return None
+
+    def _cache_result(self, cache_key: str, result: dict[str, Any]) -> None:
+        """Cache processing result."""
+        if not self.enable_caching:
             return
 
-        # Add sentence segmenter if not present
-        if not self.nlp.has_pipe("parser"):
-            self.nlp.add_pipe("sentencizer")
+        cache_file = os.path.join(self.cache_dir, f"{cache_key}.pkl")
+        try:
+            with open(cache_file, "wb") as f:
+                pickle.dump(result, f)
+        except Exception as e:
+            logger.warning(f"Error caching result: {e}")
 
-    def process(self, text: str) -> dict[str, Any] | None:
-        """Process text through the NLP pipeline with semantic analysis."""
-        if not self.nlp:
+    def process(self, text: str) -> dict[str, Any]:
+        """Process text through the optimized NLP pipeline."""
+        if not text.strip():
+            return self._fallback_processing(text)
+
+        # Check cache first
+        cache_key = self._get_cache_key(text)
+        cached_result = self._get_cached_result(cache_key)
+        if cached_result:
+            logger.debug("Using cached result")
+            return cached_result
+
+        # Process with spaCy
+        nlp = self.nlp
+        if not nlp:
             return self._fallback_processing(text)
 
         try:
-            doc = self.nlp(text)
+            doc = nlp(text)
             sentences = [sent.text.strip() for sent in doc.sents]
 
             # Get semantic embeddings if available
@@ -136,7 +202,7 @@ class NLPPipeline:
                 except Exception as e:
                     logger.warning(f"Failed to generate sentence embeddings: {e}")
 
-            return {
+            result = {
                 "text": text,
                 "sentences": sentences,
                 "tokens": [token.text for token in doc],
@@ -146,8 +212,12 @@ class NLPPipeline:
                 "sentence_embeddings": sentence_embeddings,
                 "doc": doc,  # Keep reference to spaCy doc for advanced features
                 "model_name": self.model_name,
-                "has_transformer": "trf" in self.model_name,
+                "has_transformer": self.has_transformer,
             }
+
+            # Cache the result
+            self._cache_result(cache_key, result)
+            return result
 
         except Exception as e:
             logger.error(f"Error processing text: {e}")
@@ -155,81 +225,61 @@ class NLPPipeline:
 
     def _fallback_processing(self, text: str) -> dict[str, Any]:
         """Fallback processing when spaCy is not available."""
-        logger.warning("Using fallback text processing")
-
-        # Simple sentence splitting
-        sentences = [s.strip() for s in text.split(".") if s.strip()]
-
-        # Simple tokenization
-        tokens = text.split()
+        sentences = text.split(".")
+        sentences = [s.strip() for s in sentences if s.strip()]
 
         return {
             "text": text,
             "sentences": sentences,
-            "tokens": tokens,
-            "lemmas": tokens,  # No lemmatization
-            "pos_tags": ["UNK"] * len(tokens),  # No POS tagging
-            "entities": [],  # No NER
-            "sentence_embeddings": None,  # No embeddings
+            "tokens": text.split(),
+            "lemmas": text.split(),
+            "pos_tags": ["UNK"] * len(text.split()),
+            "entities": [],
+            "sentence_embeddings": None,
             "doc": None,
             "model_name": "fallback",
             "has_transformer": False,
         }
 
-    def get_sentences(self, text: str) -> list[str]:
-        """Extract sentences from text."""
-        result = self.process(text)
-        return result["sentences"] if result else []
+    def batch_process(self, texts: list[str]) -> list[dict[str, Any]]:
+        """Process multiple texts efficiently."""
+        results = []
+        for text in texts:
+            results.append(self.process(text))
+        return results
 
-    def get_tokens(self, text: str) -> list[str]:
-        """Extract tokens from text."""
-        result = self.process(text)
-        return result["tokens"] if result else []
-
-    def get_pos_tags(self, text: str) -> list[str]:
-        """Extract POS tags from text."""
-        result = self.process(text)
-        return result["pos_tags"] if result else []
-
-    def get_entities(self, text: str) -> list[tuple]:
-        """Extract named entities from text."""
-        result = self.process(text)
-        return result["entities"] if result else []
-
-    def get_sentence_embeddings(self, sentences: list[str]) -> list[list[float]] | None:
-        """Get semantic embeddings for a list of sentences."""
-        if not self.sentence_model:
+    def get_sentence_embeddings(self, sentences: list[str]) -> Any | None:
+        """Get embeddings for a list of sentences."""
+        if not self.sentence_model or not sentences:
             return None
 
         try:
-            embeddings = self.sentence_model.encode(sentences)
-            return embeddings.tolist()
+            return self.sentence_model.encode(sentences)
         except Exception as e:
-            logger.warning(f"Failed to generate embeddings: {e}")
+            logger.error(f"Error generating sentence embeddings: {e}")
             return None
 
     def calculate_semantic_similarity(self, text1: str, text2: str) -> float:
         """Calculate semantic similarity between two texts."""
-        if not self.sentence_model:
+        embeddings1 = self.get_sentence_embeddings([text1])
+        embeddings2 = self.get_sentence_embeddings([text2])
+
+        if embeddings1 is None or embeddings2 is None:
             return 0.0
 
         try:
-            embeddings = self.sentence_model.encode([text1, text2])
-            # Calculate cosine similarity
-            import numpy as np
+            from sklearn.metrics.pairwise import cosine_similarity
 
-            similarity = np.dot(embeddings[0], embeddings[1]) / (
-                np.linalg.norm(embeddings[0]) * np.linalg.norm(embeddings[1])
-            )
+            similarity = cosine_similarity(embeddings1, embeddings2)[0][0]
             return float(similarity)
-        except Exception as e:
-            logger.warning(f"Failed to calculate semantic similarity: {e}")
+        except ImportError:
+            logger.warning("scikit-learn not available for similarity calculation")
             return 0.0
 
     def detect_semantic_drift(
-        self, sentences: list[str], threshold: float = 0.7
+        self, sentences: list[str], threshold: float = 0.8
     ) -> list[int]:
-        """Detect sentences with significant semantic drift from previous sentence."""
+        """Detect semantic drift points in a sequence of sentences."""
         if not self.sentence_model or len(sentences) < 2:
             return []
 
@@ -238,25 +288,45 @@ class NLPPipeline:
             drift_points = []
 
             for i in range(1, len(embeddings)):
-                # Calculate cosine similarity between consecutive sentences
-                import numpy as np
-
-                similarity = np.dot(embeddings[i - 1], embeddings[i]) / (
-                    np.linalg.norm(embeddings[i - 1]) * np.linalg.norm(embeddings[i])
+                similarity = self.calculate_semantic_similarity(
+                    sentences[i - 1], sentences[i]
                 )
-
                 if similarity < threshold:
                     drift_points.append(i)
 
             return drift_points
         except Exception as e:
-            logger.warning(f"Failed to detect semantic drift: {e}")
+            logger.error(f"Error detecting semantic drift: {e}")
             return []
 
-    def is_available(self) -> bool:
-        """Check if NLP pipeline is properly initialized."""
-        return self.nlp is not None
+    def clear_cache(self) -> None:
+        """Clear the processing cache."""
+        if not self.enable_caching or not os.path.exists(self.cache_dir):
+            return
 
-    def has_semantic_capabilities(self) -> bool:
-        """Check if semantic analysis capabilities are available."""
-        return self.sentence_model is not None
+        try:
+            for filename in os.listdir(self.cache_dir):
+                if filename.endswith(".pkl"):
+                    os.remove(os.path.join(self.cache_dir, filename))
+            logger.info("Cache cleared")
+        except Exception as e:
+            logger.error(f"Error clearing cache: {e}")
+
+    def get_cache_stats(self) -> dict[str, Any]:
+        """Get cache statistics."""
+        if not self.enable_caching or not os.path.exists(self.cache_dir):
+            return {"enabled": False, "files": 0, "size_mb": 0}
+
+        try:
+            files = [f for f in os.listdir(self.cache_dir) if f.endswith(".pkl")]
+            total_size = sum(
+                os.path.getsize(os.path.join(self.cache_dir, f)) for f in files
+            )
+            return {
+                "enabled": True,
+                "files": len(files),
+                "size_mb": total_size / (1024 * 1024),
+            }
+        except Exception as e:
+            logger.error(f"Error getting cache stats: {e}")
+            return {"enabled": False, "files": 0, "size_mb": 0}

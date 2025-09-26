@@ -10,17 +10,17 @@ This module provides:
 
 import logging
 import pickle
-import os
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
+
 import numpy as np
 
 try:
-    from sklearn.svm import OneClassSVM
     from sklearn.ensemble import IsolationForest, RandomForestClassifier
     from sklearn.linear_model import LogisticRegression
-    from sklearn.preprocessing import StandardScaler
+    from sklearn.metrics import roc_auc_score
     from sklearn.model_selection import train_test_split
-    from sklearn.metrics import classification_report, roc_auc_score
+    from sklearn.preprocessing import StandardScaler
+    from sklearn.svm import OneClassSVM
 
     SKLEARN_AVAILABLE = True
 except ImportError:
@@ -150,7 +150,7 @@ class LearnedCombiner:
         else:
             raise ValueError(f"Unsupported model type: {model_type}")
 
-    def _extract_features(self, feature_dict: Dict[str, Any]) -> np.ndarray:
+    def _extract_features(self, feature_dict: dict[str, Any]) -> np.ndarray:
         """Extract numerical features from feature dictionary."""
         features = []
         feature_names = []
@@ -187,7 +187,7 @@ class LearnedCombiner:
         self.feature_names = feature_names
         return np.array(features).reshape(1, -1)
 
-    def fit(self, feature_dicts: List[Dict[str, Any]], labels: List[int]) -> None:
+    def fit(self, feature_dicts: list[dict[str, Any]], labels: list[int]) -> None:
         """Fit the learned combiner."""
         if len(feature_dicts) != len(labels):
             raise ValueError(
@@ -210,7 +210,6 @@ class LearnedCombiner:
         self.model.fit(X_train, y_train)
 
         # Evaluate on validation set
-        y_pred = self.model.predict(X_val)
         y_pred_proba = (
             self.model.predict_proba(X_val)[:, 1]
             if hasattr(self.model, "predict_proba")
@@ -232,7 +231,7 @@ class LearnedCombiner:
 
         self.is_fitted = True
 
-    def predict(self, feature_dict: Dict[str, Any]) -> Tuple[int, float]:
+    def predict(self, feature_dict: dict[str, Any]) -> tuple[int, float]:
         """Predict slop score and probability."""
         if not self.is_fitted:
             raise ValueError("Model must be fitted before prediction")
@@ -249,7 +248,7 @@ class LearnedCombiner:
 
         return prediction, probability
 
-    def get_feature_importance(self) -> Dict[str, float]:
+    def get_feature_importance(self) -> dict[str, float]:
         """Get feature importance scores."""
         if not self.is_fitted:
             raise ValueError("Model must be fitted before getting feature importance")
@@ -261,7 +260,7 @@ class LearnedCombiner:
         else:
             return {}
 
-        return dict(zip(self.feature_names, importances))
+        return dict(zip(self.feature_names, importances, strict=False))
 
     def save_model(self, filepath: str) -> None:
         """Save the trained model."""
@@ -306,9 +305,9 @@ class EnsembleDetector:
 
     def fit(
         self,
-        feature_dicts: List[Dict[str, Any]],
-        labels: List[int],
-        anomaly_data: Optional[List[Dict[str, Any]]] = None,
+        feature_dicts: list[dict[str, Any]],
+        labels: list[int],
+        anomaly_data: list[dict[str, Any]] | None = None,
     ) -> None:
         """Fit the ensemble detector."""
         # Fit learned combiner
@@ -324,7 +323,7 @@ class EnsembleDetector:
         self.is_fitted = True
         logger.info(f"Ensemble detector fitted for domain: {self.domain}")
 
-    def predict(self, feature_dict: Dict[str, Any]) -> Dict[str, Any]:
+    def predict(self, feature_dict: dict[str, Any]) -> dict[str, Any]:
         """Predict using ensemble approach."""
         if not self.is_fitted:
             raise ValueError("Ensemble detector must be fitted before prediction")
