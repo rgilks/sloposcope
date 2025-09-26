@@ -63,7 +63,7 @@ class DensityCalculator:
                 loss = outputs.loss
 
             # Convert loss to perplexity
-            perplexity = math.exp(loss.item())
+            perplexity = float(math.exp(loss.item()))
 
             return perplexity
 

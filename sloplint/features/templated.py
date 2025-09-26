@@ -106,7 +106,7 @@ class TemplateDetector:
 
         # Normalize to [0,1] (higher entropy = more diverse)
         max_entropy = math.log2(len(ngram_counts)) if ngram_counts else 1.0
-        diversity_score = entropy / max_entropy if max_entropy > 0 else 0.0
+        diversity_score = float(entropy / max_entropy) if max_entropy > 0 else 0.0
 
         return diversity_score
 

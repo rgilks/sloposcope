@@ -136,13 +136,13 @@ class EntityGridCoherence:
                 emb2 = embeddings[i + 1]
 
                 # Cosine similarity
-                similarity = np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2))
+                similarity = float(np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2)))
 
                 # Convert to drift (lower similarity = higher drift)
-                drift = 1.0 - similarity
+                drift = float(1.0 - similarity)
                 drifts.append(drift)
 
-            return np.mean(drifts) if drifts else 0.0
+            return float(np.mean(drifts)) if drifts else 0.0
 
         except Exception as e:
             logger.error(f"Error calculating embedding drift: {e}")
