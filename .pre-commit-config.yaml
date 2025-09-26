@@ -15,13 +15,13 @@ repos:
         args: [--fix]
       - id: ruff-format
 
-  # Type check with mypy
+  # Type check with mypy (AWS Worker only for now)
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.18.2
     hooks:
       - id: mypy
-        args: [--ignore-missing-imports, --no-error-summary, --disable-error-code=valid-type, --disable-error-code=no-any-return, --disable-error-code=misc, --disable-error-code=no-untyped-def, --disable-error-code=import-untyped]
-        exclude: ^(tests/|scripts/)
+        args: [--ignore-missing-imports, --no-error-summary, --disable-error-code=valid-type, --disable-error-code=no-any-return, --disable-error-code=misc, --disable-error-code=no-untyped-def, --disable-error-code=import-untyped, --disable-error-code=assignment]
+        files: ^sloplint/aws_worker/
 
   # Check for trailing whitespace and other issues
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -33,6 +33,29 @@ repos:
       - id: check-toml
       - id: check-merge-conflict
       - id: debug-statements
+
+  # Run unit tests (fast)
+  - repo: local
+    hooks:
+      - id: pytest-unit
+        name: pytest-unit
+        entry: python -m pytest
+        language: system
+        args: [tests/test_cli.py, -v, --tb=short]
+        pass_filenames: false
+        always_run: true
+
+  # Run AWS Worker tests with LocalStack (slower, only on AWS-related changes)
+  - repo: local
+    hooks:
+      - id: pytest-aws-worker
+        name: pytest-aws-worker
+        entry: python scripts/run_tests_with_localstack.py
+        language: system
+        args: [tests/test_aws_worker.py, -v, --tb=short, -m, "not slow"]
+        pass_filenames: false
+        files: ^(sloplint/aws_worker/.*|tests/test_aws_worker\.py|scripts/sloplint_worker\.py)$
+        always_run: false
 
 ci:
   autofix_commit_msg: |
