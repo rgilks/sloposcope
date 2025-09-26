@@ -121,13 +121,40 @@ class EntityGridCoherence:
                 continuity = continuations / total_entities
                 continuity_scores.append(continuity)
 
-        return np.mean(continuity_scores) if continuity_scores else 0.0
+        return float(np.mean(continuity_scores)) if continuity_scores else 0.0
 
-    def calculate_embedding_drift(self, sentences: list[str]) -> float:
+    def calculate_embedding_drift(
+        self, sentences: list[str], sentence_embeddings: np.ndarray | None = None
+    ) -> float:
         """Calculate drift between adjacent sentence embeddings."""
         if len(sentences) < 2:
             return 0.0
 
+        # Use provided embeddings if available
+        if sentence_embeddings is not None:
+            try:
+                # Calculate cosine similarities between adjacent sentences
+                drifts = []
+                for i in range(len(sentence_embeddings) - 1):
+                    emb1 = sentence_embeddings[i]
+                    emb2 = sentence_embeddings[i + 1]
+
+                    # Cosine similarity
+                    similarity = float(
+                        np.dot(emb1, emb2)
+                        / (np.linalg.norm(emb1) * np.linalg.norm(emb2))
+                    )
+
+                    # Convert to drift (lower similarity = higher drift)
+                    drift = float(1.0 - similarity)
+                    drifts.append(drift)
+
+                return float(np.mean(drifts)) if drifts else 0.0
+            except Exception as e:
+                logger.warning(f"Error using provided embeddings: {e}")
+                # Fall through to model-based calculation
+
+        # Fallback: calculate embeddings using sentence transformer
         try:
             import torch
             from sentence_transformers import SentenceTransformer
@@ -172,36 +199,65 @@ class EntityGridCoherence:
             return 0.0
 
     def detect_coherence_breaks(
-        self, sentences: list[str], threshold: float = 0.3
+        self,
+        sentences: list[str],
+        sentence_embeddings: np.ndarray | None = None,
+        threshold: float = 0.3,
     ) -> list[dict[str, Any]]:
         """Detect coherence breaks between sentences."""
         if len(sentences) < 2:
             return []
 
         breaks = []
-        drift = self.calculate_embedding_drift(sentences)
+        drift = self.calculate_embedding_drift(sentences, sentence_embeddings)
 
         # Find positions where drift is high
-        for i in range(len(sentences) - 1):
-            if drift > threshold:
-                # Estimate character position
-                char_pos = sum(len(sentences[j]) + 1 for j in range(i + 1))
-                breaks.append(
-                    {
-                        "start": char_pos,
-                        "end": char_pos + 1,
-                        "type": "coherence_break",
-                        "note": f"High topic drift (drift: {drift:.3f})",
-                    }
+        if sentence_embeddings is not None:
+            # Use individual sentence similarities for more precise detection
+            for i in range(len(sentence_embeddings) - 1):
+                emb1 = sentence_embeddings[i]
+                emb2 = sentence_embeddings[i + 1]
+
+                similarity = float(
+                    np.dot(emb1, emb2) / (np.linalg.norm(emb1) * np.linalg.norm(emb2))
                 )
+                drift_score = 1.0 - similarity
+
+                if drift_score > threshold:
+                    # Estimate character position
+                    char_pos = sum(len(sentences[j]) + 1 for j in range(i + 1))
+                    breaks.append(
+                        {
+                            "start": char_pos,
+                            "end": char_pos + 1,
+                            "type": "coherence_break",
+                            "note": f"High topic drift (drift: {drift_score:.3f})",
+                        }
+                    )
+        else:
+            # Fallback to average drift
+            if drift > threshold:
+                for i in range(len(sentences) - 1):
+                    char_pos = sum(len(sentences[j]) + 1 for j in range(i + 1))
+                    breaks.append(
+                        {
+                            "start": char_pos,
+                            "end": char_pos + 1,
+                            "type": "coherence_break",
+                            "note": f"High topic drift (drift: {drift:.3f})",
+                        }
+                    )
 
         return breaks
 
 
 def extract_features(
-    text: str, sentences: list[str], tokens: list[str]
+    text: str,
+    sentences: list[str],
+    tokens: list[str],
+    sentence_embeddings: np.ndarray | None = None,
 ) -> dict[str, Any]:
-    """Extract all coherence-related features."""
+    """Extract all coherence-related features with enhanced semantic analysis."""
     try:
         analyzer = EntityGridCoherence()
 
@@ -213,11 +269,15 @@ def extract_features(
             analyzer.calculate_entity_continuity(entities_by_sentence)
         )
 
-        # Calculate embedding drift
-        embedding_drift = analyzer.calculate_embedding_drift(sentences)
+        # Calculate embedding drift using provided embeddings or fallback
+        embedding_drift = analyzer.calculate_embedding_drift(
+            sentences, sentence_embeddings
+        )
 
         # Detect coherence breaks
-        coherence_spans = analyzer.detect_coherence_breaks(sentences)
+        coherence_spans = analyzer.detect_coherence_breaks(
+            sentences, sentence_embeddings
+        )
 
         # Calculate overall coherence score
         # Higher continuity and lower drift = higher coherence
@@ -231,6 +291,7 @@ def extract_features(
             "embedding_drift": embedding_drift,
             "coherence_score": coherence_score,
             "coherence_spans": coherence_spans,
+            "has_semantic_features": sentence_embeddings is not None,
         }
 
     except Exception as e:
@@ -240,4 +301,5 @@ def extract_features(
             "embedding_drift": 1.0,
             "coherence_score": 0.0,
             "coherence_spans": [],
+            "has_semantic_features": False,
         }

@@ -338,9 +338,9 @@ def test_comprehensive_slop_detection():
 
     # Assertions for test validation
     assert summary["test_summary"]["success_rate"] > 0.9, "Success rate should be > 90%"
-    assert (
-        summary["performance_metrics"]["avg_processing_time"] < 5.0
-    ), "Average processing time should be < 5s"
+    assert summary["performance_metrics"]["avg_processing_time"] < 5.0, (
+        "Average processing time should be < 5s"
+    )
     assert summary["test_summary"]["total_texts"] >= 70, "Should test at least 70 texts"
 
     print("\n✅ All test assertions passed!")

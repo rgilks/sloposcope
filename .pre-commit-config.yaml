@@ -41,21 +41,9 @@ repos:
         name: pytest-unit
         entry: uv run python -m pytest
         language: system
-        args: [tests/test_cli.py, -v, --tb=short]
+        args: [test_unit_enhanced.py, -v, --tb=short]
         pass_filenames: false
         always_run: true
-
-  # Run AWS Worker tests with LocalStack (slower, only on AWS-related changes)
-  - repo: local
-    hooks:
-      - id: pytest-aws-worker
-        name: pytest-aws-worker
-        entry: uv run python scripts/run_tests_with_localstack.py
-        language: system
-        args: [tests/test_aws_worker.py, -v, --tb=short, -m, "not slow"]
-        pass_filenames: false
-        files: ^(sloplint/aws_worker/.*|tests/test_aws_worker\.py|scripts/sloplint_worker\.py)$
-        always_run: false
 
 ci:
   autofix_commit_msg: |

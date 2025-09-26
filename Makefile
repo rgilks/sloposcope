@@ -1,6 +1,6 @@
 # Makefile for Sloposcope AI Text Analysis Project
 
-.PHONY: help install install-dev test test-unit test-aws test-localstack clean-localstack lint format type-check pre-commit clean docker-build docker-run docker-clean dev-setup ci deploy-fly deploy-cf
+.PHONY: help install install-dev test test-unit lint format type-check pre-commit clean docker-build docker-run docker-clean dev-setup ci deploy-fly deploy-cf
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -36,28 +36,7 @@ test: ## Run all tests
 	python3 -m pytest tests/ -v
 
 test-unit: ## Run unit tests only (fast)
-	python3 -m pytest tests/test_cli.py -v --tb=short
-
-test-aws: ## Run AWS Worker tests with LocalStack
-	@if command -v uv >/dev/null 2>&1; then \
-		uv run python scripts/run_tests_with_localstack.py tests/test_aws_worker.py -v --tb=short; \
-	else \
-		python scripts/run_tests_with_localstack.py tests/test_aws_worker.py -v --tb=short; \
-	fi
-
-test-localstack: ## Start LocalStack for testing
-	@if command -v uv >/dev/null 2>&1; then \
-		uv run python3 scripts/start_localstack_for_tests.py start; \
-	else \
-		python3 scripts/start_localstack_for_tests.py start; \
-	fi
-
-clean-localstack: ## Stop and remove LocalStack container
-	@if command -v uv >/dev/null 2>&1; then \
-		uv run python3 scripts/start_localstack_for_tests.py stop; \
-	else \
-		python3 scripts/start_localstack_for_tests.py stop; \
-	fi
+	python3 -m pytest test_unit_enhanced.py -v --tb=short
 
 # Code Quality
 lint: ## Run linting
@@ -150,4 +129,3 @@ deploy-fly: ## Deploy to Fly.io
 # Local development server
 run: ## Run the development server
 	uvicorn app:app --reload --host 0.0.0.0 --port 8000
-

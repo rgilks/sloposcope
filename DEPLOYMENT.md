@@ -1,24 +1,34 @@
 # Sloposcope Deployment Guide
 
-This guide explains how to deploy your sloposcope project on Fly.io and Docker.
+This comprehensive guide explains how to deploy Sloposcope across multiple platforms, from local development to production cloud environments.
 
-## Architecture Overview
+## 🏗️ Architecture Overview
 
-Sloposcope supports two deployment architectures:
+Sloposcope supports multiple deployment architectures:
 
-### Option 1: Fly.io (Recommended)
+### Option 1: Fly.io (Recommended for Production)
 
-- **Backend**: FastAPI Python application
-- **Frontend**: Embedded HTML/CSS/JavaScript
+- **Backend**: FastAPI Python application with transformer models
+- **Frontend**: Embedded HTML/CSS/JavaScript with Tailwind CSS
 - **Deployment**: Single Fly.io app with Docker
+- **Benefits**: Global CDN, automatic scaling, easy SSL, generous free tier
 
-### Option 2: Docker
+### Option 2: Docker (Local Development & Self-Hosted)
 
 - **Backend**: FastAPI Python application
-- **Frontend**: Embedded HTML/CSS/JavaScript
+- **Frontend**: Embedded HTML/CSS/JavaScript with Tailwind CSS
 - **Deployment**: Docker container with docker-compose
+- **Benefits**: Consistent environment, easy local development
 
-## Prerequisites
+### Option 3: AWS ECS Worker (Enterprise Scale)
+
+- **Backend**: Containerized worker processing SQS messages
+- **Storage**: S3 for text input/output
+- **Queue**: SQS for message processing
+- **Monitoring**: CloudWatch metrics and logging
+- **Benefits**: Auto-scaling, enterprise-grade infrastructure
+
+## 📋 Prerequisites
 
 ### For Fly.io Deployment (Recommended)
 
@@ -28,23 +38,37 @@ Sloposcope supports two deployment architectures:
    curl -L https://fly.io/install.sh | sh
    ```
 3. **Python**: Version 3.11 or higher
+4. **Docker**: For building the container image
 
 ### For Docker Deployment
 
 1. **Docker**: Install Docker and Docker Compose
 2. **Python**: Version 3.11 or higher
+3. **Git**: For cloning the repository
 
-## Deployment Instructions
+### For AWS ECS Deployment
+
+1. **AWS Account**: With appropriate permissions
+2. **AWS CLI**: Configured with credentials
+3. **Terraform**: For infrastructure as code
+4. **Docker**: For building container images
+
+## 🚀 Deployment Instructions
 
 ### Option 1: Fly.io Deployment (Recommended)
 
 #### 1. Install Dependencies
 
 ```bash
-# Install Python dependencies
-pip install -e .
+# Clone the repository
+git clone https://github.com/your-org/sloposcope.git
+cd sloposcope
 
-# Download spaCy model
+# Install Python dependencies
+uv sync --dev
+
+# Download required models
+python -m spacy download en_core_web_trf
 python -m spacy download en_core_web_sm
 ```
 
@@ -56,6 +80,9 @@ flyctl auth login
 
 # Verify your account
 flyctl auth whoami
+
+# Initialize Fly.io app (if not already done)
+flyctl launch --no-deploy
 ```
 
 #### 3. Deploy to Fly.io
@@ -66,9 +93,22 @@ flyctl auth whoami
 
 # Or deploy manually
 flyctl deploy
+
+# Check deployment status
+flyctl status
 ```
 
 Your application will be available at `https://sloposcope.fly.dev`
+
+#### 4. Custom Domain Setup
+
+```bash
+# Add custom domain
+flyctl certs add your-domain.com
+
+# Check certificate status
+flyctl certs show your-domain.com
+```
 
 ### Option 2: Docker Deployment
 
@@ -80,56 +120,156 @@ docker-compose up --build
 
 # Or run in background
 docker-compose up -d --build
+
+# Check logs
+docker-compose logs -f
 ```
 
 #### 2. Access the Application
 
 The application will be available at `http://localhost:8000`
 
-## Configuration
+#### 3. Production Docker Setup
+
+```bash
+# Build production image
+docker build -f Dockerfile -t sloposcope:latest .
+
+# Run production container
+docker run -d \
+  --name sloposcope \
+  -p 8000:8000 \
+  -e ENVIRONMENT=production \
+  sloposcope:latest
+```
+
+### Option 3: AWS ECS Worker Deployment
+
+#### Prerequisites
+
+- AWS CLI configured with appropriate credentials
+- ECR repository created
+- SQS queues created (input and output)
+- VPC and subnets configured
+
+#### Deploy Infrastructure
+
+```bash
+# Navigate to docker directory
+cd docker
+
+# Initialize Terraform
+terraform init
+
+# Plan deployment
+terraform plan \
+  -var="input_queue_url=https://sqs.us-east-1.amazonaws.com/123456789/input-queue" \
+  -var="output_queue_url=https://sqs.us-east-1.amazonaws.com/123456789/output-queue"
+
+# Deploy infrastructure
+terraform apply
+```
+
+#### Build and Deploy Container
+
+```bash
+# Get ECR login token
+aws ecr get-login-password --region us-east-1 | \
+  docker login --username AWS --password-stdin <account-id>.dkr.ecr.us-east-1.amazonaws.com
+
+# Build Docker image
+docker build -f docker/Dockerfile -t sloplint-worker .
+
+# Tag for ECR
+docker tag sloplint-worker:latest \
+  <account-id>.dkr.ecr.us-east-1.amazonaws.com/sloplint-worker:latest
+
+# Push to ECR
+docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/sloplint-worker:latest
+
+# Update ECS service
+aws ecs update-service \
+  --cluster sloplint-worker-cluster \
+  --service sloplint-worker-service \
+  --force-new-deployment
+```
+
+## ⚙️ Configuration
 
 ### Environment Variables
 
 Set these in your deployment platform:
 
 ```bash
+# Application Configuration
 PORT=8000
 ENVIRONMENT=production
+LOG_LEVEL=INFO
+
+# Model Configuration
+SPACY_MODEL=en_core_web_trf
+SENTENCE_TRANSFORMER_MODEL=all-MiniLM-L6-v2
+
+# Performance Configuration
+MAX_WORKERS=4
+WORKER_TIMEOUT=30
+
+# AWS Configuration (for ECS worker)
+AWS_REGION=us-east-1
+INPUT_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/123456789/input-queue
+OUTPUT_QUEUE_URL=https://sqs.us-east-1.amazonaws.com/123456789/output-queue
+S3_OUTPUT_BUCKET=sloposcope-results
 ```
 
-### Custom Domain (Fly.io)
+### Fly.io Configuration
 
-1. Go to Fly.io Dashboard → Your App
-2. Go to Settings → Domains
-3. Add a custom domain
+Update `fly.toml` for your specific needs:
 
-## API Endpoints
+```toml
+[app]
+  app = "sloposcope"
+  primary_region = "ord"
 
-The deployed application provides these endpoints:
+[build]
 
-- `GET /health` - Health check
-- `POST /analyze` - Analyze text for AI slop
-- `GET /metrics` - Get available metrics information
+[http_service]
+  internal_port = 8000
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
 
-### Example API Usage
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
 
-```bash
-# Health check
-curl https://sloposcope.fly.dev/health
-
-# Analyze text
-curl -X POST https://sloposcope.fly.dev/analyze \
-  -H "Content-Type: application/json" \
-  -d '{
-    "text": "Your text here",
-    "domain": "general",
-    "language": "en",
-    "explain": true,
-    "spans": true
-  }'
+[env]
+  ENVIRONMENT = "production"
+  LOG_LEVEL = "INFO"
 ```
 
-## Development Workflow
+### Docker Configuration
+
+Update `docker-compose.yml` for your environment:
+
+```yaml
+version: "3.8"
+
+services:
+  sloposcope:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./models:/app/models
+    restart: unless-stopped
+```
+
+## 🔧 Development Workflow
 
 ### Local Development
 
@@ -139,75 +279,342 @@ make run
 
 # Or with Docker
 make docker-run
-```
 
-### Testing
-
-```bash
-# Run Python tests
+# Run tests
 make test
 
-# Run unit tests only
-make test-unit
+# Run linting
+make lint
 ```
 
-## Troubleshooting
+### Testing Deployments
+
+```bash
+# Test Fly.io deployment
+curl https://sloposcope.fly.dev/health
+
+# Test Docker deployment
+curl http://localhost:8000/health
+
+# Test AWS worker
+aws sqs send-message \
+  --queue-url $INPUT_QUEUE_URL \
+  --message-body '{"doc_id":"test","text":"Sample text","domain":"general"}'
+```
+
+## 🔍 Monitoring and Observability
+
+### Health Checks
+
+All deployments include health check endpoints:
+
+```bash
+# Basic health check
+curl https://sloposcope.fly.dev/health
+
+# Detailed metrics
+curl https://sloposcope.fly.dev/metrics
+```
+
+### Logging
+
+#### Fly.io Logs
+
+```bash
+# View application logs
+flyctl logs
+
+# Follow logs in real-time
+flyctl logs -f
+
+# View logs for specific app
+flyctl logs -a sloposcope
+```
+
+#### Docker Logs
+
+```bash
+# View container logs
+docker-compose logs -f
+
+# View specific service logs
+docker-compose logs -f sloposcope
+```
+
+#### AWS CloudWatch Logs
+
+```bash
+# View worker logs
+aws logs tail /ecs/sloplint-worker --follow
+
+# View specific log stream
+aws logs get-log-events \
+  --log-group-name /ecs/sloplint-worker \
+  --log-stream-name <stream-name>
+```
+
+### Metrics
+
+#### Fly.io Metrics
+
+```bash
+# View app metrics
+flyctl metrics
+
+# View specific metrics
+flyctl metrics --type cpu,memory
+```
+
+#### AWS CloudWatch Metrics
+
+The ECS worker publishes metrics to CloudWatch:
+
+- **MessageProcessingTime**: Time to process each message
+- **MessagesProcessed**: Number of successfully processed messages
+- **MessagesFailed**: Number of failed messages
+- **SlopScore**: AI slop scores distribution
+- **WorkerErrors**: Error counts by type
+
+## 🚨 Troubleshooting
 
 ### Common Issues
 
-1. **Memory Limits**: Monitor memory usage and optimize if needed
-2. **Cold Starts**: First requests may be slower due to model loading
-3. **Dependencies**: Ensure all Python packages are compatible
+#### 1. Memory Issues
 
-### Debugging
+**Symptoms**: Application crashes, out of memory errors
+
+**Solutions**:
 
 ```bash
-# View application logs (Fly.io)
-flyctl logs
+# Increase memory allocation (Fly.io)
+flyctl scale memory 2048
 
-# View Docker logs
-docker-compose logs -f
+# Increase Docker memory limit
+docker run -m 2g sloposcope:latest
+
+# Monitor memory usage
+flyctl metrics --type memory
 ```
 
-## Performance Optimization
+#### 2. Model Loading Issues
 
-1. **Caching**: Implement caching for analysis results
-2. **CDN**: Leverage Fly.io's global network
-3. **Compression**: Enable gzip compression
-4. **Minification**: Optimize static assets
+**Symptoms**: Slow startup, model not found errors
 
-## Security Considerations
+**Solutions**:
 
-1. **Rate Limiting**: Implement rate limiting for API endpoints
-2. **Input Validation**: Validate all input text
-3. **CORS**: Configure CORS properly
-4. **Authentication**: Add authentication if needed
+```bash
+# Check if models are installed
+python -c "import spacy; spacy.load('en_core_web_trf')"
 
-## Monitoring
+# Download missing models
+python -m spacy download en_core_web_trf
 
-1. **Logs**: Monitor application logs
-2. **Metrics**: Track performance metrics
-3. **Alerts**: Set up alerts for errors
-4. **Health Checks**: Use built-in health check endpoint
+# Pre-build models in Docker
+docker build --build-arg DOWNLOAD_MODELS=true -t sloposcope:latest .
+```
 
-## Scaling
+#### 3. Performance Issues
 
-Both Fly.io and Docker support automatic scaling:
+**Symptoms**: Slow response times, high CPU usage
 
-1. **Resource Limits**: Monitor CPU and memory usage
-2. **Concurrent Requests**: Handle high traffic
-3. **Database**: Use external database if needed
-4. **File Storage**: Use external storage for large files
+**Solutions**:
 
-## Cost Optimization
+```bash
+# Scale horizontally (Fly.io)
+flyctl scale count 2
 
-1. **Free Tier**: Fly.io has generous free tier
-2. **Usage Monitoring**: Track usage to avoid overages
-3. **Optimization**: Optimize code for efficiency
-4. **Caching**: Reduce redundant computations
+# Optimize Docker resources
+docker run --cpus=2 --memory=2g sloposcope:latest
 
-## Support
+# Monitor performance
+flyctl metrics --type cpu,memory,latency
+```
 
-- **Documentation**: [Fly.io Docs](https://fly.io/docs/)
-- **Community**: [Fly.io Community](https://community.fly.io/)
-- **Issues**: Report issues in the GitHub repository
+#### 4. AWS ECS Issues
+
+**Symptoms**: Tasks failing, queue messages not processing
+
+**Solutions**:
+
+```bash
+# Check task status
+aws ecs describe-tasks \
+  --cluster sloplint-worker-cluster \
+  --tasks $(aws ecs list-tasks --cluster sloplint-worker-cluster --query taskArns[0])
+
+# Check queue depth
+aws sqs get-queue-attributes \
+  --queue-url $INPUT_QUEUE_URL \
+  --attribute-names ApproximateNumberOfMessages
+
+# Restart service
+aws ecs update-service \
+  --cluster sloplint-worker-cluster \
+  --service sloplint-worker-service \
+  --force-new-deployment
+```
+
+### Debugging Commands
+
+```bash
+# Debug Fly.io deployment
+flyctl ssh console
+
+# Debug Docker container
+docker exec -it sloposcope-container /bin/bash
+
+# Debug AWS ECS task
+aws ecs execute-command \
+  --cluster sloplint-worker-cluster \
+  --task <task-arn> \
+  --container sloplint-worker \
+  --interactive \
+  --command "/bin/bash"
+```
+
+## 🔒 Security Considerations
+
+### 1. Input Validation
+
+- Validate all input text for length and content
+- Implement rate limiting for API endpoints
+- Sanitize user inputs to prevent injection attacks
+
+### 2. Authentication & Authorization
+
+```bash
+# Add API key authentication (optional)
+export API_KEY=your-secret-key
+
+# Configure CORS properly
+export CORS_ORIGINS=https://yourdomain.com
+```
+
+### 3. Data Protection
+
+- No sensitive data persisted unless explicitly configured
+- Use HTTPS for all communications
+- Implement proper logging without exposing sensitive information
+
+### 4. AWS Security
+
+- Use least-privilege IAM roles
+- Enable S3 server-side encryption
+- Use VPC endpoints for AWS services
+- Implement proper security groups
+
+## 📈 Performance Optimization
+
+### 1. Caching
+
+```bash
+# Enable Redis caching (optional)
+export REDIS_URL=redis://localhost:6379
+
+# Enable model caching
+export CACHE_MODELS=true
+```
+
+### 2. CDN
+
+Fly.io automatically provides global CDN. For other deployments:
+
+```bash
+# Configure CloudFlare or similar CDN
+# Set appropriate cache headers
+# Enable compression
+```
+
+### 3. Resource Optimization
+
+```bash
+# Optimize Docker image size
+docker build --target production -t sloposcope:latest .
+
+# Use multi-stage builds
+# Minimize dependencies
+# Use Alpine Linux base images
+```
+
+## 💰 Cost Optimization
+
+### Fly.io
+
+- Use shared CPU instances for development
+- Enable auto-stop/start for non-production apps
+- Monitor usage with `flyctl metrics`
+
+### AWS
+
+- Use Spot instances for non-critical workloads
+- Implement auto-scaling based on queue depth
+- Use S3 Intelligent Tiering for storage
+- Monitor costs with AWS Cost Explorer
+
+### Docker
+
+- Use multi-stage builds to reduce image size
+- Implement health checks to restart unhealthy containers
+- Use resource limits to prevent runaway processes
+
+## 🔄 CI/CD Pipeline
+
+### GitHub Actions Example
+
+```yaml
+name: Deploy to Fly.io
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+```
+
+### Docker Hub Example
+
+```yaml
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: your-org/sloposcope:latest
+```
+
+## 📚 Additional Resources
+
+- [Fly.io Documentation](https://fly.io/docs/)
+- [Docker Documentation](https://docs.docker.com/)
+- [AWS ECS Documentation](https://docs.aws.amazon.com/ecs/)
+- [FastAPI Deployment Guide](https://fastapi.tiangolo.com/deployment/)
+- [spaCy Model Installation](https://spacy.io/usage/models)
+
+## 🆘 Support
+
+For deployment issues:
+
+1. Check the troubleshooting section above
+2. Review application logs
+3. Check platform-specific documentation
+4. Open an issue in the GitHub repository
+5. Join the community discussions

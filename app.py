@@ -2,23 +2,20 @@
 Sloposcope Web Application - FastAPI implementation for Fly.io deployment
 """
 
-import json
 import os
 import time
-from typing import Dict, Any, Optional
-from pathlib import Path
+from typing import Any
 
 # Set tokenizers parallelism to avoid warnings
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 from fastapi import FastAPI, HTTPException
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
+from sloplint.combine import combine_scores, get_slop_level, normalize_scores
 from sloplint.feature_extractor import FeatureExtractor
-from sloplint.combine import combine_scores, normalize_scores, get_slop_level
 
 app = FastAPI(
     title="Sloposcope API", description="AI Slop Detection API", version="1.0.0"
@@ -34,7 +31,7 @@ app.add_middleware(
 )
 
 # Global feature extractor instance
-feature_extractor: Optional[FeatureExtractor] = None
+feature_extractor: FeatureExtractor | None = None
 
 
 class AnalysisRequest(BaseModel):
@@ -51,10 +48,10 @@ class AnalysisResponse(BaseModel):
     slop_score: float
     confidence: float
     level: str
-    metrics: Dict[str, Any]
-    timings_ms: Dict[str, int]
-    spans: Optional[list] = None
-    explanations: Optional[Dict[str, str]] = None
+    metrics: dict[str, Any]
+    timings_ms: dict[str, int]
+    spans: list | None = None
+    explanations: dict[str, str] | None = None
 
 
 def get_feature_extractor(language: str = "en") -> FeatureExtractor:
@@ -96,14 +93,14 @@ async def root():
             <!-- Main Content -->
             <div class="bg-white rounded-lg shadow-sm border p-6">
                 <h2 class="text-xl font-semibold mb-4">Text Analysis</h2>
-                
+
                 <form id="analysisForm" class="space-y-4">
                     <div>
                         <label for="text" class="block text-sm font-medium text-gray-700 mb-2">Enter text to analyze</label>
-                        <textarea 
-                            id="text" 
-                            name="text" 
-                            rows="6" 
+                        <textarea
+                            id="text"
+                            name="text"
+                            rows="6"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             placeholder="Paste your text here to analyze for AI slop patterns..."
                             required
@@ -120,7 +117,7 @@ async def root():
                                 <option value="qa">Q&A - Question and answer content</option>
                             </select>
                         </div>
-                        
+
                         <div>
                             <label for="language" class="block text-sm font-medium text-gray-700 mb-2">Language</label>
                             <select id="language" name="language" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
@@ -219,7 +216,7 @@ async def root():
             // Character counter
             const textArea = document.getElementById('text');
             const charCount = document.getElementById('charCount');
-            
+
             textArea.addEventListener('input', () => {
                 charCount.textContent = textArea.value.length + ' characters';
             });
@@ -233,7 +230,7 @@ async def root():
 
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
-                
+
                 const formData = new FormData(form);
                 const data = {
                     text: formData.get('text'),
@@ -250,7 +247,7 @@ async def root():
 
                 analyzeBtn.disabled = true;
                 analyzeBtn.innerHTML = '<svg class="animate-spin h-4 w-4" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span class="ml-2">Analyzing...</span>';
-                
+
                 try {
                     const response = await fetch('/analyze', {
                         method: 'POST',
@@ -284,10 +281,10 @@ async def root():
 
             function showResults(result) {
                 error.classList.add('hidden');
-                
+
                 const slopColor = getSlopColor(result.level);
                 const slopPercentage = (result.slop_score * 100).toFixed(1);
-                
+
                 const resultsHTML = `
                     <div class="space-y-6">
                         <!-- Overall Score -->
@@ -301,14 +298,14 @@ async def root():
                                     </div>
                                     <div class="text-sm text-gray-600 mt-2">Confidence: ${(result.confidence * 100).toFixed(1)}%</div>
                                 </div>
-                                
+
                                 <div class="text-center">
                                     <h3 class="text-sm font-medium text-gray-500 mb-2">Level</h3>
                                     <div class="text-2xl font-semibold">
                                         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${slopColor}">${result.level}</span>
                                     </div>
                                 </div>
-                                
+
                                 <div class="text-center">
                                     <h3 class="text-sm font-medium text-gray-500 mb-2">Processing Time</h3>
                                     <div class="text-2xl font-semibold text-gray-900">${result.timings_ms.total}ms</div>
@@ -373,7 +370,7 @@ async def root():
                         ` : ''}
                     </div>
                 `;
-                
+
                 document.getElementById('resultsContent').innerHTML = resultsHTML;
                 results.classList.remove('hidden');
             }
@@ -511,7 +508,7 @@ async def analyze_text(request: AnalysisRequest):
         return result
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Analysis failed: {str(e)}") from e
 
 
 @app.get("/metrics")

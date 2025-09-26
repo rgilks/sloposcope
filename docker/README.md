@@ -1,8 +1,8 @@
 # AI Slop Worker - AWS Deployment
 
-This directory contains the Docker and infrastructure configuration for deploying the AI Slop CLI as an AWS ECS worker with SQS integration.
+This directory contains the Docker and infrastructure configuration for deploying the Sloposcope AI Text Analysis tool as an AWS ECS worker with SQS integration.
 
-## Architecture
+## 🏗️ Architecture
 
 ```
 ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
@@ -17,7 +17,7 @@ This directory contains the Docker and infrastructure configuration for deployin
                        └─────────────────┘
 ```
 
-## Components
+## 🧩 Components
 
 ### 1. AWS Worker (`sloplint/aws_worker/`)
 
@@ -37,7 +37,7 @@ This directory contains the Docker and infrastructure configuration for deployin
 - **docker-compose.yml**: Local development setup
 - **terraform.tf**: Infrastructure as Code
 
-## Environment Variables
+## ⚙️ Environment Variables
 
 ```bash
 # AWS Configuration
@@ -50,9 +50,13 @@ LOG_LEVEL=INFO
 MAX_MESSAGES=10
 POLL_INTERVAL=30
 BATCH_SIZE=5
+
+# Model Configuration
+SPACY_MODEL=en_core_web_trf
+SENTENCE_TRANSFORMER_MODEL=all-MiniLM-L6-v2
 ```
 
-## Message Format
+## 📨 Message Format
 
 ### Input Message
 
@@ -85,7 +89,7 @@ BATCH_SIZE=5
     "metrics": {
       "density": {"value": 0.5, "perplexity": 25.0, ...},
       "repetition": {"value": 0.3, "compression_ratio": 0.4, ...},
-      // ... all 10 metrics
+      // ... all 11 metrics
     },
     "spans": [
       {
@@ -101,7 +105,7 @@ BATCH_SIZE=5
 }
 ```
 
-## Deployment Options
+## 🚀 Deployment Options
 
 ### 1. Docker Compose (Local Development)
 
@@ -145,7 +149,7 @@ docker push <account-id>.dkr.ecr.us-east-1.amazonaws.com/sloplint-worker:latest
 aws ecs update-service --cluster sloplint-worker-cluster --service sloplint-worker-service --force-new-deployment
 ```
 
-## Monitoring
+## 📊 Monitoring
 
 ### CloudWatch Metrics
 
@@ -155,7 +159,7 @@ The worker publishes the following metrics:
 - **MessagesProcessed**: Number of successfully processed messages
 - **MessagesFailed**: Number of failed messages
 - **FeatureExtractionTime/{feature}**: Time for each feature extractor
-- **SlopScore**: AI slop scores
+- **SlopScore**: AI slop scores distribution
 - **AverageSlopScore**: Batch average scores
 - **QueueDepth**: SQS queue depths
 - **WorkerErrors**: Error counts by type
@@ -170,7 +174,7 @@ Logs are sent to CloudWatch Logs group `/ecs/sloplint-worker`.
 - Graceful shutdown on SIGTERM
 - Startup period of 60 seconds
 
-## Scaling
+## 📈 Scaling
 
 ### Auto Scaling
 
@@ -187,7 +191,7 @@ Configure ECS Service Auto Scaling based on:
 - **Batch Size**: 5 messages (configurable via env var)
 - **Poll Interval**: 30 seconds (configurable via env var)
 
-## Security
+## 🔒 Security
 
 ### IAM Permissions
 
@@ -208,7 +212,7 @@ The worker uses least-privilege IAM roles:
 - SQS message encryption at rest
 - No sensitive data in logs
 
-## Troubleshooting
+## 🐛 Troubleshooting
 
 ### Common Issues
 
@@ -251,14 +255,14 @@ aws sqs get-queue-attributes --queue-url <queue-url> --attribute-names Approxima
 docker run -e INPUT_QUEUE_URL=... -e OUTPUT_QUEUE_URL=... sloplint-worker
 ```
 
-## Cost Optimization
+## 💰 Cost Optimization
 
 - **Fargate Spot**: Use spot instances for non-critical workloads
 - **Auto Scaling**: Scale down during low traffic periods
 - **Monitoring**: Set up billing alerts for unexpected costs
 - **Data Transfer**: Use VPC endpoints to reduce data transfer costs
 
-## Development
+## 🛠️ Development
 
 ### Local Testing
 
@@ -284,7 +288,14 @@ docker-compose up localstack
     aws ecs update-service --cluster $ECS_CLUSTER --service $ECS_SERVICE --force-new-deployment
 ```
 
-## Support
+## 📚 Additional Resources
+
+- [AWS ECS Documentation](https://docs.aws.amazon.com/ecs/)
+- [AWS SQS Documentation](https://docs.aws.amazon.com/sqs/)
+- [AWS S3 Documentation](https://docs.aws.amazon.com/s3/)
+- [Terraform AWS Provider](https://registry.terraform.io/providers/hashicorp/aws/latest)
+
+## 🆘 Support
 
 For issues and questions:
 

@@ -48,6 +48,7 @@ class FeatureExtractor:
         sentences = doc_result["sentences"]
         tokens = doc_result["tokens"]
         pos_tags = doc_result.get("pos_tags", [])
+        sentence_embeddings = doc_result.get("sentence_embeddings")
 
         # Extract features from each module
         features = {}
@@ -55,7 +56,7 @@ class FeatureExtractor:
         try:
             # Information Utility
             density_features = extract_density_features(
-                text, sentences, tokens, pos_tags
+                text, sentences, tokens, pos_tags, sentence_embeddings
             )
             features["density"] = density_features
 
@@ -80,7 +81,9 @@ class FeatureExtractor:
             )
             features["templated"] = templated_features
 
-            coherence_features = extract_coherence_features(text, sentences, tokens)
+            coherence_features = extract_coherence_features(
+                text, sentences, tokens, sentence_embeddings
+            )
             features["coherence"] = coherence_features
 
             verbosity_features = extract_verbosity_features(text, sentences, tokens)
