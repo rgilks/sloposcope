@@ -27,31 +27,39 @@ class ScoreNormalizer:
             "general": {
                 "density": {"mean": 0.5, "std": 0.2},
                 "relevance": {"mean": 0.6, "std": 0.15},
+                "factuality": {"mean": 0.7, "std": 0.18},  # Higher mean for factuality
+                "subjectivity": {"mean": 0.4, "std": 0.16},
                 "coherence": {"mean": 0.5, "std": 0.18},
                 "repetition": {"mean": 0.3, "std": 0.12},
                 "templated": {"mean": 0.4, "std": 0.16},
                 "verbosity": {"mean": 0.5, "std": 0.14},
-                "complexity": {"mean": 0.5, "std": 0.20},
+                "complexity": {"mean": 0.4, "std": 0.18},  # Lower mean for complexity
                 "tone": {"mean": 0.4, "std": 0.15},
+                "fluency": {"mean": 0.6, "std": 0.16},  # Higher mean for fluency
             },
             "news": {
                 "density": {"mean": 0.6, "std": 0.18},
                 "relevance": {"mean": 0.7, "std": 0.12},
+                "factuality": {"mean": 0.8, "std": 0.15},  # Higher for news
+                "subjectivity": {"mean": 0.3, "std": 0.12},
                 "coherence": {"mean": 0.6, "std": 0.16},
                 "repetition": {"mean": 0.2, "std": 0.10},
                 "templated": {"mean": 0.3, "std": 0.14},
-                "subjectivity": {"mean": 0.3, "std": 0.12},
                 "verbosity": {"mean": 0.4, "std": 0.13},
-                "complexity": {"mean": 0.6, "std": 0.15},
+                "complexity": {"mean": 0.5, "std": 0.15},
                 "tone": {"mean": 0.3, "std": 0.13},
+                "fluency": {"mean": 0.7, "std": 0.14},
             },
             "qa": {
-                "factuality": {"mean": 0.4, "std": 0.20},
+                "relevance": {"mean": 0.7, "std": 0.15},  # High for QA
+                "factuality": {"mean": 0.6, "std": 0.20},  # Important for QA
+                "density": {"mean": 0.5, "std": 0.16},
+                "subjectivity": {"mean": 0.4, "std": 0.14},
+                "coherence": {"mean": 0.5, "std": 0.17},
                 "repetition": {"mean": 0.2, "std": 0.09},
                 "templated": {"mean": 0.3, "std": 0.15},
-                "coherence": {"mean": 0.5, "std": 0.17},
-                "density": {"mean": 0.5, "std": 0.16},
                 "verbosity": {"mean": 0.4, "std": 0.14},
+                "complexity": {"mean": 0.4, "std": 0.16},
                 "tone": {"mean": 0.3, "std": 0.12},
                 "fluency": {"mean": 0.6, "std": 0.18},
             },
@@ -91,38 +99,43 @@ def get_domain_weights(domain: str) -> dict[str, float]:
     """Get domain-specific weights for combining metrics."""
     weights = {
         "general": {
-            "density": 0.1,
-            "relevance": 0.1,
-            "coherence": 0.1,
-            "repetition": 0.1,
-            "templated": 0.1,
-            "verbosity": 0.1,
-            "complexity": 0.1,
-            "tone": 0.1,
-            "subjectivity": 0.1,
-            "fluency": 0.1,
+            "density": 0.15,  # Strongest predictor (β=0.05)
+            "relevance": 0.20,  # Strongest predictor (β=0.06)
+            "factuality": 0.15,  # Highest agreement (AC₁=0.76)
+            "coherence": 0.10,
+            "repetition": 0.08,
+            "templated": 0.08,
+            "verbosity": 0.08,
+            "complexity": 0.06,
+            "tone": 0.05,  # Strong predictor (β=0.05)
+            "subjectivity": 0.05,
+            "fluency": 0.05,
         },
         "news": {
-            "density": 0.15,
-            "relevance": 0.15,
-            "coherence": 0.15,
-            "repetition": 0.10,
-            "templated": 0.10,
-            "subjectivity": 0.10,
-            "verbosity": 0.10,
-            "complexity": 0.05,
+            "density": 0.18,  # Strong predictor
+            "relevance": 0.20,  # Strongest predictor
+            "factuality": 0.18,  # High agreement, important for news
+            "coherence": 0.12,
+            "repetition": 0.08,
+            "templated": 0.08,
+            "subjectivity": 0.08,  # Important for news objectivity
+            "verbosity": 0.05,
+            "complexity": 0.03,
             "tone": 0.05,
             "fluency": 0.05,
         },
         "qa": {
-            "factuality": 0.20,
-            "repetition": 0.125,  # Structure metrics combined
-            "templated": 0.125,
-            "coherence": 0.15,
-            "density": 0.10,
-            "verbosity": 0.10,
+            "relevance": 0.25,  # Strongest predictor, crucial for QA
+            "factuality": 0.20,  # High agreement, crucial for QA
+            "density": 0.15,  # Strong predictor
+            "coherence": 0.12,
+            "repetition": 0.08,  # Structure metrics
+            "templated": 0.08,
+            "fluency": 0.08,
+            "verbosity": 0.04,
             "tone": 0.05,
-            "fluency": 0.15,
+            "subjectivity": 0.05,
+            "complexity": 0.05,
         },
     }
 
@@ -160,10 +173,11 @@ def _extract_main_score(metric_name: str, metric_data: dict[str, Any]) -> float:
         "coherence": "coherence_score",
         "verbosity": "overall_verbosity",
         "tone": "tone_score",
-        "relevance": "value",
-        "subjectivity": "value",
-        "fluency": "value",
-        "complexity": "value",
+        "relevance": "relevance_score",  # Updated based on paper
+        "factuality": "factuality_score",  # New based on paper
+        "subjectivity": "subjectivity_score",  # Updated based on paper
+        "fluency": "fluency_score",  # Updated based on paper
+        "complexity": "complexity_score",  # Updated based on paper
     }
 
     # Try the specific key first, then fall back to "value"

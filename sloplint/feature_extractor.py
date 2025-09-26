@@ -15,6 +15,11 @@ from .features import (
     extract_tone_features,
     extract_verbosity_features,
 )
+from .features.complexity import extract_features as extract_complexity_features
+from .features.factuality import extract_features as extract_factuality_features
+from .features.fluency import extract_features as extract_fluency_features
+from .features.relevance import extract_features as extract_relevance_features
+from .features.subjectivity import extract_features as extract_subjectivity_features
 from .nlp.pipeline import NLPPipeline
 from .spans import Span, SpanCollection, SpanType
 
@@ -54,13 +59,17 @@ class FeatureExtractor:
             )
             features["density"] = density_features
 
-            # Information Quality (placeholder - would need factuality and subjectivity)
-            features["relevance"] = {
-                "value": 0.5,
-                "mean_sim": 0.5,
-                "low_sim_frac": 0.2,
-            }  # Placeholder
-            features["subjectivity"] = {"value": 0.3, "top_terms": []}  # Placeholder
+            # Information Quality - now implemented based on paper findings
+            relevance_features = extract_relevance_features(text, sentences, tokens)
+            features["relevance"] = relevance_features
+
+            factuality_features = extract_factuality_features(text, sentences, tokens)
+            features["factuality"] = factuality_features
+
+            subjectivity_features = extract_subjectivity_features(
+                text, sentences, tokens
+            )
+            features["subjectivity"] = subjectivity_features
 
             # Style Quality
             repetition_features = extract_repetition_features(text, sentences, tokens)
@@ -77,15 +86,12 @@ class FeatureExtractor:
             verbosity_features = extract_verbosity_features(text, sentences, tokens)
             features["verbosity"] = verbosity_features
 
-            # Placeholder for fluency
-            features["fluency"] = {
-                "value": 0.2,
-                "grammar_errors_k": 1.0,
-                "ppl_spikes": 0,
-            }
+            # Fluency and Complexity - now implemented based on paper findings
+            fluency_features = extract_fluency_features(text, sentences, tokens)
+            features["fluency"] = fluency_features
 
-            # Placeholder for complexity
-            features["complexity"] = {"value": 0.4, "fkgl": 10.5, "fog": 12.0}
+            complexity_features = extract_complexity_features(text, sentences, tokens)
+            features["complexity"] = complexity_features
 
             tone_features = extract_tone_features(text, sentences, tokens)
             features["tone"] = tone_features
