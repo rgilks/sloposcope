@@ -20,7 +20,6 @@ Sloposcope supports multiple deployment architectures:
 - **Deployment**: Docker container with docker-compose
 - **Benefits**: Consistent environment, easy local development
 
-
 ## 📋 Prerequisites
 
 ### For Fly.io Deployment (Recommended)
@@ -38,7 +37,6 @@ Sloposcope supports multiple deployment architectures:
 1. **Docker**: Install Docker and Docker Compose
 2. **Python**: Version 3.11 or higher
 3. **Git**: For cloning the repository
-
 
 ## 🚀 Deployment Instructions
 
@@ -129,7 +127,6 @@ docker run -d \
   -e ENVIRONMENT=production \
   sloposcope:latest
 ```
-
 
 ## ⚙️ Configuration
 
@@ -269,7 +266,6 @@ docker-compose logs -f
 docker-compose logs -f sloposcope
 ```
 
-
 ### Metrics
 
 #### Fly.io Metrics
@@ -281,7 +277,6 @@ flyctl metrics
 # View specific metrics
 flyctl metrics --type cpu,memory
 ```
-
 
 ## 🚨 Troubleshooting
 
@@ -338,7 +333,6 @@ docker run --cpus=2 --memory=2g sloposcope:latest
 flyctl metrics --type cpu,memory,latency
 ```
 
-
 ### Debugging Commands
 
 ```bash
@@ -373,7 +367,6 @@ export CORS_ORIGINS=https://yourdomain.com
 - No sensitive data persisted unless explicitly configured
 - Use HTTPS for all communications
 - Implement proper logging without exposing sensitive information
-
 
 ## 📈 Performance Optimization
 
@@ -415,7 +408,6 @@ docker build --target production -t sloposcope:latest .
 - Use shared CPU instances for development
 - Enable auto-stop/start for non-production apps
 - Monitor usage with `flyctl metrics`
-
 
 ### Docker
 
