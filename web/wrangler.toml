@@ -1,0 +1,15 @@
+name = "sloposcope-web"
+compatibility_date = "2024-01-15"
+
+[env.production]
+name = "sloposcope-web-prod"
+
+[env.staging]
+name = "sloposcope-web-staging"
+
+# Pages configuration
+pages_build_output_dir = "out"
+
+# Environment variables
+[vars]
+NEXT_PUBLIC_API_URL = "https://sloposcope.your-domain.workers.dev"
