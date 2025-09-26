@@ -1,0 +1,178 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "sloplint"
+version = "0.1.0"
+description = "AI Slop CLI - Detect low-quality AI-generated text with interpretable metrics"
+readme = "README.md"
+license = {text = "Apache-2.0"}
+requires-python = ">=3.11"
+authors = [
+    {name = "Rob Gilks", email = "rob@example.com"},
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+    "Topic :: Text Processing :: Linguistic",
+]
+dependencies = [
+    # Core dependencies
+    "typer>=0.9.0",
+    "rich>=13.7.0",
+    "tomli>=2.0.0",
+    "tomli-w>=1.0.0",
+
+    # NLP and ML
+    "spacy>=3.7.0",
+    "sentence-transformers>=2.2.0",
+    "transformers>=4.35.0",
+    "torch>=2.0.0",
+    "tokenizers>=0.15.0",
+
+    # Scientific computing
+    "numpy>=1.24.0",
+    "scipy>=1.11.0",
+    "scikit-learn>=1.3.0",
+
+    # Text processing
+    "textstat>=0.7.0",
+    "nltk>=3.8.0",
+    "regex>=2023.10.0",
+
+    # AWS
+    "boto3>=1.29.0",
+
+    # Optional for grammar checking
+    "language-tool-python>=2.7.0",
+
+    # Progress bars and utilities
+    "tqdm>=4.65.0",
+    "pathlib2>=2.3.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-xdist>=3.3.0",
+    "hypothesis>=6.88.0",
+    "ruff>=0.1.0",
+    "mypy>=1.7.0",
+    "black>=23.10.0",
+    "pre-commit>=3.5.0",
+]
+aws = [
+    "boto3>=1.29.0",
+    "botocore>=1.32.0",
+]
+all = [
+    "sloplint[dev,aws]",
+]
+
+[project.scripts]
+sloplint = "sloplint.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/rgilks/sloposcope"
+Repository = "https://github.com/rgilks/sloposcope.git"
+Issues = "https://github.com/rgilks/sloposcope/issues"
+Documentation = "https://github.com/rgilks/sloposcope#readme"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sloplint"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+extend-exclude = [
+    "sloplint/models/*",  # Model files may have different style requirements
+]
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+]
+ignore = [
+    "E501", # line too long, handled by black
+    "B008", # do not perform function calls in argument defaults
+    "C901", # too complex
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | sloplint/models
+)/
+'''
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[[tool.mypy.overrides]]
+module = [
+    "transformers.*",
+    "sentence_transformers.*",
+    "spacy.*",
+    "torch.*",
+    "nltk.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "--strict-markers",
+    "--strict-config",
+    "--verbose",
+    "--tb=short",
+    "--cov=sloplint",
+    "--cov-report=term-missing",
+    "--cov-report=html:htmlcov",
+    "--cov-report=xml",
+]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+]
