@@ -353,14 +353,64 @@ async def root():
 
                         ${result.explanations ? `
                             <div>
-                                <h3 class="text-lg font-semibold mb-4">Explanations</h3>
-                                <div class="space-y-3">
-                                    ${Object.entries(result.explanations).map(([metric, explanation]) => `
-                                        <div class="border-l-4 border-blue-200 pl-4">
-                                            <h4 class="font-medium text-gray-900 capitalize">${metric}</h4>
-                                            <p class="text-gray-600 text-sm">${explanation}</p>
+                                <h3 class="text-lg font-semibold mb-4">Analysis Summary</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <!-- Key Issues -->
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 mb-3">Key Issues Found</h4>
+                                        <div class="space-y-2">
+                                            ${(() => {
+                                                const problematicMetrics = Object.entries(result.metrics)
+                                                    .filter(([_, data]) => data.value > 0.7)
+                                                    .map(([name, _]) => name);
+
+                                                if (problematicMetrics.length === 0) {
+                                                    return '<div class="bg-green-50 border border-green-200 rounded-lg p-3"><p class="text-green-800 text-sm">✅ No major issues detected - good quality text!</p></div>';
+                                                }
+
+                                                return problematicMetrics.slice(0, 5).map(metric =>
+                                                    \`<div class="bg-yellow-50 border border-yellow-200 rounded-lg p-3"><p class="text-yellow-800 text-sm font-medium">\${metric.replace(/_/g, ' ').replace('score', '').toUpperCase()}</p></div>\`
+                                                ).join('');
+                                            })()}
                                         </div>
-                                    `).join('')}
+                                    </div>
+
+                                    <!-- Quick Recommendations -->
+                                    <div>
+                                        <h4 class="font-medium text-gray-900 mb-3">Quick Fixes</h4>
+                                        <div class="space-y-2">
+                                            ${(() => {
+                                                const problematicMetrics = Object.entries(result.metrics)
+                                                    .filter(([_, data]) => data.value > 0.7)
+                                                    .map(([name, _]) => name);
+
+                                                const quickFixes = [];
+                                                if (problematicMetrics.some(m => m.includes('repetition'))) {
+                                                    quickFixes.push('Vary your vocabulary and sentence structure');
+                                                }
+                                                if (problematicMetrics.some(m => m.includes('templated'))) {
+                                                    quickFixes.push('Replace generic phrases with specific language');
+                                                }
+                                                if (problematicMetrics.some(m => m.includes('verbosity'))) {
+                                                    quickFixes.push('Remove unnecessary words and be more concise');
+                                                }
+                                                if (problematicMetrics.some(m => m.includes('tone'))) {
+                                                    quickFixes.push('Use confident, direct language');
+                                                }
+                                                if (problematicMetrics.some(m => m.includes('coherence'))) {
+                                                    quickFixes.push('Improve sentence transitions and flow');
+                                                }
+
+                                                if (quickFixes.length === 0) {
+                                                    return '<div class="bg-green-50 border border-green-200 rounded-lg p-3"><p class="text-green-800 text-sm">Your text is well-written!</p></div>';
+                                                }
+
+                                                return quickFixes.map(fix =>
+                                                    \`<div class="bg-blue-50 border border-blue-200 rounded-lg p-3"><p class="text-blue-800 text-sm">\${fix}</p></div>\`
+                                                ).join('');
+                                            })()}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         ` : ''}

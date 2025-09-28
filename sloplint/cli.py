@@ -19,6 +19,11 @@ from .io import load_text, save_json_output
 
 # Suppress transformers warnings globally
 os.environ['TRANSFORMERS_VERBOSITY'] = 'error'
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+
+# Also suppress logging warnings
+import logging
+logging.getLogger("transformers").setLevel(logging.ERROR)
 
 app = typer.Typer()
 console = Console()
@@ -138,7 +143,9 @@ def analyze_command(
             display_results(result, explain, spans)
 
     except Exception as e:
-        console.print(f"[red]Error: {e}[/red]")
+        # Disable Rich markup for error messages to avoid parsing issues
+        import sys
+        print(f"Error: {str(e)}", file=sys.stderr)
         sys.exit(3)
 
 
@@ -154,45 +161,102 @@ def get_slop_level(score: float) -> str:
         return "High-Slop"
 
 
+def get_metric_summary(metric_name: str, score: float) -> str:
+    """Get concise summary for a metric."""
+    # Only provide detailed explanations for the most important problematic metrics
+    key_metrics = {
+        "overall_repetition": "🔴",
+        "templated_score": "🔴",
+        "overall_verbosity": "🔴",
+        "tone_score": "🔴",
+        "coherence_score": "🔴",
+        "factuality_score": "🔴"
+    }
+
+    if metric_name in key_metrics and score > 0.6:
+        return key_metrics[metric_name]
+
+    if score <= 0.3:
+        return "✅"
+    elif score <= 0.55:
+        return "⚠️"
+    elif score <= 0.75:
+        return "🔶"
+    else:
+        return "❌"
+
+
 def display_results(result: dict, explain: bool = False, spans: bool = False) -> None:
-    """Display analysis results in a formatted table."""
+    """Display analysis results in a formatted table with enhanced explanations."""
     console.print("\n[bold]AI Slop Analysis Results[/bold]")
     console.print(f"Domain: {result['domain']}")
     console.print(f"Slop Score: {result['slop_score']:.3f} ({result['level']})")
     console.print(f"Confidence: {result['confidence']:.3f}")
 
-    # Create metrics table
+    # Add interpretation guidance
+    score_pct = result['slop_score'] * 100
+    if result['slop_score'] <= 0.3:
+        console.print("[green]✅ Clean text - minimal AI slop detected[/green]")
+    elif result['slop_score'] <= 0.55:
+        console.print("[yellow]⚠️ Some concerns - review highlighted metrics[/yellow]")
+    elif result['slop_score'] <= 0.75:
+        console.print("[orange]🔶 Significant issues - consider major revisions[/orange]")
+    else:
+        console.print("[red]❌ Major problems - likely AI-generated or heavily templated[/red]")
+
+    # Create simplified metrics table
     table = Table(title="Per-Axis Metrics")
-    table.add_column("Metric", style="cyan", no_wrap=True)
-    table.add_column("Score", style="magenta")
-    table.add_column("Status", style="green")
+    table.add_column("Metric", style="cyan", no_wrap=True, width=22)
+    table.add_column("Score", style="magenta", justify="right", width=8)
+    table.add_column("Status", style="white", justify="center", width=2)
 
     for metric_name, metric_data in result["metrics"].items():
         score = metric_data["value"]
-        if score <= 0.50:
-            status = "✅ Good"
-        elif score <= 0.70:
-            status = "⚠️ Watch"
-        elif score <= 0.85:
-            status = "🔶 Sloppy"
-        else:
-            status = "❌ High-Slop"
 
-        table.add_row(metric_name.title(), f"{score:.3f}", status)
+        # Get concise summary (just icons)
+        summary = get_metric_summary(metric_name, score)
+
+        table.add_row(
+            metric_name.replace("_", " ").title(),
+            f"{score:.3f}",
+            summary
+        )
 
     console.print(table)
 
+    # Brief explanations only for key problematic metrics
     if explain:
-        console.print("\n[yellow]Explanations:[/yellow]")
-        console.print("• Density: Information density and perplexity measures")
-        console.print("• Relevance: How well content matches prompt/references")
-        console.print("• Coherence: Entity continuity and topic flow")
-        console.print("• Repetition: N-gram repetition and compression")
-        console.print("• Verbosity: Wordiness and structural complexity")
+        problematic_metrics = []
+        for metric_name, metric_data in result["metrics"].items():
+            if metric_data["value"] > 0.7:  # Focus on high slop indicators
+                problematic_metrics.append(metric_name)
 
-    console.print(
-        f"\n[blue]Analysis completed in {result['timings_ms']['total']}ms[/blue]"
-    )
+        if problematic_metrics:
+            console.print("\nKey Issues:")
+            for metric in problematic_metrics[:5]:  # Limit to top 5
+                metric_display = metric.replace("_", " ").title()
+                console.print(f"  • {metric_display}")
+            console.print()
+
+    # Concise recommendations
+    recommendations = []
+    if problematic_metrics:
+        recommendations.append(f"Focus on: {', '.join([m.replace('_', ' ') for m in problematic_metrics[:3]])}")
+        if any("repetition" in m for m in problematic_metrics):
+            recommendations.append("Vary vocabulary and sentence structure")
+        if any("templated" in m for m in problematic_metrics):
+            recommendations.append("Use specific language, avoid generic phrases")
+        if any("verbosity" in m for m in problematic_metrics):
+            recommendations.append("Remove unnecessary words, be more concise")
+        if any("tone" in m for m in problematic_metrics):
+            recommendations.append("Use confident, direct language")
+
+    if recommendations:
+        console.print("Recommendations:")
+        for rec in recommendations:
+            console.print(f"  {rec}")
+
+    console.print(f"\nAnalysis completed in {result['timings_ms']['total']}ms")
 
 
 def cli_main() -> None:

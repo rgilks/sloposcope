@@ -12,6 +12,7 @@ import hashlib
 import logging
 import os
 import pickle
+import warnings
 from typing import Any
 
 try:
@@ -25,6 +26,10 @@ except ImportError:
     Language = None
 
 try:
+    # Set environment variables before importing to suppress warnings
+    import os
+    os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+
     from sentence_transformers import SentenceTransformer
 
     SENTENCE_TRANSFORMERS_AVAILABLE = True
@@ -33,6 +38,10 @@ except ImportError:
     SentenceTransformer = None
 
 logger = logging.getLogger(__name__)
+
+# Suppress sentence-transformers warnings at module level
+warnings.filterwarnings("ignore", message=".*loss_type.*", category=UserWarning)
+warnings.filterwarnings("ignore", message=".*You passed along.*", category=UserWarning)
 
 
 class NLPPipeline:
@@ -62,9 +71,9 @@ class NLPPipeline:
         self._model_name: str | None = None
         self._has_transformer: bool = False
 
-        # Set model name
-        if use_transformer:
-            self._model_name = model_name or "en_core_web_trf"
+        # Set model name - default to small model, transformer is optional
+        if use_transformer and model_name:
+            self._model_name = model_name
         else:
             self._model_name = model_name or "en_core_web_sm"
 
@@ -99,31 +108,27 @@ class NLPPipeline:
             return None
 
         try:
-            # Try transformer model first
-            if self.use_transformer:
+            # Load the specified model
+            nlp = spacy.load(self._model_name)
+            self._has_transformer = "trf" in self._model_name
+            logger.info(f"Loaded spaCy model: {self._model_name}")
+            return nlp
+
+        except OSError:
+            logger.error(f"Model {self._model_name} not found")
+            # Try fallback model if the current model name is not already the fallback
+            if self._model_name != "en_core_web_sm":
+                logger.info("Trying fallback model: en_core_web_sm")
                 try:
-                    nlp = spacy.load(self._model_name)
-                    self._has_transformer = "trf" in self._model_name
-                    logger.info(f"Loaded transformer model: {self._model_name}")
+                    nlp = spacy.load("en_core_web_sm")
+                    self._has_transformer = False
+                    self._model_name = "en_core_web_sm"
+                    logger.info("Loaded fallback model: en_core_web_sm")
                     return nlp
                 except OSError:
-                    logger.warning(
-                        f"Transformer model {self._model_name} not found, trying fallback"
-                    )
-
-            # Fallback to small model
-            fallback_model = "en_core_web_sm"
-            try:
-                nlp = spacy.load(fallback_model)
-                self._has_transformer = False
-                self._model_name = fallback_model
-                logger.info(f"Loaded fallback model: {fallback_model}")
-                return nlp
-            except OSError:
-                logger.error(
-                    f"Neither {self._model_name} nor {fallback_model} available"
-                )
-                return None
+                    logger.error("Fallback model en_core_web_sm not available")
+                    return None
+            return None
 
         except Exception as e:
             logger.error(f"Error loading spaCy model: {e}")
@@ -136,20 +141,17 @@ class NLPPipeline:
             return None
 
         try:
-            # Suppress the loss_type warning by redirecting stderr temporarily
-            import os
-            import sys
-            import warnings
+            # Set logging level to suppress transformer warnings
+            logging.getLogger("transformers").setLevel(logging.ERROR)
+
+            # Capture any remaining stderr output
             from contextlib import redirect_stderr
             from io import StringIO
-            
-            # Capture stderr during model loading to suppress the warning
+
             stderr_capture = StringIO()
             with redirect_stderr(stderr_capture):
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
-                    model = SentenceTransformer("all-MiniLM-L6-v2")
-            
+                model = SentenceTransformer("all-MiniLM-L6-v2")
+
             logger.info("Loaded sentence transformer model: all-MiniLM-L6-v2")
             return model
         except Exception as e:
