@@ -25,9 +25,11 @@ from .features.complexity import extract_features as extract_complexity_features
 from .features.factuality import extract_features as extract_factuality_features
 from .features.fluency import extract_features as extract_fluency_features
 from .features.relevance import (
-    extract_features as extract_relevance_features,
-    extract_relevance_features_fallback,
     SENTENCE_TRANSFORMERS_AVAILABLE,
+    extract_relevance_features_fallback,
+)
+from .features.relevance import (
+    extract_features as extract_relevance_features,
 )
 from .features.subjectivity import extract_features as extract_subjectivity_features
 from .nlp.pipeline import NLPPipeline
@@ -73,38 +75,68 @@ class FeatureExtractor:
 
         # Extract density features (with semantic embeddings)
         density_start = time.time()
-        features.update(
-            extract_density_features(
-                text,
-                doc_result["sentences"],
-                doc_result["tokens"],
-                doc_result.get("pos_tags"),
-                doc_result.get("sentence_embeddings"),
-            )
+        density_result = extract_density_features(
+            text,
+            doc_result["sentences"],
+            doc_result["tokens"],
+            doc_result.get("pos_tags"),
+            doc_result.get("sentence_embeddings"),
         )
+
+        # Wrap density features in proper format
+        if isinstance(density_result, dict):
+            wrapped_density = {}
+            for key, value in density_result.items():
+                if isinstance(value, (int, float, bool, str)):
+                    # Simple scalar values get wrapped
+                    wrapped_density[key] = {"value": value, "normalized": False}
+                elif isinstance(value, list):
+                    # Lists get wrapped
+                    wrapped_density[key] = {"value": value, "normalized": False}
+                elif isinstance(value, dict):
+                    # Complex dictionaries are kept as-is
+                    wrapped_density[key] = value
+                else:
+                    wrapped_density[key] = value
+            features.update(wrapped_density)
         self._processing_times["density"] = time.time() - density_start
 
         # Extract coherence features (with semantic embeddings if available)
         coherence_start = time.time()
         if SPACY_AVAILABLE:
-            features.update(
-                extract_coherence_features(
-                    text,
-                    doc_result["sentences"],
-                    doc_result["tokens"],
-                    doc_result.get("sentence_embeddings"),
-                    self.nlp_pipeline,
-                )
+            coherence_result = extract_coherence_features(
+                text,
+                doc_result["sentences"],
+                doc_result["tokens"],
+                doc_result.get("sentence_embeddings"),
+                self.nlp_pipeline,
             )
+
+            # Wrap coherence features in proper format
+            if isinstance(coherence_result, dict):
+                wrapped_coherence = {}
+                for key, value in coherence_result.items():
+                    if isinstance(value, (int, float, bool, str)):
+                        # Simple scalar values get wrapped
+                        wrapped_coherence[key] = {"value": value, "normalized": False}
+                    elif isinstance(value, list):
+                        # Lists get wrapped
+                        wrapped_coherence[key] = {"value": value, "normalized": False}
+                    elif isinstance(value, dict):
+                        # Complex dictionaries are kept as-is
+                        wrapped_coherence[key] = value
+                    else:
+                        wrapped_coherence[key] = value
+                features.update(wrapped_coherence)
         else:
             # Fallback coherence features
             features.update(
                 {
-                    "entity_continuity": 0.5,
-                    "local_coherence": 0.5,
-                    "global_coherence": 0.5,
-                    "coherence_score": 0.5,
-                    "value": 0.5,
+                    "entity_continuity": {"value": 0.5, "normalized": False},
+                    "local_coherence": {"value": 0.5, "normalized": False},
+                    "global_coherence": {"value": 0.5, "normalized": False},
+                    "coherence_score": {"value": 0.5, "normalized": False},
+                    "value": {"value": 0.5, "normalized": False},
                 }
             )
         self._processing_times["coherence"] = time.time() - coherence_start
@@ -130,7 +162,29 @@ class FeatureExtractor:
                     doc_result["sentences"],
                     doc_result["tokens"],
                 )
-                features.update(feature_result)
+
+                # Wrap relevance features in proper format
+                if isinstance(feature_result, dict):
+                    wrapped_relevance = {}
+                    for key, value in feature_result.items():
+                        if isinstance(value, (int, float, bool, str)):
+                            # Simple scalar values get wrapped
+                            wrapped_relevance[key] = {
+                                "value": value,
+                                "normalized": False,
+                            }
+                        elif isinstance(value, list):
+                            # Lists get wrapped
+                            wrapped_relevance[key] = {
+                                "value": value,
+                                "normalized": False,
+                            }
+                        elif isinstance(value, dict):
+                            # Complex dictionaries are kept as-is
+                            wrapped_relevance[key] = value
+                        else:
+                            wrapped_relevance[key] = value
+                    features.update(wrapped_relevance)
             except Exception as e:
                 logger.error(f"Error extracting relevance features: {e}")
                 features["relevance_error"] = str(e)
@@ -140,7 +194,29 @@ class FeatureExtractor:
                     text,
                     doc_result["sentences"],
                 )
-                features.update(feature_result)
+
+                # Wrap fallback relevance features in proper format
+                if isinstance(feature_result, dict):
+                    wrapped_relevance = {}
+                    for key, value in feature_result.items():
+                        if isinstance(value, (int, float, bool, str)):
+                            # Simple scalar values get wrapped
+                            wrapped_relevance[key] = {
+                                "value": value,
+                                "normalized": False,
+                            }
+                        elif isinstance(value, list):
+                            # Lists get wrapped
+                            wrapped_relevance[key] = {
+                                "value": value,
+                                "normalized": False,
+                            }
+                        elif isinstance(value, dict):
+                            # Complex dictionaries are kept as-is
+                            wrapped_relevance[key] = value
+                        else:
+                            wrapped_relevance[key] = value
+                    features.update(wrapped_relevance)
             except Exception as e:
                 logger.error(f"Error extracting fallback relevance features: {e}")
                 features["relevance_error"] = str(e)
@@ -156,7 +232,35 @@ class FeatureExtractor:
                     doc_result["sentences"],
                     doc_result["tokens"],
                 )
-                features.update(feature_result)
+
+                # Wrap feature results in proper format for combine.py
+                if isinstance(feature_result, dict):
+                    wrapped_features = {}
+                    for key, value in feature_result.items():
+                        if isinstance(value, (int, float, bool, str)):
+                            # Simple scalar values get wrapped
+                            wrapped_features[key] = {
+                                "value": value,
+                                "normalized": False,
+                            }
+                        elif isinstance(value, list):
+                            # Lists get wrapped
+                            wrapped_features[key] = {
+                                "value": value,
+                                "normalized": False,
+                            }
+                        elif isinstance(value, dict):
+                            # Complex dictionaries are kept as-is so combine.py can access their structure
+                            wrapped_features[key] = value
+                        else:
+                            wrapped_features[key] = value
+                    features.update(wrapped_features)
+                else:
+                    # Handle single value features
+                    features[f"{feature_name}_value"] = {
+                        "value": feature_result,
+                        "normalized": False,
+                    }
             except Exception as e:
                 logger.error(f"Error extracting {feature_name} features: {e}")
                 features[f"{feature_name}_error"] = str(e)
@@ -166,12 +270,23 @@ class FeatureExtractor:
         # Add metadata
         features.update(
             {
-                "has_semantic_features": doc_result.get("sentence_embeddings")
-                is not None,
-                "model_name": doc_result["model_name"],
-                "has_transformer": doc_result["has_transformer"],
-                "processing_times": self._processing_times.copy(),
-                "total_processing_time": time.time() - start_time,
+                "has_semantic_features": {
+                    "value": doc_result.get("sentence_embeddings") is not None,
+                    "normalized": False,
+                },
+                "model_name": {"value": doc_result["model_name"], "normalized": False},
+                "has_transformer": {
+                    "value": doc_result["has_transformer"],
+                    "normalized": False,
+                },
+                "processing_times": {
+                    "value": self._processing_times.copy(),
+                    "normalized": False,
+                },
+                "total_processing_time": {
+                    "value": time.time() - start_time,
+                    "normalized": False,
+                },
             }
         )
 

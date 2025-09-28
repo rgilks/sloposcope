@@ -21,10 +21,10 @@ except ImportError:
     SKLEARN_AVAILABLE = False
 
     # Create a fallback cosine similarity function using numpy
-    def cosine_similarity(X, Y):
+    def cosine_similarity(X: np.ndarray, Y: np.ndarray) -> np.ndarray:
         """Simple numpy-based cosine similarity fallback."""
         if X is None or Y is None:
-            return 0.0
+            return np.array([0.0])
         X = np.array(X).reshape(1, -1) if len(X.shape) == 1 else X
         Y = np.array(Y).reshape(1, -1) if len(Y.shape) == 1 else Y
         dot_product = np.dot(X, Y.T)
@@ -40,7 +40,8 @@ try:
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
     SENTENCE_TRANSFORMERS_AVAILABLE = False
-    SentenceTransformer = None
+    # Create a dummy SentenceTransformer type for type annotations
+    SentenceTransformer = Any
 
 __all__ = [
     "extract_features",
@@ -52,7 +53,7 @@ __all__ = [
 _relevance_model = None
 
 
-def get_relevance_model() -> Any:
+def get_relevance_model() -> Any | None:
     """Get or initialize the sentence transformer model for relevance calculation."""
     global _relevance_model
     if (
@@ -366,7 +367,6 @@ def extract_relevance_features_fallback(
 
     # Simple text-based relevance approximation
     # This is a basic fallback - in a real implementation you'd want something more sophisticated
-    text_length = len(text.split())
     avg_sentence_length = (
         sum(len(s.split()) for s in sentences) / len(sentences) if sentences else 0
     )

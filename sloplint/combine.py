@@ -314,6 +314,10 @@ def normalize_scores(
 
     normalized = {}
     for metric_name, metric_data in metrics.items():
+        # Skip non-scalar features (like spans, complex objects)
+        if not isinstance(metric_data, dict) or "value" not in metric_data:
+            continue
+
         # Extract the main score value - different extractors use different key names
         raw_score = _extract_main_score(metric_name, metric_data)
         normalized_score = normalizer.normalize_score_with_inversion(
@@ -349,9 +353,37 @@ def _extract_main_score(metric_name: str, metric_data: dict[str, Any]) -> float:
     # Try the specific key first, then fall back to "value"
     key = score_keys.get(metric_name, "value")
     if key in metric_data:
-        return float(metric_data[key])
+        value = metric_data[key]
+        # Handle different value types
+        if isinstance(value, (int, float)):
+            return float(value)
+        elif isinstance(value, list):
+            # For span features and other list-based features, return neutral score
+            return 0.5
+        elif isinstance(value, str):
+            # Try to convert string numbers to float
+            try:
+                return float(value)
+            except ValueError:
+                return 0.5
+        else:
+            return 0.5
     elif "value" in metric_data:
-        return float(metric_data["value"])
+        value = metric_data["value"]
+        # Handle different value types
+        if isinstance(value, (int, float)):
+            return float(value)
+        elif isinstance(value, list):
+            # For span features and other list-based features, return neutral score
+            return 0.5
+        elif isinstance(value, str):
+            # Try to convert string numbers to float
+            try:
+                return float(value)
+            except ValueError:
+                return 0.5
+        else:
+            return 0.5
     else:
         # If no score found, return 0.5 as neutral
         return 0.5
