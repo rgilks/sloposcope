@@ -23,8 +23,18 @@ def get_relevance_model() -> Any:
     global _relevance_model
     if _relevance_model is None:
         try:
-            # Use a lightweight model for efficiency
-            _relevance_model = SentenceTransformer("all-MiniLM-L6-v2")
+            # Suppress the loss_type warning during model loading
+            import warnings
+            from contextlib import redirect_stderr
+            from io import StringIO
+            
+            # Capture stderr during model loading to suppress the warning
+            stderr_capture = StringIO()
+            with redirect_stderr(stderr_capture):
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    # Use a lightweight model for efficiency
+                    _relevance_model = SentenceTransformer("all-MiniLM-L6-v2")
 
             # Try to use GPU if available
             try:

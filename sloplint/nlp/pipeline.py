@@ -136,7 +136,20 @@ class NLPPipeline:
             return None
 
         try:
-            model = SentenceTransformer("all-MiniLM-L6-v2")
+            # Suppress the loss_type warning by redirecting stderr temporarily
+            import os
+            import sys
+            import warnings
+            from contextlib import redirect_stderr
+            from io import StringIO
+            
+            # Capture stderr during model loading to suppress the warning
+            stderr_capture = StringIO()
+            with redirect_stderr(stderr_capture):
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    model = SentenceTransformer("all-MiniLM-L6-v2")
+            
             logger.info("Loaded sentence transformer model: all-MiniLM-L6-v2")
             return model
         except Exception as e:

@@ -4,6 +4,7 @@ CLI interface for the AI Slop CLI tool.
 Provides command-line interface for analyzing text files and detecting AI slop.
 """
 
+import os
 import sys
 from pathlib import Path
 
@@ -15,6 +16,9 @@ from . import __version__
 from .combine import combine_scores, normalize_scores
 from .feature_extractor import FeatureExtractor
 from .io import load_text, save_json_output
+
+# Suppress transformers warnings globally
+os.environ['TRANSFORMERS_VERBOSITY'] = 'error'
 
 app = typer.Typer()
 console = Console()
@@ -42,7 +46,8 @@ def main(
 
 @app.command("analyze")
 def analyze_command(
-    files: list[Path] = typer.Argument(..., help="Text files to analyze"),
+    files: list[Path] = typer.Argument(None, help="Text files to analyze"),
+    text: str | None = typer.Option(None, "--text", help="Text to analyze directly"),
     domain: str = typer.Option(
         "general", "--domain", help="Domain for analysis (news, qa, general)"
     ),
@@ -60,12 +65,21 @@ def analyze_command(
     language: str = typer.Option("en", "--language", help="Language code"),
     config: Path | None = typer.Option(None, "--config", help="Config file path"),
 ) -> None:
-    """Analyze text files for AI slop."""
+    """Analyze text files or direct text for AI slop."""
     try:
-        # Load text from files
+        # Get text content from either files or direct text
         text_content = ""
-        for file_path in files:
-            text_content += load_text(file_path)
+        
+        if text:
+            # Use direct text input
+            text_content = text
+        elif files:
+            # Load text from files
+            for file_path in files:
+                text_content += load_text(file_path)
+        else:
+            console.print("[red]Error: Must provide either text files or --text option[/red]")
+            sys.exit(2)
 
         if not text_content.strip():
             console.print("[red]Error: No text content found in provided files[/red]")
@@ -181,5 +195,10 @@ def display_results(result: dict, explain: bool = False, spans: bool = False) ->
     )
 
 
-if __name__ == "__main__":
+def cli_main() -> None:
+    """Entry point for the CLI script."""
     app()
+
+
+if __name__ == "__main__":
+    cli_main()

@@ -50,6 +50,7 @@ dependencies = [
     "fastapi>=0.104.0",
     "uvicorn[standard]>=0.24.0",
     "datasets>=4.1.1",
+    "pip>=25.2",
 ]
 
 [project.optional-dependencies]
@@ -66,7 +67,7 @@ dev = [
 all = ["sloplint[dev]"]
 
 [project.scripts]
-sloplint = "sloplint.cli:main"
+sloplint = "sloplint.cli:cli_main"
 
 [project.urls]
 Homepage = "https://github.com/rgilks/sloposcope"

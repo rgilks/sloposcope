@@ -27,13 +27,17 @@ class EntityGridCoherence:
         """Initialize entity grid analyzer."""
         self.entity_roles = ["S", "O", "X", "-"]  # Subject, Object, Other, None
 
-    def extract_entities(self, sentences: list[str]) -> dict[int, list[str]]:
+    def extract_entities(self, sentences: list[str], nlp_pipeline=None) -> dict[int, list[str]]:
         """Extract entities and their roles from sentences."""
         if not SPACY_AVAILABLE:
             return self._fallback_entity_extraction(sentences)
 
         try:
-            nlp = spacy.load("en_core_web_sm")
+            # Use provided NLP pipeline or load spaCy directly
+            if nlp_pipeline and hasattr(nlp_pipeline, 'nlp') and nlp_pipeline.nlp:
+                nlp = nlp_pipeline.nlp
+            else:
+                nlp = spacy.load("en_core_web_sm")
 
             entities_by_sentence = {}
             for i, sentence in enumerate(sentences):
@@ -256,13 +260,14 @@ def extract_features(
     sentences: list[str],
     tokens: list[str],
     sentence_embeddings: np.ndarray | None = None,
+    nlp_pipeline=None,
 ) -> dict[str, Any]:
     """Extract all coherence-related features with enhanced semantic analysis."""
     try:
         analyzer = EntityGridCoherence()
 
         # Extract entities and roles
-        entities_by_sentence = analyzer.extract_entities(sentences)
+        entities_by_sentence = analyzer.extract_entities(sentences, nlp_pipeline)
 
         # Calculate entity continuity
         entity_continuity = float(

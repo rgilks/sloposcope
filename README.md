@@ -19,7 +19,7 @@ A production-ready tool for detecting AI-generated text patterns and measuring "
 ### Prerequisites
 
 - Python 3.11+
-- `uv` package manager (recommended) or `pip`
+- `uv` package manager
 
 ### Installation
 
@@ -28,34 +28,43 @@ A production-ready tool for detecting AI-generated text patterns and measuring "
 git clone https://github.com/rgilks/sloposcope.git
 cd sloposcope
 
-# Install with uv (recommended)
-uv sync --dev
+# One-command setup (installs everything)
+make install
+```
 
-# Or install with pip
-pip install -e ".[dev]"
+That's it! The setup process will:
 
-# Download required models
-python -m spacy download en_core_web_sm
+- Install all dependencies with `uv`
+- Download the required spaCy model
+- Verify everything is working correctly
+
+### Quick Test
+
+```bash
+# Test that everything is working
+uv run sloplint analyze --text "This is a test" --explain
 ```
 
 ### Command Line Usage
 
 ```bash
 # Analyze text directly
-python -m sloplint.cli analyze "Your text here" --explain
+uv run sloplint analyze --text "Your text here" --explain
 
 # Analyze a file
-python -m sloplint.cli analyze document.txt --domain news --explain
+uv run sloplint analyze document.txt --explain
 
 # Get help
-python -m sloplint.cli --help
+uv run sloplint --help
 ```
+
+> **Note**: You may see a harmless warning about `loss_type=None` from the transformers library. This can be ignored.
 
 ### Web Interface
 
 ```bash
 # Start the development server
-uvicorn app:app --reload
+uv run uvicorn app:app --reload
 
 # Or use the Makefile
 make run
@@ -148,45 +157,32 @@ docker-compose up --build
 
 ## 🛠️ Development
 
-### Running Tests
+### Quick Commands
 
 ```bash
-# Run all tests
+# Run tests
 make test
 
-# Run unit tests only (fast)
-make test-unit
-
-# Run with coverage
-make test-coverage
-```
-
-### Code Quality
-
-```bash
 # Lint code
 make lint
 
 # Format code
 make format
 
-# Type checking
-make type-check
+# Run development server
+make run
 
-# Run all quality checks
-make pre-commit-run
+# Clean up
+make clean
 ```
 
 ### Development Setup
 
 ```bash
-# Install development dependencies
-make sync-dev
+# One-command setup (if not already done)
+make install
 
-# Install pre-commit hooks
-make pre-commit
-
-# Run development server
+# Start developing!
 make run
 ```
 

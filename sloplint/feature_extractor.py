@@ -87,6 +87,7 @@ class FeatureExtractor:
                 doc_result["sentences"],
                 doc_result["tokens"],
                 doc_result.get("sentence_embeddings"),
+                self.nlp_pipeline,
             )
         )
         self._processing_times["coherence"] = time.time() - coherence_start

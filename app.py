@@ -14,8 +14,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from sloplint.feature_extractor import FeatureExtractor
 from sloplint.combine import combine_scores, normalize_scores
+from sloplint.feature_extractor import FeatureExtractor
 from sloplint.spans import SpanCollection
 
 app = FastAPI(

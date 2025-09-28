@@ -10,14 +10,17 @@ RUN apt-get update && apt-get install -y \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
+# Install uv
+RUN pip install uv
+
 # Copy requirements first for better caching
-COPY pyproject.toml README.md ./
+COPY pyproject.toml uv.lock README.md ./
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -e .
+RUN uv sync --frozen
 
 # Download spaCy model
-RUN python -m spacy download en_core_web_sm
+RUN uv run python -m spacy download en_core_web_sm
 
 # Copy application code
 COPY . .
@@ -35,4 +38,4 @@ HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 # Run the application
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uv", "run", "uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
