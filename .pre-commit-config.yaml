@@ -61,16 +61,6 @@ repos:
         pass_filenames: false
         always_run: true
 
-  # Run comprehensive tests on push (slower but more thorough)
-  - repo: local
-    hooks:
-      - id: pytest-comprehensive
-        name: pytest-comprehensive
-        entry: uv run python
-        language: system
-        args: [tests/test_comprehensive_slop_detection.py]
-        pass_filenames: false
-        stages: [pre-push]
 
 ci:
   autofix_commit_msg: |

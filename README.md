@@ -46,7 +46,7 @@ The project uses pre-commit hooks to ensure code quality:
 - **Automatic formatting** with Black and Ruff
 - **Linting** to catch issues early
 - **Unit tests** run on every commit
-- **Comprehensive tests** run on every push
+- **Comprehensive tests** run by pre-commit.ci on every push
 
 The hooks are automatically installed during `make install`. If you need to set them up manually:
 
@@ -60,6 +60,20 @@ make setup-hooks
 # Test that everything is working
 uv run sloplint analyze --text "This is a test" --explain
 ```
+
+### Running Comprehensive Tests
+
+For more thorough testing with 100+ diverse text samples:
+
+```bash
+# Run comprehensive test suite
+uv run python tests/test_comprehensive_slop_detection.py
+```
+
+This test suite includes:
+- Performance benchmarking (processing time per text)
+- Accuracy testing across different content categories
+- Slop score distribution analysis
 
 ### Command Line Usage
 
