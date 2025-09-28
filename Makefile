@@ -12,6 +12,8 @@ install: ## Install dependencies and models (one command setup)
 	uv run python -m spacy download en_core_web_sm
 	@echo "Verifying model installation..."
 	uv run python -c "import spacy; nlp = spacy.load('en_core_web_sm'); print('✅ spaCy model verified and working')"
+	@echo "Setting up pre-commit hooks..."
+	uv run pre-commit install --install-hooks
 	@echo "✅ Setup complete! Ready to use."
 
 # Development
@@ -23,6 +25,9 @@ lint: ## Run linting
 
 format: ## Format code
 	uv run black sloplint/ tests/ && uv run ruff check --fix sloplint/ tests/
+
+setup-hooks: ## Set up pre-commit hooks
+	uv run pre-commit install --install-hooks
 
 # Utilities
 clean: ## Clean up temporary files

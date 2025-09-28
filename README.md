@@ -36,7 +36,23 @@ That's it! The setup process will:
 
 - Install all dependencies with `uv`
 - Download the required spaCy model
+- Set up pre-commit hooks for automatic code quality checks
 - Verify everything is working correctly
+
+### Pre-commit Hooks
+
+The project uses pre-commit hooks to ensure code quality:
+
+- **Automatic formatting** with Black and Ruff
+- **Linting** to catch issues early
+- **Unit tests** run on every commit
+- **Comprehensive tests** run on every push
+
+The hooks are automatically installed during `make install`. If you need to set them up manually:
+
+```bash
+make setup-hooks
+```
 
 ### Quick Test
 
