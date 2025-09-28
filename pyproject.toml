@@ -23,12 +23,12 @@ classifiers = [
     "Topic :: Text Processing :: Linguistic",
 ]
 dependencies = [
-    # Core dependencies
+    # Core CLI dependencies
     "typer>=0.9.0",
     "rich>=13.7.0",
     "tomli>=2.0.0",
     "tomli-w>=1.0.0",
-    # NLP and ML - CPU only
+    # NLP and ML - CPU only for production
     "spacy>=3.7.0",
     "sentence-transformers>=2.2.0",
     "transformers>=4.35.0",
@@ -42,7 +42,7 @@ dependencies = [
     "textstat>=0.7.0",
     "nltk>=3.8.0",
     "regex>=2023.10.0",
-    # Web framework
+    # Web framework (for API deployment)
     "fastapi>=0.104.0",
     "uvicorn[standard]>=0.24.0",
     "pydantic>=2.0.0",
@@ -50,30 +50,6 @@ dependencies = [
     "tqdm>=4.65.0",
     "pathlib2>=2.3.0",
 ]
-
-# Production dependencies (minimal set for web deployment)
-[project.optional-dependencies]
-web = [
-    "sloplint",
-    # Production-only dependencies
-]
-
-# Development dependencies
-dev = [
-    "pytest>=7.4.0",
-    "pytest-cov>=4.1.0",
-    "pytest-xdist>=3.3.0",
-    "hypothesis>=6.88.0",
-    "ruff>=0.1.0",
-    "mypy>=1.7.0",
-    "black>=23.10.0",
-    "pre-commit>=3.5.0",
-    # Optional tools
-    "language-tool-python>=2.7.0",
-    "datasets>=4.1.1",
-]
-
-all = ["sloplint[dev]"]
 
 [project.scripts]
 sloplint = "sloplint.cli:cli_main"
@@ -87,6 +63,7 @@ Documentation = "https://github.com/rgilks/sloposcope#readme"
 [tool.hatch.build.targets.wheel]
 packages = ["sloplint"]
 
+# Code formatting and linting configuration
 [tool.ruff]
 line-length = 88
 target-version = "py311"
@@ -116,6 +93,7 @@ ignore = [
     "C901", # too complex
 ]
 
+# Code formatting configuration
 [tool.black]
 line-length = 88
 target-version = ['py311']
@@ -138,6 +116,7 @@ extend-exclude = '''
 )/
 '''
 
+# Static type checking configuration
 [tool.mypy]
 python_version = "3.11"
 warn_return_any = true
@@ -153,6 +132,7 @@ warn_no_return = true
 warn_unreachable = true
 strict_equality = true
 
+# Type checking overrides for external libraries
 [[tool.mypy.overrides]]
 module = [
     "transformers.*",
@@ -163,6 +143,7 @@ module = [
 ]
 ignore_missing_imports = true
 
+# Testing configuration
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
@@ -188,14 +169,22 @@ filterwarnings = [
     "ignore::PendingDeprecationWarning",
 ]
 
+# Development dependencies (using modern dependency-groups format)
 [dependency-groups]
 dev = [
+    # Code formatting and linting
     "black>=25.9.0",
-    "hypothesis>=6.140.2",
+    "ruff>=0.13.2",
     "mypy>=1.18.2",
     "pre-commit>=4.3.0",
+
+    # Testing framework
     "pytest>=8.4.2",
     "pytest-cov>=7.0.0",
     "pytest-xdist>=3.8.0",
-    "ruff>=0.13.2",
+    "hypothesis>=6.140.2",
+
+    # Optional development tools
+    "language-tool-python>=2.7.0",
+    "datasets>=4.1.1",
 ]
