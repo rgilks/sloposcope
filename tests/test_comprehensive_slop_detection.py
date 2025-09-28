@@ -5,7 +5,6 @@ Optimized for M1 Mac with GPU acceleration and batch processing.
 """
 
 import json
-import os
 import statistics
 import time
 
@@ -135,8 +134,6 @@ class SlopDetectionTester:
     def analyze_batch(self, batch: list[dict]) -> list[dict]:
         """Analyze a batch of texts for AI slop using optimized batch processing."""
         texts = [item["text"] for item in batch]
-        doc_ids = [item["doc_id"] for item in batch]
-        domains = [item["domain"] for item in batch]
 
         start_time = time.time()
 
@@ -145,7 +142,7 @@ class SlopDetectionTester:
             batch_features = self.extractor.batch_extract_features(texts)
 
             results = []
-            for i, (item, features) in enumerate(zip(batch, batch_features)):
+            for item, features in zip(batch, batch_features, strict=False):
                 try:
                     # Convert raw features to expected format (dict with "value" key)
                     features_dict = {}
@@ -153,11 +150,15 @@ class SlopDetectionTester:
                         if isinstance(value, dict):
                             features_dict[key] = value
                         elif isinstance(value, list):
-                            features_dict[key] = {"value": 0.5}  # Neutral score for list features
+                            features_dict[key] = {
+                                "value": 0.5
+                            }  # Neutral score for list features
                         elif isinstance(value, bool):
                             features_dict[key] = {"value": 1.0 if value else 0.0}
                         elif isinstance(value, str):
-                            features_dict[key] = {"value": 0.5}  # Neutral score for string features
+                            features_dict[key] = {
+                                "value": 0.5
+                            }  # Neutral score for string features
                         else:
                             features_dict[key] = {"value": float(value)}
 

@@ -10,7 +10,7 @@ The time complexity of QuickSort is O(n log n) on average, but O(n²) in the wor
 
 The choice of pivot significantly affects performance. Common strategies include:
 - Always pick the first element
-- Always pick the last element  
+- Always pick the last element
 - Pick a random element
 - Pick the median of first, middle, and last elements
 

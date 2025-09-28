@@ -57,7 +57,7 @@ repos:
         name: pytest-unit
         entry: uv run python -m pytest
         language: system
-        args: [test_optimized_components.py, -v, --tb=short]
+        args: [tests/test_cli.py, -v, --tb=short]
         pass_filenames: false
         always_run: true
 

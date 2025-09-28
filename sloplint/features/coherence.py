@@ -27,14 +27,16 @@ class EntityGridCoherence:
         """Initialize entity grid analyzer."""
         self.entity_roles = ["S", "O", "X", "-"]  # Subject, Object, Other, None
 
-    def extract_entities(self, sentences: list[str], nlp_pipeline=None) -> dict[int, list[str]]:
+    def extract_entities(
+        self, sentences: list[str], nlp_pipeline=None
+    ) -> dict[int, list[str]]:
         """Extract entities and their roles from sentences."""
         if not SPACY_AVAILABLE:
             return self._fallback_entity_extraction(sentences)
 
         try:
             # Use provided NLP pipeline or load spaCy directly
-            if nlp_pipeline and hasattr(nlp_pipeline, 'nlp') and nlp_pipeline.nlp:
+            if nlp_pipeline and hasattr(nlp_pipeline, "nlp") and nlp_pipeline.nlp:
                 nlp = nlp_pipeline.nlp
             else:
                 nlp = spacy.load("en_core_web_sm")

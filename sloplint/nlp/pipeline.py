@@ -28,7 +28,8 @@ except ImportError:
 try:
     # Set environment variables before importing to suppress warnings
     import os
-    os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+
+    os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
     from sentence_transformers import SentenceTransformer
 

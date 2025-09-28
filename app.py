@@ -80,7 +80,7 @@ def get_index_html() -> str:
     """Load the HTML template from file."""
     template_path = Path(__file__).parent / "templates" / "index.html"
     try:
-        with open(template_path, "r", encoding="utf-8") as f:
+        with open(template_path, encoding="utf-8") as f:
             return f.read()
     except FileNotFoundError:
         # Fallback to inline HTML if template file doesn't exist
@@ -208,9 +208,11 @@ async def analyze_text(request: AnalysisRequest):
                 metrics[feature_name] = feature_data
             else:
                 metrics[feature_name] = {
-                    "value": float(feature_data)
-                    if isinstance(feature_data, (int, float))
-                    else 0.5
+                    "value": (
+                        float(feature_data)
+                        if isinstance(feature_data, (int, float))
+                        else 0.5
+                    )
                 }
 
         # Normalize and combine scores

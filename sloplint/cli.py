@@ -117,9 +117,11 @@ def analyze_command(
             else:
                 # If it's not a dict, wrap it
                 metrics[feature_name] = {
-                    "value": float(feature_data)
-                    if isinstance(feature_data, (int, float))
-                    else 0.5
+                    "value": (
+                        float(feature_data)
+                        if isinstance(feature_data, (int, float))
+                        else 0.5
+                    )
                 }
 
         # Create normalizer and normalize scores

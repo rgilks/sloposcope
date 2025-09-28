@@ -149,15 +149,21 @@ class FeatureExtractor:
         stats = {
             "total_time": total_time,
             "feature_times": self._processing_times.copy(),
-            "average_feature_time": total_time / len(self._processing_times)
-            if self._processing_times
-            else 0,
-            "slowest_feature": max(self._processing_times.items(), key=lambda x: x[1])
-            if self._processing_times
-            else None,
-            "fastest_feature": min(self._processing_times.items(), key=lambda x: x[1])
-            if self._processing_times
-            else None,
+            "average_feature_time": (
+                total_time / len(self._processing_times)
+                if self._processing_times
+                else 0
+            ),
+            "slowest_feature": (
+                max(self._processing_times.items(), key=lambda x: x[1])
+                if self._processing_times
+                else None
+            ),
+            "fastest_feature": (
+                min(self._processing_times.items(), key=lambda x: x[1])
+                if self._processing_times
+                else None
+            ),
         }
 
         # Add NLP pipeline stats
