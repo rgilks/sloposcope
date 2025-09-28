@@ -336,10 +336,10 @@ async def get_metrics_info():
         ],
         "domains": ["general", "news", "qa"],
         "slop_levels": {
-            "Clean": "≤ 0.30",
-            "Watch": "0.30 - 0.55",
-            "Sloppy": "0.55 - 0.75",
-            "High-Slop": "> 0.75",
+            "Clean": "≤ 0.50",
+            "Watch": "0.50 - 0.70",
+            "Sloppy": "0.70 - 0.85",
+            "High-Slop": "> 0.85",
         },
     }
 

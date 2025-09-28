@@ -85,7 +85,7 @@
   },
   {
     "doc_id": "test_054_creative_001",
-    "text": "The old lighthouse stood sentinel on the rocky cliff, its beam cutting through the fog like a sword. Sarah could hear the waves crashing against the shore below.",
+    "text": "The old lighthouse stood sentinel on the rocky cliff, its beam cutting through the fog like a sword. The visitor could hear the waves crashing against the shore below.",
     "domain": "creative",
     "expected_slop_range": 0.1,
     "category": "creative"
@@ -575,7 +575,7 @@
   },
   {
     "doc_id": "test_082_creative_004",
-    "text": "The old bookstore smelled of dust and paper, with sunlight streaming through the dusty windows. Sarah found the book she'd been searching for on the top shelf.",
+    "text": "The old bookstore smelled of dust and paper, with sunlight streaming through the dusty windows. The customer found the book they'd been searching for on the top shelf.",
     "domain": "creative",
     "expected_slop_range": 0.1,
     "category": "creative"

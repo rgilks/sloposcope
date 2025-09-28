@@ -49,7 +49,7 @@ class SlopTester:
             ),
             SlopTestCase(
                 "High Slop - Template News Article",
-                "Dr. Sarah Johnson, a renowned expert at Harvard University, recently published groundbreaking research on this important topic. Professor Michael Smith, a leading scientist at MIT, confirmed these findings in a peer-reviewed study. Dr. Emily Davis, an authority at Stanford University, emphasized the significance of these results.",
+                "Dr. A. Researcher, a renowned expert at a leading university, recently published groundbreaking research on this important topic. Professor B. Scientist, a leading researcher at a major institution, confirmed these findings in a peer-reviewed study. Dr. C. Expert, an authority at a top university, emphasized the significance of these results.",
                 "high",
                 "news",
             ),

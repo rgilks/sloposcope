@@ -63,7 +63,7 @@ def add_additional_texts():
         # More creative writing
         {
             "doc_id": "creative_004",
-            "text": "The old bookstore smelled of dust and paper, with sunlight streaming through the dusty windows. Sarah found the book she'd been searching for on the top shelf.",
+            "text": "The old bookstore smelled of dust and paper, with sunlight streaming through the dusty windows. The customer found the book they'd been searching for on the top shelf.",
             "domain": "creative",
             "expected_slop_range": 0.1,
             "category": "creative",

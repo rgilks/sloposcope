@@ -8,13 +8,17 @@
 # Clone and setup
 git clone https://github.com/rgilks/sloposcope.git
 cd sloposcope
-uv sync --dev
 
-# Download models
-python -m spacy download en_core_web_sm
+# One-command setup (recommended)
+make install
+
+# Or manual setup
+uv sync --dev
+uv run python -m spacy download en_core_web_sm
 
 # Run locally
-uvicorn app:app --reload
+make run
+# Or: uv run uvicorn app:app --reload
 # Visit http://localhost:8000
 ```
 
@@ -40,6 +44,19 @@ flyctl auth login
 ./deploy-fly.sh
 
 # Your app will be available at https://sloposcope.fly.dev
+```
+
+### CLI Usage
+
+```bash
+# Analyze text directly
+sloposcope analyze --text "Your text here" --explain
+
+# Analyze a file
+sloposcope analyze document.txt --explain
+
+# Get help
+sloposcope --help
 ```
 
 ## Architecture

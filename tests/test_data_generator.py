@@ -52,7 +52,7 @@ def generate_clean_human_texts() -> list[tuple[str, str, float]]:
         # Creative writing
         (
             "creative_001",
-            "The old lighthouse stood sentinel on the rocky cliff, its beam cutting through the fog like a sword. Sarah could hear the waves crashing against the shore below.",
+            "The old lighthouse stood sentinel on the rocky cliff, its beam cutting through the fog like a sword. The visitor could hear the waves crashing against the shore below.",
             "creative",
             0.1,
         ),

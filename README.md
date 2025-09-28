@@ -105,7 +105,7 @@ Visit http://localhost:8000 to use the web interface.
 
 ## 🔍 Research-Based Analysis
 
-The tool implements the 7 core slop dimensions from "Measuring AI 'SLOP' in Text" (Shaib et al., 2025):
+The tool implements a comprehensive 11-dimensional analysis framework for detecting AI-generated text patterns:
 
 ### Core Dimensions
 
@@ -116,13 +116,10 @@ The tool implements the 7 core slop dimensions from "Measuring AI 'SLOP' in Text
 5. **Coherence** - Entity continuity and topic flow analysis
 6. **Relevance** - Appropriateness to context/task
 7. **Factuality** - Accuracy and truthfulness measures
-
-### Additional Dimensions
-
-- **Subjectivity** - Bias and subjective language detection
-- **Fluency** - Grammar and natural language patterns
-- **Complexity** - Text complexity and readability measures
-- **Verbosity** - Wordiness and structural complexity
+8. **Subjectivity** - Bias and subjective language detection
+9. **Fluency** - Grammar and natural language patterns
+10. **Complexity** - Text complexity and readability measures
+11. **Verbosity** - Wordiness and structural complexity
 
 ## 📈 Slop Levels
 
@@ -236,7 +233,7 @@ make run
 
 ## 📚 Research Foundation
 
-This project is based on the research paper "Measuring AI 'SLOP' in Text" by Shaib et al. (2025), which identifies 7 core dimensions of AI-generated text quality issues. The implementation focuses on the most effective patterns and approaches identified in the research.
+This project implements multiple research-based approaches for detecting AI-generated text quality issues, including patterns identified in recent academic literature on LLM text analysis. The implementation focuses on the most effective patterns for detecting verbose, templated, and low-quality AI-generated content.
 
 ## 🤝 Contributing
 
@@ -252,9 +249,6 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENS
 
 ## 🙏 Acknowledgments
 
-- Based on research by Shaib et al. (2025) "Measuring AI 'SLOP' in Text"
 - Built with [spaCy](https://spacy.io/) and [sentence-transformers](https://www.sbert.net/)
 - Deployed on [Fly.io](https://fly.io/)
 - Inspired by ongoing research in AI text detection and quality assessment
-
-# Test comment
