@@ -267,8 +267,70 @@ class FeatureExtractor:
 
             self._processing_times[feature_name] = time.time() - feature_start
 
+        # Organize features into categories for combine.py
+        organized_features = {}
+
+        # Group density features
+        density_metrics = [
+            "perplexity",
+            "idea_density",
+            "semantic_density",
+            "conceptual_density",
+            "combined_density",
+        ]
+        if any(k in features for k in density_metrics):
+            organized_features["density"] = {
+                "value": features.get("combined_density", {}).get("value", 0.5),
+                "normalized": False,
+            }
+
+        # Group coherence features
+        coherence_metrics = [
+            "entity_continuity",
+            "coherence_score",
+            "local_coherence",
+            "global_coherence",
+        ]
+        if any(k in features for k in coherence_metrics):
+            organized_features["coherence"] = {
+                "value": features.get("coherence_score", {}).get("value", 0.5),
+                "normalized": False,
+            }
+
+        # Group repetition features
+        repetition_metrics = [
+            "ngram_repetition",
+            "sentence_repetition",
+            "overall_repetition",
+        ]
+        if any(k in features for k in repetition_metrics):
+            organized_features["repetition"] = {
+                "value": features.get("overall_repetition", {}).get("value", 0.5),
+                "normalized": False,
+            }
+
+        # Group other features
+        other_features = [
+            "templated_score",
+            "tone_score",
+            "overall_verbosity",
+            "relevance_score",
+            "factuality_score",
+            "subjectivity_score",
+            "fluency_score",
+            "complexity_score",
+        ]
+
+        for feature_name in other_features:
+            if feature_name in features:
+                base_name = feature_name.replace("_score", "")
+                organized_features[base_name] = {
+                    "value": features.get(feature_name, {}).get("value", 0.5),
+                    "normalized": False,
+                }
+
         # Add metadata
-        features.update(
+        organized_features.update(
             {
                 "has_semantic_features": {
                     "value": doc_result.get("sentence_embeddings") is not None,
@@ -290,7 +352,7 @@ class FeatureExtractor:
             }
         )
 
-        return features
+        return organized_features
 
     def batch_extract_features(self, texts: list[str]) -> list[dict[str, Any]]:
         """Extract features for multiple texts efficiently."""
