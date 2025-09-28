@@ -20,6 +20,9 @@ try:
     TRANSFORMERS_AVAILABLE = True
 except ImportError:
     TRANSFORMERS_AVAILABLE = False
+    torch = None
+    AutoModelForCausalLM = None
+    AutoTokenizer = None
     logger.warning(
         "Transformers not available. Perplexity calculation will be limited."
     )

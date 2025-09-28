@@ -20,10 +20,15 @@ from .features import (
     extract_tone_features,
     extract_verbosity_features,
 )
+from .features.coherence import SPACY_AVAILABLE
 from .features.complexity import extract_features as extract_complexity_features
 from .features.factuality import extract_features as extract_factuality_features
 from .features.fluency import extract_features as extract_fluency_features
-from .features.relevance import extract_features as extract_relevance_features
+from .features.relevance import (
+    extract_features as extract_relevance_features,
+    extract_relevance_features_fallback,
+    SENTENCE_TRANSFORMERS_AVAILABLE,
+)
 from .features.subjectivity import extract_features as extract_subjectivity_features
 from .nlp.pipeline import NLPPipeline
 
@@ -79,17 +84,29 @@ class FeatureExtractor:
         )
         self._processing_times["density"] = time.time() - density_start
 
-        # Extract coherence features (with semantic embeddings)
+        # Extract coherence features (with semantic embeddings if available)
         coherence_start = time.time()
-        features.update(
-            extract_coherence_features(
-                text,
-                doc_result["sentences"],
-                doc_result["tokens"],
-                doc_result.get("sentence_embeddings"),
-                self.nlp_pipeline,
+        if SPACY_AVAILABLE:
+            features.update(
+                extract_coherence_features(
+                    text,
+                    doc_result["sentences"],
+                    doc_result["tokens"],
+                    doc_result.get("sentence_embeddings"),
+                    self.nlp_pipeline,
+                )
             )
-        )
+        else:
+            # Fallback coherence features
+            features.update(
+                {
+                    "entity_continuity": 0.5,
+                    "local_coherence": 0.5,
+                    "global_coherence": 0.5,
+                    "coherence_score": 0.5,
+                    "value": 0.5,
+                }
+            )
         self._processing_times["coherence"] = time.time() - coherence_start
 
         # Extract other features
@@ -101,10 +118,35 @@ class FeatureExtractor:
             ("complexity", extract_complexity_features),
             ("factuality", extract_factuality_features),
             ("fluency", extract_fluency_features),
-            ("relevance", extract_relevance_features),
             ("subjectivity", extract_subjectivity_features),
         ]
 
+        # Extract relevance features (with semantic embeddings if available)
+        relevance_start = time.time()
+        if SENTENCE_TRANSFORMERS_AVAILABLE:
+            try:
+                feature_result = extract_relevance_features(
+                    text,
+                    doc_result["sentences"],
+                    doc_result["tokens"],
+                )
+                features.update(feature_result)
+            except Exception as e:
+                logger.error(f"Error extracting relevance features: {e}")
+                features["relevance_error"] = str(e)
+        else:
+            try:
+                feature_result = extract_relevance_features_fallback(
+                    text,
+                    doc_result["sentences"],
+                )
+                features.update(feature_result)
+            except Exception as e:
+                logger.error(f"Error extracting fallback relevance features: {e}")
+                features["relevance_error"] = str(e)
+        self._processing_times["relevance"] = time.time() - relevance_start
+
+        # Extract other features
         for feature_name, extractor_func in feature_extractors:
             feature_start = time.time()
             try:

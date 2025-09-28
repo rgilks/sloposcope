@@ -23,7 +23,10 @@ try:
 except ImportError:
     SPACY_AVAILABLE = False
     spacy = None
-    Language = None
+    # Create a dummy Language type for type annotations
+    from typing import Any
+
+    Language = Any
 
 try:
     # Set environment variables before importing to suppress warnings
@@ -36,7 +39,10 @@ try:
     SENTENCE_TRANSFORMERS_AVAILABLE = True
 except ImportError:
     SENTENCE_TRANSFORMERS_AVAILABLE = False
-    SentenceTransformer = None
+    # Create a dummy SentenceTransformer type for type annotations
+    from typing import Any
+
+    SentenceTransformer = Any
 
 logger = logging.getLogger(__name__)
 

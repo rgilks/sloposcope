@@ -28,16 +28,12 @@ dependencies = [
     "rich>=13.7.0",
     "tomli>=2.0.0",
     "tomli-w>=1.0.0",
-    # NLP and ML - CPU only for production
-    "spacy>=3.7.0",
-    "sentence-transformers>=2.2.0",
-    "transformers>=4.35.0",
-    "torch>=2.0.0",
-    "tokenizers>=0.15.0",
-    # Scientific computing
+    # Minimal NLP - smaller spacy model
+    # "spacy>=3.7.0",  # Commented out - too large, will download at runtime
+    # Lightweight alternatives
     "numpy>=1.24.0",
     "scipy>=1.11.0",
-    "scikit-learn>=1.3.0",
+    # "scikit-learn>=1.3.0",  # Commented out - builds large from source
     # Text processing
     "textstat>=0.7.0",
     "nltk>=3.8.0",
@@ -50,6 +46,12 @@ dependencies = [
     "tqdm>=4.65.0",
     "pathlib2>=2.3.0",
 ]
+
+# Optional heavy dependencies (commented out for now)
+# "sentence-transformers>=2.2.0",  # Heavy - used by relevance features
+# "transformers>=4.35.0",        # Very heavy - used by density features
+# "torch>=2.0.0",               # Extremely heavy - required by transformers
+# "tokenizers>=0.15.0",         # Heavy - required by transformers
 
 [project.scripts]
 sloplint = "sloplint.cli:cli_main"

@@ -9,10 +9,44 @@ import logging
 from typing import Any
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
-from sklearn.metrics.pairwise import cosine_similarity
 
 logger = logging.getLogger(__name__)
+
+# Try to import scikit-learn, but make it optional
+try:
+    from sklearn.metrics.pairwise import cosine_similarity
+
+    SKLEARN_AVAILABLE = True
+except ImportError:
+    SKLEARN_AVAILABLE = False
+
+    # Create a fallback cosine similarity function using numpy
+    def cosine_similarity(X, Y):
+        """Simple numpy-based cosine similarity fallback."""
+        if X is None or Y is None:
+            return 0.0
+        X = np.array(X).reshape(1, -1) if len(X.shape) == 1 else X
+        Y = np.array(Y).reshape(1, -1) if len(Y.shape) == 1 else Y
+        dot_product = np.dot(X, Y.T)
+        norm_X = np.linalg.norm(X, axis=1, keepdims=True)
+        norm_Y = np.linalg.norm(Y, axis=1, keepdims=True)
+        return dot_product / (norm_X * norm_Y.T)
+
+
+# Try to import sentence-transformers, but make it optional
+try:
+    from sentence_transformers import SentenceTransformer
+
+    SENTENCE_TRANSFORMERS_AVAILABLE = True
+except ImportError:
+    SENTENCE_TRANSFORMERS_AVAILABLE = False
+    SentenceTransformer = None
+
+__all__ = [
+    "extract_features",
+    "extract_relevance_features_fallback",
+    "SENTENCE_TRANSFORMERS_AVAILABLE",
+]
 
 # Global model instance for efficiency
 _relevance_model = None
@@ -21,7 +55,11 @@ _relevance_model = None
 def get_relevance_model() -> Any:
     """Get or initialize the sentence transformer model for relevance calculation."""
     global _relevance_model
-    if _relevance_model is None:
+    if (
+        _relevance_model is None
+        and SENTENCE_TRANSFORMERS_AVAILABLE
+        and SentenceTransformer
+    ):
         try:
             # Suppress the loss_type warning during model loading
             import warnings
@@ -315,3 +353,38 @@ def extract_features(
             "relevance_spans": [],
             "value": 0.5,
         }
+
+
+# Fallback function when sentence-transformers is not available
+def extract_relevance_features_fallback(
+    text: str, sentences: list[str]
+) -> dict[str, Any]:
+    """Fallback relevance features when sentence-transformers is not available."""
+    logger.warning(
+        "Sentence-transformers not available, using fallback relevance calculation"
+    )
+
+    # Simple text-based relevance approximation
+    # This is a basic fallback - in a real implementation you'd want something more sophisticated
+    text_length = len(text.split())
+    avg_sentence_length = (
+        sum(len(s.split()) for s in sentences) / len(sentences) if sentences else 0
+    )
+
+    # Simple heuristic: longer, more varied sentences might be more relevant
+    length_variance = (
+        sum(abs(len(s.split()) - avg_sentence_length) for s in sentences)
+        / len(sentences)
+        if sentences
+        else 0
+    )
+
+    return {
+        "mean_similarity": 0.5,  # Neutral score
+        "min_similarity": 0.3,
+        "low_relevance_ratio": 0.2,
+        "relevance_variance": length_variance / 100,  # Normalize
+        "relevance_score": 0.5,
+        "relevance_spans": [],
+        "value": 0.5,
+    }

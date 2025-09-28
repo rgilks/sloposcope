@@ -1,4 +1,4 @@
-# Git
+# Version control
 .git
 .gitignore
 
@@ -14,26 +14,15 @@ pip-delete-this-directory.txt
 .tox
 .coverage
 .coverage.*
-.cache
+.pytest_cache
 nosetests.xml
 coverage.xml
 *.cover
 *.log
-.git
-.mypy_cache
-.pytest_cache
-.hypothesis
-
-# Virtual environments
-.env
 .venv
-env/
 venv/
-ENV/
-env.bak/
-venv.bak/
 
-# IDE
+# IDEs
 .vscode/
 .idea/
 *.swp
@@ -50,23 +39,40 @@ ehthumbs.db
 Thumbs.db
 
 # Documentation
+*.md
+!README.md
 docs/
-htmlcov/
 
-# Test files
+# Tests
 tests/
 test_*.py
 *_test.py
+conftest.py
 
-# Development files
-Makefile
-docker/
-scripts/
-demo_*.txt
-demo_*.json
-*_results.json
-coverage.xml
+# Development and build artifacts
 htmlcov/
+.coverage
+.pytest_cache/
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Node modules (if any)
+node_modules/
+
+# Examples and sample data
+examples/
 
 # Deployment files
-DEPLOYMENT.md
+fly.toml
+Dockerfile
+.dockerignore
+Makefile
+.pre-commit-config.yaml
+
+# CI/CD
+.github/
+
+# Temporary files
+*.tmp
+*.temp

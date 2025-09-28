@@ -17,6 +17,7 @@ try:
     SPACY_AVAILABLE = True
 except ImportError:
     SPACY_AVAILABLE = False
+    spacy = None
     logger.warning("spaCy not available. Coherence analysis will be limited.")
 
 
