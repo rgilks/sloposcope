@@ -71,6 +71,7 @@ uv run python tests/test_comprehensive_slop_detection.py
 ```
 
 This test suite includes:
+
 - Performance benchmarking (processing time per text)
 - Accuracy testing across different content categories
 - Slop score distribution analysis
@@ -255,4 +256,5 @@ This project is licensed under the Apache 2.0 License - see the [LICENSE](LICENS
 - Built with [spaCy](https://spacy.io/) and [sentence-transformers](https://www.sbert.net/)
 - Deployed on [Fly.io](https://fly.io/)
 - Inspired by ongoing research in AI text detection and quality assessment
+
 # Test comment
