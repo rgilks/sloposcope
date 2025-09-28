@@ -4,12 +4,10 @@ Systematic testing script for sloposcope to identify issues and improvements.
 Tests various types of high/low slop content and analyzes results.
 """
 
-import subprocess
-import json
-import sys
-from pathlib import Path
-from typing import Dict, List, Tuple
 import re
+import subprocess
+import sys
+
 
 class SlopTestCase:
     def __init__(self, name: str, text: str, expected_slop_level: str, domain: str = "general"):
@@ -23,7 +21,7 @@ class SlopTester:
         self.test_cases = self._create_test_cases()
         self.results = []
 
-    def _create_test_cases(self) -> List[SlopTestCase]:
+    def _create_test_cases(self) -> list[SlopTestCase]:
         """Create comprehensive test cases covering different slop scenarios."""
 
         return [
@@ -114,7 +112,7 @@ class SlopTester:
             )
         ]
 
-    def run_test(self, test_case: SlopTestCase) -> Dict:
+    def run_test(self, test_case: SlopTestCase) -> dict:
         """Run a single test case and return results."""
         try:
             # Create temporary file with test text
@@ -170,7 +168,7 @@ class SlopTester:
         match = re.search(r"Slop Score: [0-9.]+ \(([^)]+)\)", output)
         return match.group(1) if match else "unknown"
 
-    def _extract_key_issues(self, output: str) -> List[str]:
+    def _extract_key_issues(self, output: str) -> list[str]:
         """Extract key issues from CLI output."""
         issues = []
         match = re.search(r"Key Issues:(.*?)(?=Recommendations:|$)", output, re.DOTALL)
@@ -179,7 +177,7 @@ class SlopTester:
             issues = [line.strip("• ").strip() for line in issue_text.split('\n') if line.strip() and "•" in line]
         return issues
 
-    def run_all_tests(self) -> List[Dict]:
+    def run_all_tests(self) -> list[dict]:
         """Run all test cases and return results."""
         results = []
         for test_case in self.test_cases:
@@ -189,7 +187,7 @@ class SlopTester:
             print(f"  Result: Score={result.get('actual_score', 'ERROR')}, Level={result.get('actual_level', 'ERROR')}")
         return results
 
-    def analyze_results(self, results: List[Dict]) -> Dict:
+    def analyze_results(self, results: list[dict]) -> dict:
         """Analyze test results to identify patterns and issues."""
         analysis = {
             "total_tests": len(results),
@@ -223,7 +221,7 @@ class SlopTester:
 
         return analysis
 
-    def _matches_expected_level(self, result: Dict) -> bool:
+    def _matches_expected_level(self, result: dict) -> bool:
         """Check if actual level matches expected level."""
         expected = result.get("expected", "")
         actual_level = result.get("actual_level", "")
@@ -235,7 +233,7 @@ class SlopTester:
 
         return False
 
-    def _identify_improvement_areas(self, results: List[Dict]) -> List[str]:
+    def _identify_improvement_areas(self, results: list[dict]) -> list[str]:
         """Identify areas where the detector needs improvement."""
         improvements = []
 

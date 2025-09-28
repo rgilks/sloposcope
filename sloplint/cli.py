@@ -4,6 +4,7 @@ CLI interface for the AI Slop CLI tool.
 Provides command-line interface for analyzing text files and detecting AI slop.
 """
 
+import logging
 import os
 import sys
 from pathlib import Path
@@ -13,16 +14,16 @@ from rich.console import Console
 from rich.table import Table
 
 from . import __version__
-from .combine import combine_scores, normalize_scores
+from .combine import ScoreNormalizer, combine_scores, normalize_scores
 from .feature_extractor import FeatureExtractor
 from .io import load_text, save_json_output
 
 # Suppress transformers warnings globally
-os.environ['TRANSFORMERS_VERBOSITY'] = 'error'
-os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+os.environ["TRANSFORMERS_VERBOSITY"] = "error"
+os.environ["TOKENIZERS_PARALLELISM"] = "false"
 
 # Also suppress logging warnings
-import logging
+
 logging.getLogger("transformers").setLevel(logging.ERROR)
 
 app = typer.Typer()
@@ -74,7 +75,7 @@ def analyze_command(
     try:
         # Get text content from either files or direct text
         text_content = ""
-        
+
         if text:
             # Use direct text input
             text_content = text
@@ -83,7 +84,9 @@ def analyze_command(
             for file_path in files:
                 text_content += load_text(file_path)
         else:
-            console.print("[red]Error: Must provide either text files or --text option[/red]")
+            console.print(
+                "[red]Error: Must provide either text files or --text option[/red]"
+            )
             sys.exit(2)
 
         if not text_content.strip():
@@ -119,9 +122,10 @@ def analyze_command(
                     else 0.5
                 }
 
-        # Normalize and combine scores
+        # Create normalizer and normalize scores
+        normalizer = ScoreNormalizer()
         normalized_metrics = normalize_scores(metrics, domain)
-        slop_score, confidence = combine_scores(normalized_metrics, domain)
+        slop_score, confidence = combine_scores(normalized_metrics, domain, normalizer)
 
         # Create output
         result = {
@@ -144,7 +148,6 @@ def analyze_command(
 
     except Exception as e:
         # Disable Rich markup for error messages to avoid parsing issues
-        import sys
         print(f"Error: {str(e)}", file=sys.stderr)
         sys.exit(3)
 
@@ -170,7 +173,7 @@ def get_metric_summary(metric_name: str, score: float) -> str:
         "overall_verbosity": "🔴",
         "tone_score": "🔴",
         "coherence_score": "🔴",
-        "factuality_score": "🔴"
+        "factuality_score": "🔴",
     }
 
     if metric_name in key_metrics and score > 0.6:
@@ -194,15 +197,18 @@ def display_results(result: dict, explain: bool = False, spans: bool = False) ->
     console.print(f"Confidence: {result['confidence']:.3f}")
 
     # Add interpretation guidance
-    score_pct = result['slop_score'] * 100
-    if result['slop_score'] <= 0.3:
+    if result["slop_score"] <= 0.3:
         console.print("[green]✅ Clean text - minimal AI slop detected[/green]")
-    elif result['slop_score'] <= 0.55:
+    elif result["slop_score"] <= 0.55:
         console.print("[yellow]⚠️ Some concerns - review highlighted metrics[/yellow]")
-    elif result['slop_score'] <= 0.75:
-        console.print("[orange]🔶 Significant issues - consider major revisions[/orange]")
+    elif result["slop_score"] <= 0.75:
+        console.print(
+            "[orange]🔶 Significant issues - consider major revisions[/orange]"
+        )
     else:
-        console.print("[red]❌ Major problems - likely AI-generated or heavily templated[/red]")
+        console.print(
+            "[red]❌ Major problems - likely AI-generated or heavily templated[/red]"
+        )
 
     # Create simplified metrics table
     table = Table(title="Per-Axis Metrics")
@@ -216,11 +222,7 @@ def display_results(result: dict, explain: bool = False, spans: bool = False) ->
         # Get concise summary (just icons)
         summary = get_metric_summary(metric_name, score)
 
-        table.add_row(
-            metric_name.replace("_", " ").title(),
-            f"{score:.3f}",
-            summary
-        )
+        table.add_row(metric_name.replace("_", " ").title(), f"{score:.3f}", summary)
 
     console.print(table)
 
@@ -241,7 +243,9 @@ def display_results(result: dict, explain: bool = False, spans: bool = False) ->
     # Concise recommendations
     recommendations = []
     if problematic_metrics:
-        recommendations.append(f"Focus on: {', '.join([m.replace('_', ' ') for m in problematic_metrics[:3]])}")
+        recommendations.append(
+            f"Focus on: {', '.join([m.replace('_', ' ') for m in problematic_metrics[:3]])}"
+        )
         if any("repetition" in m for m in problematic_metrics):
             recommendations.append("Vary vocabulary and sentence structure")
         if any("templated" in m for m in problematic_metrics):

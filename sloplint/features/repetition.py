@@ -38,18 +38,49 @@ def calculate_ngram_repetition(tokens: list[str], n: int) -> float:
 
 
 def calculate_sentence_repetition(sentences: list[str]) -> float:
-    """Calculate sentence-level repetition using embeddings similarity."""
+    """Calculate sentence-level repetition using multiple strategies."""
     if len(sentences) < 2:
         return 0.0
 
-    # Simple approach: look for exact sentence matches
-    sentence_counts = Counter(sentences)
     total_sentences = len(sentences)
+    repetition_score = 0.0
 
-    repeated_sentences = sum(count for count in sentence_counts.values() if count > 1)
-    repetition_rate = repeated_sentences / total_sentences
+    # Strategy 1: Exact sentence matches
+    sentence_counts = Counter(sentences)
+    exact_repeats = sum(count for count in sentence_counts.values() if count > 1)
+    repetition_score += (exact_repeats / total_sentences) * 0.5
 
-    return repetition_rate
+    # Strategy 2: Word-level repetition within sentences
+    all_words = []
+    for sentence in sentences:
+        words = sentence.lower().split()
+        all_words.extend(words)
+
+    if all_words:
+        word_counts = Counter(all_words)
+        # Calculate how many words appear more than once
+        repeated_words = sum(count for count in word_counts.values() if count > 1)
+        word_repetition_rate = repeated_words / len(all_words)
+        repetition_score += word_repetition_rate * 0.3
+
+    # Strategy 3: N-gram repetition (bigrams)
+    if len(sentences) >= 2:
+        bigrams = []
+        for sentence in sentences:
+            words = sentence.lower().split()
+            if len(words) >= 2:
+                for i in range(len(words) - 1):
+                    bigrams.append(f"{words[i]}_{words[i + 1]}")
+
+        if bigrams:
+            bigram_counts = Counter(bigrams)
+            repeated_bigrams = sum(
+                count for count in bigram_counts.values() if count > 1
+            )
+            bigram_repetition_rate = repeated_bigrams / len(bigrams)
+            repetition_score += bigram_repetition_rate * 0.2
+
+    return min(repetition_score, 1.0)
 
 
 def calculate_compression_ratio(text: str) -> float:

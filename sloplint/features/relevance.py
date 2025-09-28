@@ -27,7 +27,7 @@ def get_relevance_model() -> Any:
             import warnings
             from contextlib import redirect_stderr
             from io import StringIO
-            
+
             # Capture stderr during model loading to suppress the warning
             stderr_capture = StringIO()
             with redirect_stderr(stderr_capture):

@@ -3,9 +3,8 @@
 Debug script to see what metrics are being extracted and how they're processed.
 """
 
-import sys
+from sloplint.combine import combine_scores, get_domain_weights, normalize_scores
 from sloplint.feature_extractor import FeatureExtractor
-from sloplint.combine import normalize_scores, combine_scores, get_domain_weights
 
 
 def debug_metrics():

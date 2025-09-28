@@ -31,7 +31,7 @@ def test_feature_extractor():
     assert len(features) > 0
 
     # Check that features are valid data types
-    for feature_name, feature_data in features.items():
+    for _feature_name, feature_data in features.items():
         assert isinstance(feature_data, (dict, list, int, float, str))
 
 

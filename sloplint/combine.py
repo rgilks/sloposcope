@@ -8,7 +8,6 @@ into a composite slop score with domain-specific weighting.
 from pathlib import Path
 from typing import Any
 
-import math
 import numpy as np
 from scipy import stats
 
@@ -461,7 +460,7 @@ def combine_scores(
                 dim_weights_list = dimension_weights[dimension]
 
                 weighted_sum_dim = sum(
-                    s * w for s, w in zip(dim_scores, dim_weights_list)
+                    s * w for s, w in zip(dim_scores, dim_weights_list, strict=False)
                 )
                 total_weight_dim = sum(dim_weights_list)
 

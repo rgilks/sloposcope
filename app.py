@@ -78,7 +78,7 @@ def get_slop_level(score: float) -> str:
 @app.get("/", response_class=HTMLResponse)
 async def root():
     """Serve the main web interface."""
-    html_content = """
+    html_content = r"""
     <!DOCTYPE html>
     <html lang="en">
     <head>
