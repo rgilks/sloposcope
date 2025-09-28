@@ -35,16 +35,16 @@ class ScoreNormalizer:
                 "subjectivity": {"mean": 0.3, "std": 0.16},  # Lower
                 "coherence": {"mean": 0.4, "std": 0.18},  # Lower
                 "repetition": {
-                    "mean": 0.1,
-                    "std": 0.12,
-                },  # Much lower - key slop indicator
+                    "mean": 0.10,
+                    "std": 0.10,
+                },  # Even lower mean to make high repetition scores much higher
                 "templated": {
-                    "mean": 0.2,
-                    "std": 0.16,
-                },  # Much lower - key slop indicator
+                    "mean": 0.15,
+                    "std": 0.15,
+                },  # Lower mean to make high templated scores higher
                 "verbosity": {"mean": 0.3, "std": 0.14},  # Lower - key slop indicator
                 "complexity": {"mean": 0.3, "std": 0.18},  # Lower
-                "tone": {"mean": 0.2, "std": 0.15},  # Much lower - key slop indicator
+                "tone": {"mean": 0.25, "std": 0.18},  # Adjusted for better sensitivity
                 "fluency": {"mean": 0.5, "std": 0.16},  # Lower
             },
             "news": {
@@ -99,15 +99,80 @@ class ScoreNormalizer:
         # Z-score normalization
         z_score = float((raw_score - mean_val) / std_val)
 
-        # Convert to [0,1] range using improved scaling
+        # Convert to [0,1] range - simpler, more direct approach
         if z_score > 0:
-            # Linear scaling for positive z-scores to prevent compression
-            normalized = min(1.0, 0.5 + (z_score * 0.4))
+            # More sensitive scaling for positive z-scores
+            normalized = min(1.0, 0.4 + (z_score * 0.4))
         else:
             # Sigmoid for negative z-scores
             normalized = 1 / (1 + np.exp(-z_score))
 
         return float(max(0.0, min(1.0, normalized)))
+
+    def _get_metric_weight(self, metric_name: str) -> float:
+        """Get weight for individual metrics within dimensions."""
+        # Higher weights for more reliable/important metrics
+        metric_weights = {
+            # Density metrics - perplexity is most reliable
+            "perplexity_score": 2.0,
+            "combined_density": 1.5,
+            "idea_density_score": 1.0,
+            "semantic_density_score": 1.0,
+            "conceptual_density_score": 1.0,
+            # Repetition metrics - overall and sentence repetition most important
+            "overall_repetition": 2.0,
+            "sentence_repetition": 1.5,
+            "compression_ratio": 1.2,
+            "pattern_repetition": 1.0,
+            "ngram_repetition": 0.8,
+            # Templated metrics - score and hits most important
+            "templated_score": 2.0,
+            "boilerplate_hits": 1.5,
+            "pos_diversity": 1.0,
+            # Tone metrics - overall score most important
+            "tone_score": 2.0,
+            "hedging_ratio": 1.2,
+            "sycophancy_ratio": 1.2,
+            "formality_ratio": 1.0,
+            "passive_ratio": 1.0,
+            # Verbosity metrics - overall and key ratios most important
+            "overall_verbosity": 2.0,
+            "filler_ratio": 1.5,
+            "words_per_sentence": 1.2,
+            "listiness": 1.0,
+            "sentence_variance": 0.8,
+            # Coherence metrics - score and continuity most important
+            "coherence_score": 2.0,
+            "entity_continuity": 1.5,
+            "embedding_drift": 1.0,
+            # Relevance metrics - score most important
+            "relevance_score": 2.0,
+            "mean_similarity": 1.2,
+            "min_similarity": 1.2,
+            "low_relevance_ratio": 1.0,
+            "relevance_variance": 0.8,
+            # Factuality metrics - score and ratios most important
+            "factuality_score": 2.0,
+            "unsupported_ratio": 1.5,
+            "contradictions_count": 1.2,
+            # Subjectivity metrics - score and ratios most important
+            "subjectivity_score": 2.0,
+            "subjective_ratio": 1.2,
+            "bias_ratio": 1.2,
+            "neutral_ratio": 1.0,
+            # Fluency metrics - score and ratios most important
+            "fluency_score": 2.0,
+            "grammar_error_ratio": 1.5,
+            "unnatural_phrase_ratio": 1.5,
+            "fragment_ratio": 1.2,
+            # Complexity metrics - score most important
+            "complexity_score": 2.0,
+            "complex_word_ratio": 1.2,
+            "complex_phrase_ratio": 1.2,
+            "flesch_kincaid_grade": 1.0,
+        }
+
+        return metric_weights.get(metric_name, 1.0)
 
     def normalize_score_with_inversion(
         self, metric_name: str, raw_score: float, domain: str
@@ -199,17 +264,17 @@ def get_domain_weights(domain: str) -> dict[str, float]:
     """Get domain-specific weights for combining metrics."""
     weights = {
         "general": {
-            "density": 0.12,  # Reduced slightly
-            "relevance": 0.15,  # Reduced slightly
-            "factuality": 0.12,  # Reduced slightly
-            "coherence": 0.10,  # Same
-            "repetition": 0.15,  # Nearly doubled - key slop indicator
-            "templated": 0.15,  # Nearly doubled - key slop indicator
-            "verbosity": 0.12,  # Increased 50% - key slop indicator
-            "complexity": 0.06,  # Same
-            "tone": 0.10,  # Doubled - key slop indicator
-            "subjectivity": 0.05,  # Same
-            "fluency": 0.05,  # Same
+            "density": 0.10,  # Reduced - can be misleading
+            "relevance": 0.12,  # Reduced
+            "factuality": 0.10,  # Reduced
+            "coherence": 0.08,  # Reduced
+            "repetition": 0.25,  # Significantly increased - primary slop indicator
+            "templated": 0.20,  # Significantly increased - primary slop indicator
+            "verbosity": 0.08,  # Reduced
+            "complexity": 0.05,  # Reduced
+            "tone": 0.06,  # Reduced
+            "subjectivity": 0.04,  # Reduced
+            "fluency": 0.03,  # Reduced
         },
         "news": {
             "density": 0.18,  # Strong predictor
@@ -294,7 +359,9 @@ def _extract_main_score(metric_name: str, metric_data: dict[str, Any]) -> float:
 
 
 def combine_scores(
-    metrics: dict[str, dict[str, Any]], domain: str
+    metrics: dict[str, dict[str, Any]],
+    domain: str,
+    normalizer: ScoreNormalizer | None = None,
 ) -> tuple[float, float]:
     """Combine normalized metrics into a composite slop score."""
     weights = get_domain_weights(domain)
@@ -374,8 +441,12 @@ def combine_scores(
                 dimension_weights[dimension] = []
 
             dimension_scores[dimension].append(score)
-            # Use equal weight for metrics within a dimension
-            dimension_weights[dimension].append(1.0)
+            # Use metric-specific weights within dimensions for better sensitivity
+            if normalizer:
+                metric_weight = normalizer._get_metric_weight(metric_name)
+            else:
+                metric_weight = 1.0  # Default weight if no normalizer
+            dimension_weights[dimension].append(metric_weight)
 
     # Calculate weighted average for each dimension
     total_weight = 0.0
@@ -384,11 +455,24 @@ def combine_scores(
 
     for dimension, scores in dimension_scores.items():
         if dimension in weights:
-            # Calculate average score for this dimension
-            if scores:
-                dimension_score = sum(scores) / len(scores)
-                weight = weights[dimension]
+            # Calculate weighted average score for this dimension
+            if scores and dimension_weights.get(dimension):
+                dim_scores = dimension_scores[dimension]
+                dim_weights_list = dimension_weights[dimension]
 
+                weighted_sum_dim = sum(
+                    s * w for s, w in zip(dim_scores, dim_weights_list)
+                )
+                total_weight_dim = sum(dim_weights_list)
+
+                if total_weight_dim > 0:
+                    dimension_score = weighted_sum_dim / total_weight_dim
+                else:
+                    dimension_score = (
+                        sum(dim_scores) / len(dim_scores) if dim_scores else 0.5
+                    )
+
+                weight = weights[dimension]
                 weighted_sum += weight * dimension_score
                 total_weight += weight
                 available_dimensions += 1
@@ -409,18 +493,21 @@ def combine_scores(
 
 def get_slop_level(score: float) -> str:
     """Convert slop score to categorical level."""
-    if score <= 0.30:
+    # More sensitive thresholds based on empirical data
+    if score <= 0.50:  # Clean content
         return "Clean"
-    elif score <= 0.55:
+    elif score <= 0.58:  # Moderate - most content falls here
         return "Watch"
-    elif score <= 0.75:
+    elif score <= 0.70:  # Higher slop content
         return "Sloppy"
     else:
         return "High-Slop"
 
 
 def calculate_confidence_intervals(
-    metrics: dict[str, dict[str, Any]], domain: str
+    metrics: dict[str, dict[str, Any]],
+    domain: str,
+    normalizer: ScoreNormalizer | None = None,
 ) -> dict[str, Any]:
     """Calculate confidence intervals for the composite score."""
     # This is a simplified version - in practice would use bootstrap sampling
@@ -440,7 +527,7 @@ def calculate_confidence_intervals(
     margin = z_score * std_error
 
     # Get point estimate
-    score, _ = combine_scores(metrics, domain)
+    score, _ = combine_scores(metrics, domain, normalizer)
 
     return {
         "lower": max(0.0, score - margin),
