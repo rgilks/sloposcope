@@ -38,11 +38,17 @@ repos:
     rev: v5.0.0
     hooks:
       - id: trailing-whitespace
+        exclude: ^\.venv/|\.venv/|__pycache__/|\.pytest_cache/
       - id: end-of-file-fixer
+        exclude: ^\.venv/|\.venv/|__pycache__/|\.pytest_cache/
       - id: check-yaml
+        exclude: ^\.venv/|\.venv/|__pycache__/|\.pytest_cache/
       - id: check-toml
+        exclude: ^\.venv/|\.venv/|__pycache__/|\.pytest_cache/
       - id: check-merge-conflict
+        exclude: ^\.venv/|\.venv/|__pycache__/|\.pytest_cache/
       - id: debug-statements
+        exclude: ^\.venv/|\.venv/|__pycache__/|\.pytest_cache/
 
   # Run unit tests (fast)
   - repo: local

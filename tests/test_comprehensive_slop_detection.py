@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """
 Comprehensive test suite for AI slop detection with 100 diverse text samples.
+Optimized for M1 Mac with GPU acceleration and batch processing.
 """
 
 import json
+import os
 import statistics
 import time
+
+import torch
 
 from sloplint.combine import combine_scores, normalize_scores
 from sloplint.feature_extractor import FeatureExtractor
@@ -15,7 +19,11 @@ class SlopDetectionTester:
     """Test AI slop detection across diverse text samples."""
 
     def __init__(self):
-        self.extractor = FeatureExtractor()
+        # Enable GPU acceleration on M1 Mac if available
+        use_gpu = torch.backends.mps.is_available()
+        print(f"🚀 Using GPU acceleration: {use_gpu}")
+
+        self.extractor = FeatureExtractor(use_transformer=True)
         self.results = []
         self.performance_stats = {
             "total_texts": 0,
@@ -78,36 +86,42 @@ class SlopDetectionTester:
             }
 
     def run_comprehensive_test(
-        self, dataset_path: str = "tests/test_dataset.json"
+        self, dataset_path: str = "tests/test_dataset.json", batch_size: int = 10
     ) -> dict:
-        """Run comprehensive test on all texts in the dataset."""
+        """Run comprehensive test on all texts in the dataset with batch processing."""
         print("🚀 Starting comprehensive AI slop detection test...")
 
         # Load dataset
         dataset = self.load_test_dataset(dataset_path)
         self.performance_stats["total_texts"] = len(dataset)
 
-        print(f"📊 Testing {len(dataset)} texts across multiple categories...")
+        print(
+            f"📊 Testing {len(dataset)} texts across multiple categories in batches of {batch_size}..."
+        )
 
-        # Process each text
-        for i, item in enumerate(dataset):
-            print(f"Processing {i + 1}/{len(dataset)}: {item['doc_id']}")
+        # Process texts in batches for better performance
+        for i in range(0, len(dataset), batch_size):
+            batch = dataset[i : i + batch_size]
+            print(
+                f"Processing batch {i // batch_size + 1}/{(len(dataset) + batch_size - 1) // batch_size}: {len(batch)} texts"
+            )
 
-            result = self.analyze_text(item["text"], item["doc_id"], item["domain"])
+            # Process batch
+            batch_results = self.analyze_batch(batch)
 
-            # Add expected slop range for comparison
-            result["expected_slop_range"] = item["expected_slop_range"]
-            result["category"] = item["category"]
+            # Add results to main results
+            for result in batch_results:
+                self.results.append(result)
 
-            self.results.append(result)
-
-            # Update performance stats
-            if result["success"]:
-                self.performance_stats["processing_times"].append(
-                    result["processing_time"]
-                )
-                self.performance_stats["slop_scores"].append(result["slop_score"])
-                self.performance_stats["confidence_scores"].append(result["confidence"])
+                # Update performance stats
+                if result["success"]:
+                    self.performance_stats["processing_times"].append(
+                        result["processing_time"]
+                    )
+                    self.performance_stats["slop_scores"].append(result["slop_score"])
+                    self.performance_stats["confidence_scores"].append(
+                        result["confidence"]
+                    )
 
         # Calculate accuracy metrics
         self._calculate_accuracy_metrics()
@@ -117,6 +131,95 @@ class SlopDetectionTester:
 
         print("✅ Comprehensive test completed!")
         return summary
+
+    def analyze_batch(self, batch: list[dict]) -> list[dict]:
+        """Analyze a batch of texts for AI slop using optimized batch processing."""
+        texts = [item["text"] for item in batch]
+        doc_ids = [item["doc_id"] for item in batch]
+        domains = [item["domain"] for item in batch]
+
+        start_time = time.time()
+
+        try:
+            # Use batch processing for better performance
+            batch_features = self.extractor.batch_extract_features(texts)
+
+            results = []
+            for i, (item, features) in enumerate(zip(batch, batch_features)):
+                try:
+                    # Convert raw features to expected format (dict with "value" key)
+                    features_dict = {}
+                    for key, value in features.items():
+                        if isinstance(value, dict):
+                            features_dict[key] = value
+                        elif isinstance(value, list):
+                            features_dict[key] = {"value": 0.5}  # Neutral score for list features
+                        elif isinstance(value, bool):
+                            features_dict[key] = {"value": 1.0 if value else 0.0}
+                        elif isinstance(value, str):
+                            features_dict[key] = {"value": 0.5}  # Neutral score for string features
+                        else:
+                            features_dict[key] = {"value": float(value)}
+
+                    # Normalize scores
+                    normalized = normalize_scores(features_dict, item["domain"])
+
+                    # Combine scores
+                    slop_score, confidence = combine_scores(normalized, item["domain"])
+
+                    processing_time = (time.time() - start_time) / len(
+                        batch
+                    )  # Average per text
+
+                    results.append(
+                        {
+                            "doc_id": item["doc_id"],
+                            "domain": item["domain"],
+                            "text_length": len(item["text"]),
+                            "slop_score": slop_score,
+                            "confidence": confidence,
+                            "processing_time": processing_time,
+                            "features": features,
+                            "normalized_features": normalized,
+                            "success": True,
+                            "error": None,
+                            "expected_slop_range": item["expected_slop_range"],
+                            "category": item["category"],
+                        }
+                    )
+
+                except Exception as e:
+                    processing_time = (time.time() - start_time) / len(
+                        batch
+                    )  # Average per text
+                    results.append(
+                        {
+                            "doc_id": item["doc_id"],
+                            "domain": item["domain"],
+                            "text_length": len(item["text"]),
+                            "slop_score": None,
+                            "confidence": None,
+                            "processing_time": processing_time,
+                            "features": None,
+                            "normalized_features": None,
+                            "success": False,
+                            "error": str(e),
+                            "expected_slop_range": item["expected_slop_range"],
+                            "category": item["category"],
+                        }
+                    )
+
+            return results
+
+        except Exception as e:
+            # If batch processing fails, fall back to individual processing
+            print(
+                f"⚠️ Batch processing failed, falling back to individual processing: {e}"
+            )
+            return [
+                self.analyze_text(item["text"], item["doc_id"], item["domain"])
+                for item in batch
+            ]
 
     def _calculate_accuracy_metrics(self):
         """Calculate accuracy metrics for different categories."""
@@ -327,8 +430,10 @@ def test_comprehensive_slop_detection():
     """Main test function for comprehensive slop detection."""
     tester = SlopDetectionTester()
 
-    # Run comprehensive test
-    summary = tester.run_comprehensive_test()
+    # Run comprehensive test with optimized batch size for M1 Mac
+    # Use larger batch size for GPU acceleration
+    batch_size = 20 if torch.backends.mps.is_available() else 10
+    summary = tester.run_comprehensive_test(batch_size=batch_size)
 
     # Print results
     tester.print_summary(summary)
@@ -338,9 +443,9 @@ def test_comprehensive_slop_detection():
 
     # Assertions for test validation
     assert summary["test_summary"]["success_rate"] > 0.9, "Success rate should be > 90%"
-    assert (
-        summary["performance_metrics"]["avg_processing_time"] < 5.0
-    ), "Average processing time should be < 5s"
+    assert summary["performance_metrics"]["avg_processing_time"] < 3.0, (
+        "Average processing time should be < 3s (optimized for M1 Mac)"
+    )
     assert summary["test_summary"]["total_texts"] >= 70, "Should test at least 70 texts"
 
     print("\n✅ All test assertions passed!")

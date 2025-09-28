@@ -83,6 +83,12 @@ line-length = 88
 target-version = "py311"
 extend-exclude = [
     "sloplint/models/*", # Model files may have different style requirements
+    "__pycache__/",
+    ".venv/",
+    ".pytest_cache/",
+    "htmlcov/",
+    "build/",
+    "dist/",
 ]
 
 [tool.ruff.lint]
@@ -114,8 +120,11 @@ extend-exclude = '''
   | \.mypy_cache
   | \.tox
   | \.venv
+  | __pycache__
   | build
   | dist
+  | htmlcov
+  | \.pytest_cache
   | sloplint/models
 )/
 '''

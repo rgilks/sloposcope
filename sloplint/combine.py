@@ -492,12 +492,11 @@ def combine_scores(
 
 def get_slop_level(score: float) -> str:
     """Convert slop score to categorical level."""
-    # More sensitive thresholds based on empirical data
-    if score <= 0.50:  # Clean content
+    if score <= 0.50:
         return "Clean"
-    elif score <= 0.58:  # Moderate - most content falls here
+    elif score <= 0.70:
         return "Watch"
-    elif score <= 0.70:  # Higher slop content
+    elif score <= 0.85:
         return "Sloppy"
     else:
         return "High-Slop"
